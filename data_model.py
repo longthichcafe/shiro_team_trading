@@ -64,7 +64,7 @@ class TradingState(object):
         self.listings = listings
         self.order_depths = order_depths
         self.own_trades = own_trades                # the trades that the algorithm has done from previous TradingState
-        self.market_trades = market_trades          # the trades that other people has done from previous TradingState
+        self.market_trades = market_trades          # the trades that other people has done from previous TradingState moe suc
         self.position = position
         self.observations = observations
         
