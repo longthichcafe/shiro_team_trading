@@ -60,7 +60,7 @@ class TradingState(object):
                  market_trades: Dict[Symbol, List[Trade]],
                  position: Dict[Product, Position],
                  observations: Dict[Product, Observation]):
-        self.timestamp = timestamp
+        self.timestamp = timestamp #kakaka
         self.listings = listings
         self.order_depths = order_depths
         self.own_trades = own_trades
