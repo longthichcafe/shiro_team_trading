@@ -28,7 +28,7 @@ class Order:
 
     def __repr__(self) -> str:
         return "(" + self.symbol + ", " + str(self.price) + ", " + str(self.quantity) + ")"
-    
+
 
 class OrderDepth:
     def __init__(self):
@@ -60,17 +60,20 @@ class TradingState(object):
                  market_trades: Dict[Symbol, List[Trade]],
                  position: Dict[Product, Position],
                  observations: Dict[Product, Observation]):
-        self.timestamp = timestamp 
+        self.timestamp = timestamp
         self.listings = listings
         self.order_depths = order_depths
-        self.own_trades = own_trades                # the trades that the algorithm has done from previous TradingState
-        self.market_trades = market_trades          # the trades that other people has done from previous TradingState moe suc
+        # the trades that the algorithm has done from previous TradingState
+        self.own_trades = own_trades
+        # the trades that other people has done from previous TradingState
+        self.market_trades = market_trades
         self.position = position
         self.observations = observations
-        
+
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
-    
+
+
 class ProsperityEncoder(JSONEncoder):
-        def default(self, o):
-            return o.__dict__
+    def default(self, o):
+        return o.__dict__
