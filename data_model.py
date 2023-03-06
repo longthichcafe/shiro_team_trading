@@ -10,6 +10,7 @@ UserId = str
 Observation = int
 
 
+# Listing class provide trading pairs available
 class Listing:
     def __init__(self, symbol: Symbol, product: Product, denomination: Product):
         self.symbol = symbol
@@ -30,11 +31,11 @@ class Order:
         return "(" + self.symbol + ", " + str(self.price) + ", " + str(self.quantity) + ")"
 
 
+# Orders sent by trading bots
 class OrderDepth:
     def __init__(self):
         self.buy_orders: Dict[int, int] = {}
         self.sell_orders: Dict[int, int] = {}
-
 
 class Trade:
     def __init__(self, symbol: Symbol, price: int, quantity: int, buyer: UserId = "", seller: UserId = "") -> None:

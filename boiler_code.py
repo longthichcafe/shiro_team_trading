@@ -3,6 +3,7 @@ from data_model import OrderDepth, TradingState, Order
 
 
 class Trader:
+    # def estimate_price(self, state: TradingState) -> int:
 
     def run(self, state: TradingState) -> Dict[str, List[Order]]:
         """
@@ -25,6 +26,9 @@ class Trader:
                 orders: list[Order] = []
 
                 # Define a fair value for the PEARLS.
+                current_price = state.market_trades[product][len(product)-1].price
+
+
                 # Note that this value of 1 is just a dummy value, you should likely change it!
                 acceptable_price = 1
 
