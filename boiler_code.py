@@ -109,7 +109,7 @@ class Trader:
                 ## LONG position
                 if state.position[product] > 0:
 
-                    # Condition to close position
+                    # Condition to close position (SELL)
                     if pct_change_1 < 0 and pct_change_2 < 0:
 
                     # Looking for buy orders
@@ -126,7 +126,7 @@ class Trader:
                         
                             print("BUY", str(state.position[product]) + "x", best_bid)
                             orders.append(
-                                Order(product, best_bid, state.position[product])
+                                Order(product, best_bid, -state.position[product])
                             )
 
                             
@@ -140,18 +140,16 @@ class Trader:
                                 if position_r_vol > best_bid_volume_2:
                                     print("BUY", str(best_bid_volume_2) + "x", best_bid_2)
                                     orders.append(
-                                        Order(product, best_bid_2, best_bid_volume_2)
+                                        Order(product, best_bid_2, -best_bid_volume_2)
                                     )
                                 
                                 else:
                                     print("BUY", str(position_r_vol) + "x", best_bid_2)
                                     orders.append(
-                                        Order(product, best_bid_2, position_r_vol)
+                                        Order(product, best_bid_2, -position_r_vol)
                                     )
 
             
-
-
 
                 ## SHORT position
                 if state.position[product] < 0:
@@ -171,29 +169,29 @@ class Trader:
                                 best_ask_2 = sorted_ask[1]
                                 best_ask_volume_2 = order_depth.sell_orders[best_ask_2]                        
                         
-                            print("BUY", str(state.position[product]) + "x", best_ask)
+                            print("BUY", str(-state.position[product]) + "x", best_ask)
                             orders.append(
-                                Order(product, best_ask, state.position[product])
+                                Order(product, best_ask, -state.position[product])
                             )
 
                             
                             # If position not fully executed
-                            if state.position[product] > best_ask_volume:
+                            if abs(state.position[product]) > abs(best_ask_volume):
                                 
                                 # position remaining volumn
-                                position_r_vol = state.position[product] - best_ask_volume
+                                position_r_vol = state.position[product] - best_ask_volume # negative value
 
                                 # Check if the 2nd ask could meet all remaining volumn
-                                if position_r_vol > best_ask_volume_2:
-                                    print("BUY", str(best_ask_volume_2) + "x", best_ask_2)
+                                if abs(position_r_vol) > abs(best_ask_volume_2):        # not met all
+                                    print("BUY", str(-best_ask_volume_2) + "x", best_ask_2)
                                     orders.append(
-                                        Order(product, best_ask_2, best_ask_volume_2)
+                                        Order(product, best_ask_2, -best_ask_volume_2)
                                     )
                                 
-                                else:
-                                    print("BUY", str(position_r_vol) + "x", best_ask_2)
+                                else:    # met all
+                                    print("BUY", str(-position_r_vol) + "x", best_ask_2)
                                     orders.append(
-                                        Order(product, best_ask_2, position_r_vol)
+                                        Order(product, best_ask_2, -position_r_vol)
                                     )
 
 
