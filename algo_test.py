@@ -39,7 +39,8 @@ class Order:
 
 # Orders sent by trading bots
 class OrderDepth:
-    def __init__(self):
+    # TODO
+    def __init__(self, buy_orders: Dict[int, int], sell_orders: Dict[int, int]):
         # key: price, value: quantities
         self.buy_orders: Dict[int, int] = {}
         self.sell_orders: Dict[int, int] = {}
@@ -107,7 +108,6 @@ class Trader:
         ma_20_pre = 0
         bystate = 0
 
-
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
 
@@ -127,7 +127,6 @@ class Trader:
                 """
                 # Take the market price (mid price)
 
-
                 if order_depth.buy_orders and order_depth.sell_orders:
                     best_bid = max(order_depth.buy_orders.keys())
                     best_ask = min(order_depth.sell_orders.keys())
@@ -135,7 +134,7 @@ class Trader:
 
                 elif order_depth.buy_orders:
                     current_price = min(order_depth.buy_orders.keys())
-                    
+
                 elif order_depth.sell_orders:
                     current_price = min(order_depth.sell_orders.keys())
 
@@ -196,14 +195,15 @@ class Trader:
                         orders.append(
                             Order(product, best_bid, -best_bid_volume))
 
-
                 # Execute any holding POSITIONS
 
                 # LONG position
                 if product in state.position.keys() and state.position[product] > 0:
-                    pct_change_1 = (pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
-                    pct_change_2 = (pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
-                    
+                    pct_change_1 = (
+                        pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
+                    pct_change_2 = (
+                        pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
+
                     # Condition to close position (SELL)
                     if pct_change_1 < 0 and pct_change_2 < 0:
 
@@ -253,9 +253,11 @@ class Trader:
 
                 # SHORT position
                 if product in state.position.keys() and state.position[product] < 0:
-                    pct_change_1 = (pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
-                    pct_change_2 = (pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
-                    
+                    pct_change_1 = (
+                        pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
+                    pct_change_2 = (
+                        pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
+
                     # Condition to close position
                     if pct_change_1 > 0 and pct_change_2 > 0:
 

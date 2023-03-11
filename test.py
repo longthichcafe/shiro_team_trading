@@ -1,37 +1,37 @@
-from algo_test import Listing, OrderDepth, Trade, TradingState
+from algo_test import *
 
-timestamp = 1000
+checktime = 0
+
+timestamp = 0
 
 listings = {
-    "PRODUCT1": Listing(
-        symbol="PRODUCT1",
-        product="PRODUCT1",
-        denomination: "SEASHELLS"
+    "PEARLS": Listing(
+        symbol="PEARLS",
+        product="PEARLS",
+        denomination="SEASHELLS"
     ),
 
-    "PRODUCT2": Listing(
-        symbol="PRODUCT2",
-        product="PRODUCT2",
-        denomination: "SEASHELLS"
-    ),
+    # "PRODUCT2": Listing(
+    #     symbol="PRODUCT2",
+    #     product="PRODUCT2",
+    #     denomination="SEASHELLS"
+    # ),
 }
-
+# Orders sent by trading bots  == TEST INPUT
 order_depths = {
-    "PRODUCT1": OrderDepth(
+    "PEARLS": OrderDepth(
         buy_orders={10: 7, 9: 5},
         sell_orders={11: -4, 12: -8}
-    ),
-    "PRODUCT2": OrderDepth(
-        buy_orders={142: 3, 141: 5},
-        sell_orders={144: -5, 145: -8}
-    ),
+    )
 }
 
+# the trades that the algorithm has done from previous TradingState
 own_trades = {
     "PRODUCT1": [],
     "PRODUCT2": []
 }
 
+# the trades that other people has done from previous timestamp (ONLY 1)
 market_trades = {
     "PRODUCT1": [
         Trade(
@@ -41,10 +41,10 @@ market_trades = {
             buyer="",
             seller="",
         )
-    ],
-    "PRODUCT2": []
+    ]
 }
 
+# what we have
 position = {
     "PRODUCT1": 3,
     "PRODUCT2": -5
@@ -52,10 +52,20 @@ position = {
 
 observations = {}
 
-state = TradingState(
-    timestamp=timestamp,
-    listings=listings,
-    order_depths=order_depths,
-    own_trades,
-    market_trades
-)
+
+# ===============================  MAIN ===============================
+# ===============================  MAIN ===============================
+# ===============================  MAIN ===============================
+
+trader = Trader()
+while checktime <= 100:
+    trader.run(statstate0=TradingState(
+        timestamp=timestamp,
+        listings=listings,
+        order_depths=order_depths,
+        own_trades=own_trades,
+        market_trades=market_trades,
+        position=position,
+        observations=observations
+    ))
+    checktime += 1
