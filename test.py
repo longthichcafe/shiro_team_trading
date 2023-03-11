@@ -55,12 +55,16 @@ checktime = 0
 
 trader = Trader()
 while checktime <= 100:
-    rand_price = random.randint(-20, 20)
-    rand_quantity = random.randint(0, 20)
+    rand_price_bid = random.randint(10, 20)
+    rand_quantity_bid = random.randint(0, 20)
+    rand_price_ask = rand_price_bid + random.randint(1, 2)
+    rand_quantity_ask = random.randint(-20, 0)
     order_depths = {
         "PEARLS": OrderDepth(
-            buy_orders={rand_quantity: rand_price, rand_quantity: rand_price},
-            sell_orders={rand_quantity: rand_price, rand_quantity: rand_price}
+            buy_orders={rand_price_bid: rand_quantity_bid,
+                        rand_price_bid - 1: rand_quantity_bid},
+            sell_orders={rand_price_ask: rand_quantity_ask,
+                         rand_price_ask + 1: rand_quantity_ask}
         )
     }
 

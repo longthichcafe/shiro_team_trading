@@ -107,6 +107,7 @@ class Trader:
         ma_7_pre = 0
         ma_20_pre = 0
         bystate = 0
+        current_price = 0
 
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
@@ -126,7 +127,7 @@ class Trader:
                 Enter position when MA7 cross MA20 (happen within 5 states)
                 """
                 # Take the market price (mid price)
-                current_price = 0
+
                 if order_depth.buy_orders and order_depth.sell_orders:
                     best_bid = max(order_depth.buy_orders.keys())
                     best_ask = min(order_depth.sell_orders.keys())
