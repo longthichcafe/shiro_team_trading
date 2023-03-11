@@ -92,6 +92,8 @@ class ProsperityEncoder(JSONEncoder):
 class Trader:
     # def estimate_price(self, state: TradingState) -> int:
 
+    pre_trade = []
+
     def run(self, state: TradingState) -> Dict[str, List[Order]]:
         """
         Only method required. It takes all buy and sell orders for all symbols as an input,
@@ -128,7 +130,6 @@ class Trader:
                 """
                 # Take the market price (mid price)
 
-                
                 if order_depth.buy_orders and order_depth.sell_orders:
                     best_bid = max(order_depth.buy_orders.keys())
                     best_ask = min(order_depth.sell_orders.keys())
@@ -140,12 +141,12 @@ class Trader:
                 elif order_depth.sell_orders:
                     current_price = best_bid
 
-                pre_trade.append(current_price)
+                Trader.pre_trade.append(current_price)
 
                 # Calculate moving avg 7 and 20
-                if len(pre_trade) > 19:
-                    ma_7 = np.average(pre_trade[-7:])
-                    ma_20 = np.average(pre_trade[-20:])
+                if len(Trader.pre_trade) > 19:
+                    ma_7 = np.average(Trader.pre_trade[-7:])
+                    ma_20 = np.average(Trader.pre_trade[-20:])
 
                     # bystate marks the number of states after the cross happened
                     if abs((ma_7_pre - ma_20_pre) - (ma_7 - ma_20)) < (abs(ma_7_pre - ma_20_pre) + abs(ma_7 - ma_20)):
@@ -172,7 +173,7 @@ class Trader:
                     """
                     if ma_7 > ma_20 and current_price > ma_20 and bystate <= 5:
                     """
-                    if len(pre_trade) > 19:
+                    if len(Trader.pre_trade) > 19:
 
                         # In case the conditions met,
                         # BUY!
@@ -202,9 +203,9 @@ class Trader:
                 # LONG position
                 if product in state.position.keys() and state.position[product] > 0:
                     pct_change_1 = (
-                        pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
+                        Trader.pre_trade[-1] - Trader.pre_trade[-2]) / Trader.pre_trade[-2]
                     pct_change_2 = (
-                        pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
+                        Trader.pre_trade[-2] - Trader.pre_trade[-3]) / Trader.pre_trade[-3]
 
                     # Condition to close position (SELL)
                     if pct_change_1 < 0 and pct_change_2 < 0:
@@ -256,9 +257,9 @@ class Trader:
                 # SHORT position
                 if product in state.position.keys() and state.position[product] < 0:
                     pct_change_1 = (
-                        pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
+                        Trader.pre_trade[-1] - Trader.pre_trade[-2]) / Trader.pre_trade[-2]
                     pct_change_2 = (
-                        pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
+                        Trader.pre_trade[-2] - Trader.pre_trade[-3]) / Trader.pre_trade[-3]
 
                     # Condition to close position
                     if pct_change_1 > 0 and pct_change_2 > 0:
