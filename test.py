@@ -1,6 +1,5 @@
 from algo_test import *
-
-checktime = 0
+import random
 
 timestamp = 0
 
@@ -18,12 +17,7 @@ listings = {
     # ),
 }
 # Orders sent by trading bots  == TEST INPUT
-order_depths = {
-    "PEARLS": OrderDepth(
-        buy_orders={10: 7, 9: 5},
-        sell_orders={11: -4, 12: -8}
-    )
-}
+
 
 # the trades that the algorithm has done from previous TradingState
 own_trades = {
@@ -57,9 +51,20 @@ observations = {}
 # ===============================  MAIN ===============================
 # ===============================  MAIN ===============================
 
+checktime = 0
+rand_price = random.randint(-20, 20)
+rand_quantity = random.randint(0, 20)
+
+
 trader = Trader()
 while checktime <= 100:
-    trader.run(statstate0=TradingState(
+    order_depths = {
+        "PEARLS": OrderDepth(
+            buy_orders={rand_quantity: rand_price, rand_quantity: rand_price},
+            sell_orders={rand_quantity: rand_price, rand_quantity: rand_price}
+        )
+    }
+    print(trader.run(state=TradingState(
         timestamp=timestamp,
         listings=listings,
         order_depths=order_depths,
@@ -67,5 +72,6 @@ while checktime <= 100:
         market_trades=market_trades,
         position=position,
         observations=observations
-    ))
+    )))
+
     checktime += 1

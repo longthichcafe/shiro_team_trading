@@ -39,7 +39,7 @@ class Order:
 
 # Orders sent by trading bots
 class OrderDepth:
-    # TODO
+    # TODO: fix back later
     def __init__(self, buy_orders: Dict[int, int], sell_orders: Dict[int, int]):
         # key: price, value: quantities
         self.buy_orders: Dict[int, int] = {}
@@ -126,7 +126,7 @@ class Trader:
                 Enter position when MA7 cross MA20 (happen within 5 states)
                 """
                 # Take the market price (mid price)
-
+                current_price = 0
                 if order_depth.buy_orders and order_depth.sell_orders:
                     best_bid = max(order_depth.buy_orders.keys())
                     best_ask = min(order_depth.sell_orders.keys())
