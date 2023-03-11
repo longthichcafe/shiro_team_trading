@@ -42,8 +42,8 @@ class OrderDepth:
     # TODO: fix back later
     def __init__(self, buy_orders: Dict[int, int], sell_orders: Dict[int, int]):
         # key: price, value: quantities
-        self.buy_orders: Dict[int, int] = {}
-        self.sell_orders: Dict[int, int] = {}
+        self.buy_orders = buy_orders
+        self.sell_orders = sell_orders
 
 
 class Trade:
@@ -101,7 +101,7 @@ class Trader:
         result = {}
 
         # Initialize the list of previous trade and Moving Avg 7 and 20
-        pre_trade = []  # keep track of previous trade to calculate ma7 - ma20
+        # keep track of previous trade to calculate ma7 - ma20
         ma_7 = 0
         ma_20 = 0
         ma_7_pre = 0
@@ -128,16 +128,17 @@ class Trader:
                 """
                 # Take the market price (mid price)
 
+                
                 if order_depth.buy_orders and order_depth.sell_orders:
                     best_bid = max(order_depth.buy_orders.keys())
                     best_ask = min(order_depth.sell_orders.keys())
                     current_price = np.average([best_ask, best_bid])
 
                 elif order_depth.buy_orders:
-                    current_price = min(order_depth.buy_orders.keys())
+                    current_price = best_ask
 
                 elif order_depth.sell_orders:
-                    current_price = min(order_depth.sell_orders.keys())
+                    current_price = best_bid
 
                 pre_trade.append(current_price)
 
