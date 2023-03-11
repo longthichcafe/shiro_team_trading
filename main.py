@@ -1,4 +1,4 @@
-from algo_test import *
+from algo import *
 # from heheboi import *
 import random
 
