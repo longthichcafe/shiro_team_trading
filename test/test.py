@@ -114,8 +114,49 @@ class Trader:
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
 
-            # Check if the current product is the 'PEARLS' product, only then run the order logic
             if product == 'PEARLS':
+                order_depth: OrderDepth = state.order_depths[product]
+
+                # Initialize the list of Orders to be sent as an empty list
+                orders: list[Order] = []
+
+                if order_depth.sell_orders:
+
+                    # Sort all the available sell orders by their price,
+                    # and select only the sell order with the lowest price
+                    best_ask = min(order_depth.sell_orders.keys())
+                    best_ask_volume = order_depth.sell_orders[best_ask]
+
+                    # BUY conditions
+                    if best_ask < 10000:
+                        # In case the conditions met,
+                        # BUY!
+                        # The code below therefore sends a BUY order at the price level of the ask,
+                        # with "same quantity"
+                        # We expect this order to trade with the sell order
+                        print("BUY", str(-best_ask_volume) + "x", best_ask)
+                        orders.append(
+                            Order(product, best_ask, -best_ask_volume))
+
+                # The below code block is similar to the one above,
+                # the difference is that it find the highest bid (buy order)
+                # If the price of the order is higher than the fair value
+                # This is an opportunity to sell at a premium
+                if len(order_depth.buy_orders) != 0:
+                    best_bid = max(order_depth.buy_orders.keys())
+                    best_bid_volume = order_depth.buy_orders[best_bid]
+
+                    # SELL conditions
+                    if best_bid > 10000:
+                        print("SELL", str(best_bid_volume) + "x", best_bid)
+                        orders.append(
+                            Order(product, best_bid, -best_bid_volume))
+
+                result[product] = orders
+
+            
+            # Check if the current product is the 'PEARLS' product, only then run the order logic
+            if product == 'HEHEBOI':
 
                 # Retrieve the Order Depth containing all the market BUY and SELL orders for PEARLS
                 order_depth: OrderDepth = state.order_depths[product]
@@ -144,7 +185,7 @@ class Trader:
                 Trader.pre_trade.append(current_price)
 
                 # Calculate moving avg 7 and 20
-                if len(Trader.pre_trade) > 19:
+                if len(Trader.pre_trade) > 5:
                     ma_7 = np.average(Trader.pre_trade[-7:])
                     ma_20 = np.average(Trader.pre_trade[-20:])
 
@@ -170,11 +211,7 @@ class Trader:
                     best_ask_volume = order_depth.sell_orders[best_ask]
 
                     # BUY conditions
-                    """
-                    if ma_7 > ma_20 and current_price > ma_20 and bystate <= 5:
-                    """
-                    if len(Trader.pre_trade) > 19:
-
+                    if current_price < ma_7:
                         # In case the conditions met,
                         # BUY!
                         # The code below therefore sends a BUY order at the price level of the ask,
@@ -193,13 +230,14 @@ class Trader:
                     best_bid_volume = order_depth.buy_orders[best_bid]
 
                     # SELL conditions
-                    if ma_7 < ma_20 and current_price < ma_20 and bystate <= 5:
+                    if current_price > ma_7:
                         print("SELL", str(best_bid_volume) + "x", best_bid)
                         orders.append(
                             Order(product, best_bid, -best_bid_volume))
 
                 # Execute any holding POSITIONS
 
+                """
                 # LONG position
                 if product in state.position.keys() and state.position[product] > 0:
                     pct_change_1 = (
@@ -293,7 +331,7 @@ class Trader:
                                     best_ask_volume
 
                                 # Check if the 2nd ask could meet all remaining volumn
-                                if abs(position_r_vol) > abs(best_ask_volume_2):        # not met all
+                                if abs(position_r_vol) > abs(best_ask_volume_2): # not met all
                                     print(
                                         "BUY", str(-best_ask_volume_2) + "x", best_ask_2)
                                     orders.append(
@@ -301,13 +339,14 @@ class Trader:
                                               best_ask_volume_2)
                                     )
 
-                                else:    # met all
+                                else: # met all
                                     print("BUY", str(-position_r_vol) +
                                           "x", best_ask_2)
                                     orders.append(
                                         Order(product, best_ask_2, -
                                               position_r_vol)
                                     )
+                """
 
                 # Add all the above the orders to the result dict
                 result[product] = orders
