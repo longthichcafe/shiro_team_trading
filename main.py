@@ -1,5 +1,5 @@
 from algo import *
-# from heheboi import *
+
 import random
 
 timestamp = 0
