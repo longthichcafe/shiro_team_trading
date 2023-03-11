@@ -52,12 +52,11 @@ observations = {}
 # ===============================  MAIN ===============================
 
 checktime = 0
-rand_price = random.randint(-20, 20)
-rand_quantity = random.randint(0, 20)
-
 
 trader = Trader()
 while checktime <= 100:
+    rand_price = random.randint(-20, 20)
+    rand_quantity = random.randint(0, 20)
     order_depths = {
         "PEARLS": OrderDepth(
             buy_orders={rand_quantity: rand_price, rand_quantity: rand_price},
