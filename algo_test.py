@@ -107,6 +107,7 @@ class Trader:
         ma_20_pre = 0
         bystate = 0
 
+
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
 
@@ -124,9 +125,19 @@ class Trader:
 
                 Enter position when MA7 cross MA20 (happen within 5 states)
                 """
-                # Take the market price
-                current_price = state.market_trades[product][len(
-                    product)-1].price
+                # Take the market price (mid price)
+
+
+                if order_depth.buy_orders and order_depth.sell_orders:
+                    best_bid = max(order_depth.buy_orders.keys())
+                    best_ask = min(order_depth.sell_orders.keys())
+                    current_price = np.average([best_ask, best_bid])
+
+                elif order_depth.buy_orders:
+                    current_price = min(order_depth.buy_orders.keys())
+                    
+                elif order_depth.sell_orders:
+                    current_price = min(order_depth.sell_orders.keys())
 
                 pre_trade.append(current_price)
 
@@ -136,7 +147,7 @@ class Trader:
                     ma_20 = np.average(pre_trade[-20:])
 
                     # bystate marks the number of states after the cross happened
-                    if abs((ma_7_pre - ma_20_pre) - (ma_7 - ma_20)) < abs(ma_7_pre - ma_20_pre) + abs(ma_7 - ma_20):
+                    if abs((ma_7_pre - ma_20_pre) - (ma_7 - ma_20)) < (abs(ma_7_pre - ma_20_pre) + abs(ma_7 - ma_20)):
                         bystate = 1
 
                     else:
@@ -149,7 +160,7 @@ class Trader:
                 # acceptable_price = 1
 
                 # If statement checks if there are any SELL orders in the PEARLS market
-                if len(order_depth.sell_orders) > 0:
+                if order_depth.sell_orders:
 
                     # Sort all the available sell orders by their price,
                     # and select only the sell order with the lowest price
@@ -157,7 +168,10 @@ class Trader:
                     best_ask_volume = order_depth.sell_orders[best_ask]
 
                     # BUY conditions
-                    if ma_7 > ma_20 and current_price > ma_20 and bystate in range(1, 6):
+                    """
+                    if ma_7 > ma_20 and current_price > ma_20 and bystate <= 5:
+                    """
+                    if len(pre_trade) > 19:
 
                         # In case the conditions met,
                         # BUY!
@@ -177,19 +191,19 @@ class Trader:
                     best_bid_volume = order_depth.buy_orders[best_bid]
 
                     # SELL conditions
-                    if ma_7 < ma_20 and current_price < ma_20 and bystate in range(1, 6):
+                    if ma_7 < ma_20 and current_price < ma_20 and bystate <= 5:
                         print("SELL", str(best_bid_volume) + "x", best_bid)
                         orders.append(
                             Order(product, best_bid, -best_bid_volume))
 
+
                 # Execute any holding POSITIONS
 
-                pct_change_1 = (pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
-                pct_change_2 = (pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
-
                 # LONG position
-                if state.position[product] > 0:
-
+                if product in state.position.keys() and state.position[product] > 0:
+                    pct_change_1 = (pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
+                    pct_change_2 = (pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
+                    
                     # Condition to close position (SELL)
                     if pct_change_1 < 0 and pct_change_2 < 0:
 
@@ -238,8 +252,10 @@ class Trader:
                                     )
 
                 # SHORT position
-                if state.position[product] < 0:
-
+                if product in state.position.keys() and state.position[product] < 0:
+                    pct_change_1 = (pre_trade[-1] - pre_trade[-2]) / pre_trade[-2]
+                    pct_change_2 = (pre_trade[-2] - pre_trade[-3]) / pre_trade[-3]
+                    
                     # Condition to close position
                     if pct_change_1 > 0 and pct_change_2 > 0:
 
