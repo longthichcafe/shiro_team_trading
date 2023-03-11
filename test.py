@@ -63,7 +63,8 @@ while checktime <= 100:
             sell_orders={rand_quantity: rand_price, rand_quantity: rand_price}
         )
     }
-    print(trader.run(state=TradingState(
+
+    print(checktime, trader.run(state=TradingState(
         timestamp=timestamp,
         listings=listings,
         order_depths=order_depths,
