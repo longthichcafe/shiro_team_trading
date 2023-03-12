@@ -154,7 +154,6 @@ class Trader:
 
                 result[product] = orders
 
-            
             # Check if the current product is the 'PEARLS' product, only then run the order logic
             if product == 'HEHEBOI':
 
