@@ -170,11 +170,7 @@ class Trader:
                     best_ask_volume = order_depth.sell_orders[best_ask]
 
                     # BUY conditions
-                    """
                     if ma_7 > ma_20 and current_price > ma_20 and bystate <= 5:
-                    """
-                    if len(Trader.pre_trade) > 19:
-
                         # In case the conditions met,
                         # BUY!
                         # The code below therefore sends a BUY order at the price level of the ask,
@@ -200,6 +196,7 @@ class Trader:
 
                 # Execute any holding POSITIONS
 
+                """
                 # LONG position
                 if product in state.position.keys() and state.position[product] > 0:
                     pct_change_1 = (
@@ -293,7 +290,7 @@ class Trader:
                                     best_ask_volume
 
                                 # Check if the 2nd ask could meet all remaining volumn
-                                if abs(position_r_vol) > abs(best_ask_volume_2):        # not met all
+                                if abs(position_r_vol) > abs(best_ask_volume_2): # not met all
                                     print(
                                         "BUY", str(-best_ask_volume_2) + "x", best_ask_2)
                                     orders.append(
@@ -301,13 +298,14 @@ class Trader:
                                               best_ask_volume_2)
                                     )
 
-                                else:    # met all
+                                else: # met all
                                     print("BUY", str(-position_r_vol) +
                                           "x", best_ask_2)
                                     orders.append(
                                         Order(product, best_ask_2, -
                                               position_r_vol)
                                     )
+                """
 
                 # Add all the above the orders to the result dict
                 result[product] = orders
