@@ -224,7 +224,7 @@ class Trader:
                                 state.position[product]) + "x", best_bid)
                             orders.append(
                                 Order(product, best_bid, -
-                                      state.position[product])
+                                    state.position[product])
                             )
 
                             # If position not fully executed

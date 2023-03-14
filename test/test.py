@@ -89,10 +89,19 @@ class ProsperityEncoder(JSONEncoder):
         return o.__dict__
 
 
+# class PreTrade:
+#     def __init__(self):
+#         self.pre_trade = {}
+#     def add_pre_trade(self)
+
+
 class Trader:
     # def estimate_price(self, state: TradingState) -> int:
 
-    pre_trade = []
+    pre_trades = {'PEARLS': [],
+                  'BANANAS': []}
+    pre_ma100s = {'PEARLS': [],
+                  'BANANAS': []}
 
     def run(self, state: TradingState) -> Dict[str, List[Order]]:
         """
@@ -102,14 +111,6 @@ class Trader:
         # Initialize the method output dict as an empty dict
         result = {}
 
-        # Initialize the list of previous trade and Moving Avg 7 and 20
-        # keep track of previous trade to calculate ma7 - ma20
-        ma_7 = 0
-        ma_20 = 0
-        ma_7_pre = 0
-        ma_20_pre = 0
-        bystate = 0
-        current_price = 0
 
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
@@ -119,6 +120,7 @@ class Trader:
 
                 # Initialize the list of Orders to be sent as an empty list
                 orders: list[Order] = []
+                pre_trade: Trader.pre_trade[product] = []
 
                 if order_depth.sell_orders:
 
@@ -155,13 +157,14 @@ class Trader:
                 result[product] = orders
 
             # Check if the current product is the 'PEARLS' product, only then run the order logic
-            if product == 'HEHEBOI':
+            if product == 'BANANAS':
 
                 # Retrieve the Order Depth containing all the market BUY and SELL orders for PEARLS
                 order_depth: OrderDepth = state.order_depths[product]
 
                 # Initialize the list of Orders to be sent as an empty list
                 orders: list[Order] = []
+
 
                 """
                 The strategy starts here: 
@@ -181,58 +184,92 @@ class Trader:
                 elif order_depth.sell_orders:
                     current_price = best_bid
 
-                Trader.pre_trade.append(current_price)
+                
+
+                Trader.pre_trades[product].append(current_price)
+                pre_trade = Trader.pre_trades[product] 
 
                 # Calculate moving avg 7 and 20
-                if len(Trader.pre_trade) > 5:
-                    ma_7 = np.average(Trader.pre_trade[-7:])
-                    ma_20 = np.average(Trader.pre_trade[-20:])
+                if len(pre_trade) > 99:
+                    ma_7 = np.average(pre_trade[-7:])
+                    ma_20 = np.average(pre_trade[-20:])
+                    ma_100 = np.average(pre_trade[-100:])
+
+                    Trader.pre_ma100s[product].append(ma_100)
+                    pre_ma100 = Trader.pre_ma100s[product]
 
                     # bystate marks the number of states after the cross happened
-                    if abs((ma_7_pre - ma_20_pre) - (ma_7 - ma_20)) < (abs(ma_7_pre - ma_20_pre) + abs(ma_7 - ma_20)):
-                        bystate = 1
+                    # if abs((ma_7_pre - ma_20_pre) - (ma_7 - ma_20)) < (abs(ma_7_pre - ma_20_pre) + abs(ma_7 - ma_20)):
+                    #     bystate = 1
 
-                    else:
-                        bystate += 1
+                    # else:
+                    #     bystate += 1
 
-                    ma_7_pre = ma_7
-                    ma_20_pre = ma_20
-
-                # Note that this value of 1 is just a dummy value, you should likely change it!
-                # acceptable_price = 1
+                    # ma_7_pre = ma_7
+                    # ma_20_pre = ma_20
+                    
+                if len(pre_trade) > 119:
+                    i_trend = []
+                    # compute the %change in moving avg 100 
+                    for _ in [1,2,3,5,10,15,20,30]:
+                        i_trend.append(
+                            (pre_ma100[-1] - pre_ma100[-_ - 1]) / pre_ma100[-_ - 1]
+                        )                    
 
                 # If statement checks if there are any SELL orders in the PEARLS market
-                if order_depth.sell_orders:
+                    if order_depth.sell_orders:
 
-                    # Sort all the available sell orders by their price,
-                    # and select only the sell order with the lowest price
-                    best_ask = min(order_depth.sell_orders.keys())
-                    best_ask_volume = order_depth.sell_orders[best_ask]
+                        # Sort all the available sell orders by their price,
+                        # and select only the sell order with the lowest price
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
 
-                    # BUY conditions
-                    if current_price < ma_7:
-                        # In case the conditions met,
-                        # BUY!
-                        # The code below therefore sends a BUY order at the price level of the ask,
-                        # with "same quantity"
-                        # We expect this order to trade with the sell order
-                        print("BUY", str(-best_ask_volume) + "x", best_ask)
-                        orders.append(
-                            Order(product, best_ask, -best_ask_volume))
+                        # Trend identifier
+                        n_increase = 0
+                        for pct_change in i_trend:
+                            if pct_change > 0:
+                                n_increase += 1
 
-                # The below code block is similar to the one above,
-                # the difference is that it find the highest bid (buy order)
-                # If the price of the order is higher than the fair value
-                # This is an opportunity to sell at a premium
-                if len(order_depth.buy_orders) != 0:
-                    best_bid = max(order_depth.buy_orders.keys())
-                    best_bid_volume = order_depth.buy_orders[best_bid]
+                        # UPward trend
+                        if n_increase >= 6:
+                            if best_ask < ma_20:
+                                print("BUY", str(-best_ask_volume) + "x", best_ask)
+                                orders.append(
+                                    Order(product, best_ask, -best_ask_volume)) 
+                                   
+                        # DOWNward trend                        
+                        else:
+                            if best_ask < ma_20:
+                                print("BUY", str(-state.position[product]) + "x", best_ask)
+                                orders.append(
+                                    Order(product, best_ask, -state.position[product]))
 
-                    # SELL conditions
-                    if current_price > ma_7:
-                        print("SELL", str(best_bid_volume) + "x", best_bid)
-                        orders.append(
-                            Order(product, best_bid, -best_bid_volume))
+                    # The below code block is similar to the one above,
+                    # the difference is that it find the highest bid (buy order)
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]
+
+                        # Trend identifier
+                        n_decrease = 0
+                        for pct_change in i_trend:
+                            if pct_change < 0:
+                                n_decrease += 1
+
+                        # DOWNward trend
+                        if n_decrease > 6:
+
+                            if best_bid > ma_20:
+                                print("SELL", str(best_bid_volume) + "x", best_bid)
+                                orders.append(
+                                    Order(product, best_bid, -best_bid_volume))
+
+                        # UPward trend        
+                        else:
+                            if best_bid > ma_20:
+                                print("SELL", str(state.position[product]) + "x", best_bid)
+                                orders.append(
+                                    Order(product, best_bid, -state.position[product]))
 
                 # Execute any holding POSITIONS
 
