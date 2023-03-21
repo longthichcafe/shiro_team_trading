@@ -213,7 +213,7 @@ class Trader:
                     # compute the %change in moving avg 100 
                     for _ in [1,2,3,5,10,15,20,30]:
                         i_trend.append(
-                            (pre_ma100[-1] - pre_ma100[-_ - 1]) / pre_ma100[-_ - 1]
+                            (pre_ma100[-1] - pre_ma100[-_-1]) / pre_ma100[-_-1]
                         )                    
 
                 # If statement checks if there are any SELL orders in the PEARLS market
