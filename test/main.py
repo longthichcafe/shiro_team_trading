@@ -1,4 +1,4 @@
-from test import *
+from main import *
 
 import random
 

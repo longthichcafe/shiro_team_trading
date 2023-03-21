@@ -89,12 +89,6 @@ class ProsperityEncoder(JSONEncoder):
         return o.__dict__
 
 
-# class PreTrade:
-#     def __init__(self):
-#         self.pre_trade = {}
-#     def add_pre_trade(self)
-
-
 class Trader:
     # def estimate_price(self, state: TradingState) -> int:
 
@@ -212,9 +206,9 @@ class Trader:
                 if len(pre_trade) > 119:
                     i_trend = []
                     # compute the %change in moving avg 100 
-                    for _ in [1,2,3,5,10,15,20,30]:
+                    for i in [1,2,3,5,10,15,20,30]:
                         i_trend.append(
-                            (pre_ma100[-1] - pre_ma100[-_-1]) / pre_ma100[-_-1]
+                            (pre_ma100[-1] - pre_ma100[-i - 1]) / pre_ma100[-i - 1]
                         )                    
 
                 # If statement checks if there are any SELL orders in the BANANAS market
