@@ -145,6 +145,8 @@ class Trader:
 
     pre_trades = {'PEARLS': [],
                   'BANANAS': []}
+    pre_ma20s = {'PEARLS': [],
+                  'BANANAS': []}
     pre_ma100s = {'PEARLS': [],
                   'BANANAS': []}
 
@@ -152,7 +154,7 @@ class Trader:
         self, 
         state: TradingState
     ) -> Dict[str, List[Order]]:
-    
+
         """
         Only method required. It takes all buy and sell orders for all symbols as an input,
         and outputs a list of orders to be sent
@@ -237,14 +239,23 @@ class Trader:
                     ''' ma_7 = np.average(pre_trade[-7:]) '''
                     ma_20 = ( 
                         0.08 * pre_trade[-1] +
-                        0.3/4 * np.average(pre_trade[-5:-1]) + 
-                        0.27/4 * np.average(pre_trade[-9:-5]) + 
-                        0.21/4 * np.average(pre_trade[-13:-9]) + 
-                        0.11/4 * np.average(pre_trade[-17:-13]) + 
-                        0.03/3 * np.average(pre_trade[-20:-17]) 
-                        )
-                    ma_100 = np.average(pre_trade[-100:])
+                        0.3 * np.average(pre_trade[-5:-1]) + 
+                        0.27 * np.average(pre_trade[-9:-5]) + 
+                        0.21 * np.average(pre_trade[-13:-9]) + 
+                        0.11 * np.average(pre_trade[-17:-13]) + 
+                        0.03 * np.average(pre_trade[-20:-17]) 
+                    )
+                    Trader.pre_ma20s[product].append(ma_20)
+                    pre_ma20 = Trader.pre_ma20s[product]
 
+                    adaptive_ma20 = (
+                        1.0 * ma_20 +
+                        1.5 * (pre_ma20[-1] - pre_ma20[-2]) +
+                        1.0 * (pre_ma20[-1] - pre_ma20[-3]) +
+                        0.5 * (pre_ma20[-1] - pre_ma20[-4]) 
+                    )
+
+                    ma_100 = np.average(pre_trade[-100:])
                     Trader.pre_ma100s[product].append(ma_100)
                     pre_ma100 = Trader.pre_ma100s[product]
                     
@@ -271,7 +282,7 @@ class Trader:
 
                         # UPward trend and undefined trend
                         if not n_decrease >= 6:
-                            if best_ask < ma_20:
+                            if best_ask < adaptive_ma20:
                                 print("BUY", str(-best_ask_volume) + "x", best_ask)
                                 orders.append(
                                     Order(product, best_ask, -best_ask_volume))
@@ -279,7 +290,7 @@ class Trader:
                         # DOWNward trend                        
                         else:
                             if product in state.position.keys() and state.position[product] < 0:
-                                if best_ask < ma_20:
+                                if best_ask < adaptive_ma20:
                                     print("BUY", str(-state.position[product]) + "x", best_ask)
                                     orders.append(
                                         Order(product, best_ask, -state.position[product]))
@@ -296,7 +307,7 @@ class Trader:
 
                         # DOWNward trend and undefined
                         if not n_increase >= 6:
-                            if best_bid > ma_20:
+                            if best_bid > adaptive_ma20:
                                 print("SELL", str(best_bid_volume) + "x", best_bid)
                                 orders.append(
                                     Order(product, best_bid, -best_bid_volume))
@@ -304,7 +315,7 @@ class Trader:
                         # UPward trend        
                         else:
                             if product in state.position.keys() and state.position[product] > 0:
-                                if best_bid > ma_20:
+                                if best_bid > adaptive_ma20:
                                     print("SELL", str(state.position[product]) + "x", best_bid)
                                     orders.append(
                                         Order(product, best_bid, -state.position[product]))
