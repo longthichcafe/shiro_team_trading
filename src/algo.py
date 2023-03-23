@@ -152,6 +152,10 @@ class Trader:
     pre_ma100s = {'PEARLS': [],
                   'BANANAS': []}
 
+    position = {'BANANAS': 0,
+                'BANANAS_price': 0}
+    profit = 0
+
     def run(
         self,
         state: TradingState
@@ -161,6 +165,27 @@ class Trader:
         and outputs a list of orders to be sent
         """
         # Initialize the method output dict as an empty dict
+
+        def calc_profit_and_position(product, price, quantity):
+            position = Trader.position[product]
+            position_price = Trader.position[product + '_price']
+            profit = Trader.profit
+
+            if position == 0 or (abs(position + quantity) > abs(position) + abs(quantity)):
+                position = position + quantity
+                position_price = (position_price*position +
+                                  price*quantity) / (position + quantity)
+
+            else:
+                if abs(quantity) > abs(position):
+                    profit = position*price - position*position_price
+                    position = quantity + position
+                else:
+                    profit = quantity*price - quantity*position_price
+                    position = quantity + position
+
+            return profit
+
         result = {}
 
         # Iterate over all the keys (the available products) contained in the order dephts
@@ -288,6 +313,9 @@ class Trader:
                                 orders.append(
                                     Order(product, best_ask, -best_ask_volume))
 
+                                Trader.profit += calc_profit_and_position(
+                                    product, best_ask, -best_ask_volume)
+
                         # DOWNward trend
                         else:
                             if product in state.position.keys() and state.position[product] < 0:
@@ -296,6 +324,9 @@ class Trader:
                                         "BUY", str(-state.position[product]) + "x", best_ask)
                                     orders.append(
                                         Order(product, best_ask, -state.position[product]))
+
+                                    Trader.profit += calc_profit_and_position(
+                                        product, best_ask, -state.position[product])
 
                     # The below code block is similar to the one above,
                     # the difference is that it find the highest bid (buy order)
@@ -315,6 +346,9 @@ class Trader:
                                 orders.append(
                                     Order(product, best_bid, -best_bid_volume))
 
+                                Trader.profit += calc_profit_and_position(
+                                    product, best_bid, -best_bid_volume)
+
                         # UPward trend
                         else:
                             if product in state.position.keys() and state.position[product] > 0:
@@ -323,6 +357,9 @@ class Trader:
                                         state.position[product]) + "x", best_bid)
                                     orders.append(
                                         Order(product, best_bid, -state.position[product]))
+
+                                    Trader.profit += calc_profit_and_position(
+                                        product, best_bid, -state.position[product])
 
                 # Add all the above the orders to the result dict
                 result[product] = orders

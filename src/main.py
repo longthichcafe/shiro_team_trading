@@ -43,40 +43,13 @@ position = {
 observations = {}
 
 
-# ===============================  MAIN ===============================
-# ===============================  MAIN ===============================
-# ===============================  MAIN ===============================
+# ==============================================================  TEST ==============================================================
+# ==============================================================  TEST ==============================================================
+# ==============================================================  TEST ==============================================================
 
 filepath = "data/data_round_1/day_1_result.csv"
 df = pd.read_csv(filepath, delimiter=';', usecols=['product', 'bid_price_1', 'bid_volume_1', 'bid_price_2', 'bid_volume_2',
                                                    'bid_price_3', 'bid_volume_3', 'ask_price_1', 'ask_volume_1', 'ask_price_2', 'ask_volume_2', 'ask_price_3', 'ask_volume_3'])
-# bananas_df = df[df['product'] == 'BANANAS']
-
-# # get the number of rows in the dataframe
-# num_rows = len(bananas_df)
-
-# # initialize the row index to 0
-
-# # loop through each row and access values one at a time using a while loo
-
-# # check if row contains BANANAS
-# for index, row in bananas_df.iterrows():
-#     bid_price_1 = row['bid_price_1']
-#     bid_volume_1 = row['bid_volume_1']
-#     bid_price_2 = row['bid_price_2']
-#     bid_volume_2 = row['bid_volume_2']
-#     bid_price_3 = row['bid_price_3']
-#     bid_volume_3 = row['bid_volume_3']
-#     ask_price_1 = row['ask_price_1']
-#     ask_volume_1 = row['ask_volume_1']
-#     ask_price_2 = row['ask_price_2']
-#     ask_volume_2 = row['ask_volume_2']
-#     ask_price_3 = row['ask_price_3']
-#     ask_volume_3 = row['ask_volume_3']
-
-#     # do something with the extracted values
-#     print(bid_price_1, bid_volume_1, bid_price_2, bid_volume_2, bid_price_3, bid_volume_3,
-#           ask_price_1, ask_volume_1, ask_price_2, ask_volume_2, ask_price_3, ask_volume_3)
 
 checktime = 0
 
@@ -86,7 +59,10 @@ row_index = 0
 
 order_depths = {}
 
-while checktime <= 1000000:
+# TODO: profit
+
+
+while checktime <= 100000:
 
     bananas_df = df[df['product'] == 'BANANAS']
 
@@ -138,8 +114,10 @@ while checktime <= 1000000:
         order_depths=order_depths,
         own_trades=own_trades,
         market_trades=market_trades,
-        position=position,
+        position=Trader.position,
         observations=observations
     )))
 
     checktime += 100
+
+print(Trader.profit)
