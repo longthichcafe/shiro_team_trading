@@ -86,7 +86,7 @@ row_index = 0
 
 order_depths = {}
 
-while checktime <= 100:
+while checktime <= 1000000:
 
     bananas_df = df[df['product'] == 'BANANAS']
 
@@ -142,4 +142,4 @@ while checktime <= 100:
         observations=observations
     )))
 
-    checktime += 10
+    checktime += 100
