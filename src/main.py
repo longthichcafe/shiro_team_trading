@@ -1,21 +1,16 @@
 from algo import *
 
 import random
+import pandas as pd
 
 timestamp = 0
 
 listings = {
-    "PEARLS": Listing(
-        symbol="PEARLS",
-        product="PEARLS",
+    "BANANAS": Listing(
+        symbol="BANANAS",
+        product="BANANAS",
         denomination="SEASHELLS"
     ),
-
-    # "PRODUCT2": Listing(
-    #     symbol="PRODUCT2",
-    #     product="PRODUCT2",
-    #     denomination="SEASHELLS"
-    # ),
 }
 # Orders sent by trading bots  == TEST INPUT
 
@@ -52,23 +47,91 @@ observations = {}
 # ===============================  MAIN ===============================
 # ===============================  MAIN ===============================
 
+filepath = "data/data_round_1/day_1_result.csv"
+df = pd.read_csv(filepath, delimiter=';', usecols=['product', 'bid_price_1', 'bid_volume_1', 'bid_price_2', 'bid_volume_2',
+                                                   'bid_price_3', 'bid_volume_3', 'ask_price_1', 'ask_volume_1', 'ask_price_2', 'ask_volume_2', 'ask_price_3', 'ask_volume_3'])
+# bananas_df = df[df['product'] == 'BANANAS']
+
+# # get the number of rows in the dataframe
+# num_rows = len(bananas_df)
+
+# # initialize the row index to 0
+
+# # loop through each row and access values one at a time using a while loo
+
+# # check if row contains BANANAS
+# for index, row in bananas_df.iterrows():
+#     bid_price_1 = row['bid_price_1']
+#     bid_volume_1 = row['bid_volume_1']
+#     bid_price_2 = row['bid_price_2']
+#     bid_volume_2 = row['bid_volume_2']
+#     bid_price_3 = row['bid_price_3']
+#     bid_volume_3 = row['bid_volume_3']
+#     ask_price_1 = row['ask_price_1']
+#     ask_volume_1 = row['ask_volume_1']
+#     ask_price_2 = row['ask_price_2']
+#     ask_volume_2 = row['ask_volume_2']
+#     ask_price_3 = row['ask_price_3']
+#     ask_volume_3 = row['ask_volume_3']
+
+#     # do something with the extracted values
+#     print(bid_price_1, bid_volume_1, bid_price_2, bid_volume_2, bid_price_3, bid_volume_3,
+#           ask_price_1, ask_volume_1, ask_price_2, ask_volume_2, ask_price_3, ask_volume_3)
+
 checktime = 0
 
 trader = Trader()
+index = 0
+row_index = 0
+
+order_depths = {}
+
 while checktime <= 100:
-    rand_price_bid = random.randint(10, 20)
-    rand_quantity_bid = random.randint(0, 20)
-    rand_price_ask = rand_price_bid + random.randint(1, 2)
-    rand_quantity_ask = random.randint(-20, 0)
+
+    bananas_df = df[df['product'] == 'BANANAS']
+
+    # get the number of rows in the dataframe
+    num_rows = len(bananas_df)
+
+    # initialize the row index to 0
+
+    # loop through each row and access values one at a time using a while loop
+    while row_index < num_rows:
+        row = bananas_df.iloc[row_index]
+
+        # check if row contains BANANAS
+        if row['product'] == 'BANANAS':
+            product = row['product']
+            bid_price_1 = row['bid_price_1']
+            bid_volume_1 = row['bid_volume_1']
+            bid_price_2 = row['bid_price_2']
+            bid_volume_2 = row['bid_volume_2']
+            bid_price_3 = row['bid_price_3']
+            bid_volume_3 = row['bid_volume_3']
+            ask_price_1 = row['ask_price_1']
+            ask_volume_1 = row['ask_volume_1']
+            ask_price_2 = row['ask_price_2']
+            ask_volume_2 = row['ask_volume_2']
+            ask_price_3 = row['ask_price_3']
+            ask_volume_3 = row['ask_volume_3']
+            break
+        else:
+            row_index += 1
+    row_index += 1
+
     order_depths = {
-        "PEARLS": OrderDepth(
-            buy_orders={rand_price_bid: rand_quantity_bid,
-                        rand_price_bid - 1: rand_quantity_bid},
-            sell_orders={rand_price_ask: rand_quantity_ask,
-                         rand_price_ask + 1: rand_quantity_ask}
+        "BANANAS": OrderDepth(
+            buy_orders={bid_price_1: bid_volume_1,
+                        bid_price_2: bid_volume_2,
+                        bid_price_3: bid_volume_3},
+            sell_orders={ask_price_1: ask_volume_1,
+                         ask_price_2: ask_volume_2,
+                         ask_price_3: ask_volume_3}
+
         )
     }
 
+    # print(bid_price_1, bid_volume_1, bid_price_2, bid_volume_2)
     print(checktime, trader.run(state=TradingState(
         timestamp=timestamp,
         listings=listings,
@@ -79,4 +142,4 @@ while checktime <= 100:
         observations=observations
     )))
 
-    checktime += 1
+    checktime += 10
