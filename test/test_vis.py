@@ -1,11 +1,9 @@
 import json
+import numpy as np
+
 from typing import Dict, List
 from json import JSONEncoder
-
 from typing import Dict, List
-# from strategy_test.data_model import OrderDepth, TradingState, Order
-
-import numpy as np
 
 
 Time = int
@@ -139,16 +137,46 @@ class ProsperityEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
 
+class Logger:
+    def __init__(self) -> None:
+        self.logs = ""
+
+    def print(self, *objects: Any, sep: str = " ", end: str = "\n") -> None:
+        self.logs += sep.join(map(str, objects)) + end
+
+    def flush(self, state: TradingState, orders: dict[Symbol, list[Order]]) -> None:
+        print(json.dumps({
+            "state": state,
+            "orders": orders,
+            "logs": self.logs,
+        }, cls=ProsperityEncoder, separators=(",", ":"), sort_keys=True))
+
+        self.logs = ""
+
+logger = Logger()
+
 
 class Trader:
     # def estimate_price(self, state: TradingState) -> int:
 
-    pre_trades = {'PEARLS': [],
-                  'BANANAS': []}
-    pre_ma20s = {'PEARLS': [],
-                  'BANANAS': []}
-    pre_ma100s = {'PEARLS': [],
-                  'BANANAS': []}
+    pre_trades = {
+        'PEARLS': [],
+        'BANANAS': [],
+        'COCONUTS': [],
+        'PINA_COLADAS': []
+    }
+    pre_ma20s = {
+        'PEARLS': [],
+        'BANANAS': [],
+        'COCONUTS': [],
+        'PINA_COLADAS': []
+    }
+    pre_ma100s = {
+        'PEARLS': [],
+        'BANANAS': [],
+        'COCONUTS': [],
+        'PINA_COLADAS': []
+    }
 
     def run(
         self, 
@@ -239,7 +267,8 @@ class Trader:
                 result[product] = orders
 
             # Check if the current product is the 'PEARLS' product, only then run the order logic
-            if product == 'BANANAS':
+            # if product == 'BANANAS':
+            else:
                 """
                 The strategy starts here: 
 
@@ -389,4 +418,6 @@ class Trader:
                 # Return the dict of orders
                 # These possibly contain buy or sell orders for PEARLS
                 # Depending on the logic above
+
+        logger.flush(state, result)
         return result
