@@ -606,12 +606,14 @@ class Trader:
 
             for product in ['COCONUTS', 'PINA_COLADAS']:
 
-                orders: list[Order] = []    
+                  
                 order_depth: OrderDepth = state.order_depths[product]
 
                 if product in state.position.keys():
                     if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.1:
-
+                        
+                        orders: list[Order] = []  
+                        
                         if state.position[product] > 0:
                             
                             best_bid = max(order_depth.buy_orders.keys())
@@ -630,7 +632,7 @@ class Trader:
                             orders.append(
                                 Order(product, best_ask, -state.position[product]))
                             
-                result[product] = orders
+                        result[product] = orders
 
 
         return result

@@ -526,6 +526,7 @@ class Trader:
             
             # --- STRATEGY ---
             # Identify GAP
+
             if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.4:
 
                 orders: list[Order] = []
