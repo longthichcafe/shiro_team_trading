@@ -193,7 +193,7 @@ class Trader:
 
                 # Initialize the list of Orders to be sent as an empty list
                 orders: list[Order] = []
-                pre_trade: Trader.pre_trade[product] = []
+                pre_trade: Trader.pre_trades[product] = []
 
                 upperlimit = Trader.position_limit[product]
                 lowerlimit = -Trader.position_limit[product]
@@ -215,9 +215,9 @@ class Trader:
                         if product in state.position.keys():  
                             remaining_position = upperlimit - state.position[product]
                         else: 
-                            remaining_position = 0
+                            remaining_position = upperlimit
                             
-                        if best_ask_volume > remaining_position:
+                        if (-best_ask_volume) > remaining_position:
                             print(
                                 "BUY", str(remaining_position) + "x", best_ask
                             )
@@ -245,7 +245,7 @@ class Trader:
                         if product in state.position.keys():  
                             remaining_position = lowerlimit - state.position[product]
                         else: 
-                            remaining_position = 0
+                            remaining_position = lowerlimit
                         
                         if best_bid_volume > (-remaining_position):
                             print(
@@ -347,7 +347,7 @@ class Trader:
                                 if product in state.position.keys():  
                                     remaining_position = upperlimit - state.position[product]
                                 else: 
-                                    remaining_position = 0
+                                    remaining_position = upperlimit
                                 # remaining position is > 0
 
                                 if (-best_ask_volume) > remaining_position:
@@ -389,7 +389,7 @@ class Trader:
                                 if product in state.position.keys():  
                                     remaining_position = lowerlimit - state.position[product]
                                 else: 
-                                    remaining_position = 0
+                                    remaining_position = lowerlimit
                                 # remaining position is <0
                                 
                                 if best_bid_volume > (-remaining_position):
@@ -503,120 +503,134 @@ class Trader:
         pre_ma20_pina = Trader.pre_ma20s['PINA_COLADAS']
 
         # Identify trend
-        if len(pre_trade["COCONUTS"]) > 229:
+        if len(pre_ma200_coco) > 100:
 
             i_trend = []
             # compute the %change in moving avg 200 
             for i in [10,20,30,40,50,60,70,80,90,100]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
-                     - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]])) 
-                     / np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]])
-                )           
+                     - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))
+                )
+                         
         
-        n_increase = 0
-        n_decrease = 0
+            n_increase = 0
+            n_decrease = 0
 
-        for pct_change in i_trend:
-            if pct_change < 0:
-                n_decrease += 1
-        
-            if pct_change > 0:
-                n_increase += 1
-        
-        # --- STRATEGY ---
-        # Identify GAP
-        if abs(pre_ma20_coco - pre_ma20_pina) > 0.4:
+            for pct_change in i_trend:
+                if pct_change < 0:
+                    n_decrease += 1
             
-            # UPward trend
-            if n_increase > 7:
-                if pre_ma20_coco > pre_ma20_pina:
-                    product = 'PINA_COLADAS'
-                else:
-                    product = 'COCONUTS'
+                if pct_change > 0:
+                    n_increase += 1
+            
+            # --- STRATEGY ---
+            # Identify GAP
+            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.4:
 
-                if order_depth.sell_orders:
-
-                    best_ask = min(order_depth.sell_orders.keys())
-                    best_ask_volume = order_depth.sell_orders[best_ask]
-
-                    if product in state.position.keys():  
-                        remaining_position = Trader.position_limit[product] - state.position[product]
-                    else: 
-                        remaining_position = 0
-                    # remaining position is >0
-
-                    if (-best_ask_volume) > remaining_position:
-                        print(
-                            "BUY", str(remaining_position) + "x", best_ask
-                        )
-                        orders.append(
-                            Order(product, best_ask, remaining_position)
-                        )
+                orders: list[Order] = []
+                
+                # UPward trend
+                if n_increase > 7:
+                    if pre_ma20_coco[-1] > pre_ma20_pina[-1]:
+                        product = 'PINA_COLADAS'
                     else:
-                        print(
-                            "BUY", str(-best_ask_volume) + "x", best_ask
-                        )
-                        orders.append(
-                            Order(product, best_ask, -best_ask_volume)
-                        )
+                        product = 'COCONUTS'
 
-            # DOWNward trend
-            if n_decrease > 7:
-                if pre_ma20_coco < pre_ma20_pina:
-                    product = 'PINA_COLADAS'
-                else:
-                    product = 'COCONUTS'
+                    order_depth: OrderDepth = state.order_depths[product]
 
-                if order_depth.buy_orders:
+                    if order_depth.sell_orders:
 
-                    best_bid = min(order_depth.buy_orders.keys())
-                    best_bid_volume = order_depth.buy_orders[best_bid]
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
 
-                    if product in state.position.keys():  
-                        remaining_position = -Trader.position_limit[product] - state.position[product]
-                    else: 
-                        remaining_position = 0
-                    # remaining position is <0
+                        if product in state.position.keys():  
+                            remaining_position = Trader.position_limit[product] - state.position[product]
+                        else: 
+                            remaining_position = Trader.position_limit[product]
+                        # remaining position is >0
 
-                    if best_bid_volume > (-remaining_position):
-                        print(
-                            "SELL", str(-remaining_position) + "x", best_bid
-                        )
-                        orders.append(
-                            Order(product, best_bid, remaining_position)
-                        )
+                        if (-best_ask_volume) > remaining_position:
+                            print(
+                                "BUY", str(remaining_position) + "x", best_ask
+                            )
+                            orders.append(
+                                Order(product, best_ask, remaining_position)
+                            )
+                        else:
+                            print(
+                                "BUY", str(-best_ask_volume) + "x", best_ask
+                            )
+                            orders.append(
+                                Order(product, best_ask, -best_ask_volume)
+                            )
+
+                # DOWNward trend
+                if n_decrease > 7:
+                    if pre_ma20_coco[-1] < pre_ma20_pina[-1]:
+                        product = 'PINA_COLADAS'
                     else:
-                        print(
-                            "SELL", str(best_bid_volume) + "x", best_bid
-                        )
-                        orders.append(
-                            Order(product, best_bid, -best_bid_volume)
-                        )
-        
-        # CLOSE positions
+                        product = 'COCONUTS'
 
-        for product in ['COCONUTS', 'PINA_COLADAS']:
+                    order_depth: OrderDepth = state.order_depths[product]
 
-            if product in state.position.keys():
-                if abs(pre_ma20_coco - pre_ma20_pina) < 0.1:
-
-                    if state.position[product] > 0:
-                        
-                        best_bid = min(order_depth.buy_orders.keys())
-                        best_bid_volume = order_depth.buy_orders[best_bid]
-
-                        print("SELL", str(state.position[product]) + "x", best_bid)
-                        orders.append(
-                            Order(product, best_bid, -state.position[product]))
-                    
-                    else:
+                    if order_depth.buy_orders:
 
                         best_bid = max(order_depth.buy_orders.keys())
                         best_bid_volume = order_depth.buy_orders[best_bid]
 
-                        print("BUY", str(-state.position[product]) + "x", best_ask)
-                        orders.append(
-                            Order(product, best_ask, -state.position[product]))
+                        if product in state.position.keys():  
+                            remaining_position = -Trader.position_limit[product] - state.position[product]
+                        else: 
+                            remaining_position = -Trader.position_limit[product]
+                        # remaining position is <0
+
+                        if best_bid_volume > (-remaining_position):
+                            print(
+                                "SELL", str(-remaining_position) + "x", best_bid
+                            )
+                            orders.append(
+                                Order(product, best_bid, remaining_position)
+                            )
+                        else:
+                            print(
+                                "SELL", str(best_bid_volume) + "x", best_bid
+                            )
+                            orders.append(
+                                Order(product, best_bid, -best_bid_volume)
+                            )
+
+                result[product] = orders
+
+            # CLOSE positions
+
+            for product in ['COCONUTS', 'PINA_COLADAS']:
+
+                orders: list[Order] = []    
+                order_depth: OrderDepth = state.order_depths[product]
+
+                if product in state.position.keys():
+                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.1:
+
+                        if state.position[product] > 0:
+                            
+                            best_bid = max(order_depth.buy_orders.keys())
+                            best_bid_volume = order_depth.buy_orders[best_bid]
+
+                            print("SELL", str(state.position[product]) + "x", best_bid)
+                            orders.append(
+                                Order(product, best_bid, -state.position[product]))
+                        
+                        else:
+
+                            best_ask = min(order_depth.sell_orders.keys())
+                            best_ask_volume = order_depth.sell_orders[best_ask]
+
+                            print("BUY", str(-state.position[product]) + "x", best_ask)
+                            orders.append(
+                                Order(product, best_ask, -state.position[product]))
+                            
+                result[product] = orders
+
 
         return result
