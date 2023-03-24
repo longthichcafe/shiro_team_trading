@@ -564,9 +564,11 @@ class Trader:
                             orders.append(
                                 Order(product, best_ask, -best_ask_volume)
                             )
-
+                    result[product] = orders
+                    print(1)
+                    
                 # DOWNward trend
-                if n_decrease > 7:
+                elif n_decrease > 7:
                     if pre_ma20_coco[-1] < pre_ma20_pina[-1]:
                         product = 'PINA_COLADAS'
                     else:
@@ -600,13 +602,11 @@ class Trader:
                                 Order(product, best_bid, -best_bid_volume)
                             )
 
-                result[product] = orders
+                    result[product] = orders
 
             # CLOSE positions
 
             for product in ['COCONUTS', 'PINA_COLADAS']:
-
-                orders: list[Order] = []    
                 order_depth: OrderDepth = state.order_depths[product]
 
                 if product in state.position.keys():
@@ -618,6 +618,7 @@ class Trader:
                             best_bid_volume = order_depth.buy_orders[best_bid]
 
                             print("SELL", str(state.position[product]) + "x", best_bid)
+                            orders: list[Order] = []  
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
                         
@@ -627,9 +628,10 @@ class Trader:
                             best_ask_volume = order_depth.sell_orders[best_ask]
 
                             print("BUY", str(-state.position[product]) + "x", best_ask)
+                            orders: list[Order] = []
                             orders.append(
                                 Order(product, best_ask, -state.position[product]))
                             
-                result[product] = orders
+                        result[product] = orders
 
         return result
