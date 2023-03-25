@@ -241,15 +241,15 @@ while checktime <= 100000:
                 if abs(quantity) < abs(position_quant[item]):
                     # Close part of Long position
                     if position_quant[item] > 0:
-                        profit[item] += quantity*price - \
-                            position_average[item]*quantity
+                        profit[item] += abs(quantity)*price - \
+                            position_average[item]*abs(quantity)
                         position_quant[item] += quantity
                         # Position avg price stay same
 
                     # Close part of Short position
                     else:
                         profit[item] += position_average[item] * \
-                            quantity - quantity*price
+                            abs(quantity) - abs(quantity)*price
                         position_quant[item] += quantity
                         # Position avg price stay same
 
@@ -258,15 +258,16 @@ while checktime <= 100000:
                     # Close all of Long position and turn to Short
                     if position_quant[item] > 0:
 
-                        profit[item] += position_quant[item]*price - \
-                            position_average[item]*position_quant[item]
+                        profit[item] += abs(position_quant)[item]*price - \
+                            position_average[item]*abs(position_quant)[item]
                         position_quant[item] += quantity
                         position_average[item] = price
 
                     # Close part of Short position and turn to Long
                     else:
                         profit[item] += position_average[item] * \
-                            position_quant[item] - position_quant[item]*price
+                            abs(position_quant[item]) - \
+                            abs(position_quant[item])*price
                         position_quant[item] += quantity
                         position_average[item] = price
 
