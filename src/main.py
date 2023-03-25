@@ -2,6 +2,7 @@ from algo import *
 
 import random
 import pandas as pd
+import numpy as np
 
 timestamp = 0
 
@@ -45,9 +46,22 @@ market_trades = {
 }
 
 # what we have
-position = {
-    "PRODUCT1": 0,
-    "PRODUCT2": 0
+position_quant = {
+    "COCONUTS": 0,
+    "BANANAS": 0,
+    "PINA_COLADAS": 0
+}
+
+position_average = {
+    "COCONUTS": 0,
+    "BANANAS": 0,
+    "PINA_COLADAS": 0
+}
+
+profit = {
+    "COCONUTS": 0,
+    "BANANAS": 0,
+    "PINA_COLADAS": 0
 }
 
 observations = {}
@@ -69,12 +83,15 @@ row_index = 0
 
 order_depths = {}
 
-# TODO: profit
+
+coconnuts = "COCONUTS"
+bananas = "BANANAS"
+pina = "PINA_COLADAS"
 
 
 while checktime <= 100000:
 
-    bananas_df = df[df['product'] == 'BANANAS']
+    bananas_df = df[df['product'] == bananas]
 
     # get the number of rows in the dataframe
     num_rows = len(bananas_df)
@@ -86,7 +103,7 @@ while checktime <= 100000:
         row = bananas_df.iloc[row_index]
 
         # check if row contains BANANAS
-        if row['product'] == 'BANANAS':
+        if row['product'] == bananas:
             product = row['product']
             bid_price_1 = row['bid_price_1']
             bid_volume_1 = row['bid_volume_1']
@@ -105,7 +122,7 @@ while checktime <= 100000:
             row_index += 1
     row_index += 1
 
-    order_depths["BANANAS"] = OrderDepth(
+    order_depths[bananas] = OrderDepth(
         buy_orders={bid_price_1: bid_volume_1,
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
@@ -114,7 +131,7 @@ while checktime <= 100000:
                      ask_price_3: ask_volume_3}
     )
 
-    coconuts_df = df[df['product'] == 'COCONUTS']
+    coconuts_df = df[df['product'] == coconnuts]
 
     # get the number of rows in the dataframe
     num_rows = len(coconuts_df)
@@ -126,7 +143,7 @@ while checktime <= 100000:
         row = coconuts_df.iloc[row_index]
 
         # check if row contains COCONUTS
-        if row['product'] == 'COCONUTS':
+        if row['product'] == coconnuts:
             product = row['product']
             bid_price_1 = row['bid_price_1']
             bid_volume_1 = row['bid_volume_1']
@@ -154,7 +171,7 @@ while checktime <= 100000:
                      ask_price_3: ask_volume_3}
     )
 
-    pinas_df = df[df['product'] == 'PINA_COLADAS']
+    pinas_df = df[df['product'] == pina]
 
     # get the number of rows in the dataframe
     num_rows = len(pinas_df)
@@ -166,7 +183,7 @@ while checktime <= 100000:
         row = pinas_df.iloc[row_index]
 
         # check if row contains PINA_COLADAS
-        if row['product'] == 'PINA_COLADAS':
+        if row['product'] == pina:
             product = row['product']
             bid_price_1 = row['bid_price_1']
             bid_volume_1 = row['bid_volume_1']
@@ -185,7 +202,7 @@ while checktime <= 100000:
             row_index += 1
     row_index += 1
 
-    order_depths["PINA_COLADAS"] = OrderDepth(
+    order_depths[pina] = OrderDepth(
         buy_orders={bid_price_1: bid_volume_1,
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
@@ -194,15 +211,68 @@ while checktime <= 100000:
                      ask_price_3: ask_volume_3}
     )
 
-    # put the result in to output.csv file
+    # call the function
+    result = trader.run(state=TradingState(
+        timestamp=timestamp,
+        listings=listings,
+        order_depths=order_depths,
+        own_trades=own_trades,
+        market_trades=market_trades,
+        position=position_quant,
+        observations=observations
+    ))
+
+    # get positon from orders
+
+    for item in result:
+        if result[item]:
+            quantity = result[item][0].quantity
+            price = result[item][0].price
+            # profit = profit[item]
+
+            if np.sign(quantity) == np.sign(position_quant[item]) or position_quant[item] == 0:
+                # calculate average
+                position_average[item] = (
+                    position_quant[item]*position_average[item] + quantity*price) / (quantity + position_quant[item])
+                position_quant[item] += quantity
+
+            else:
+                # Trade is smaller
+                if abs(quantity) < abs(position_quant[item]):
+                    # Close part of Long position
+                    if position_quant[item] > 0:
+                        profit[item] += quantity*price - \
+                            position_average[item]*quantity
+                        position_quant[item] += quantity
+                        # Position avg price stay same
+
+                    # Close part of Short position
+                    else:
+                        profit[item] += position_average[item] * \
+                            quantity - quantity*price
+                        position_quant[item] += quantity
+                        # Position avg price stay same
+
+                # Trade is larger
+                else:
+                    # Close all of Long position and turn to Short
+                    if position_quant[item] > 0:
+
+                        profit[item] += position_quant[item]*price - \
+                            position_average[item]*position_quant[item]
+                        position_quant[item] += quantity
+                        position_average[item] = price
+
+                    # Close part of Short position and turn to Long
+                    else:
+                        profit[item] += position_average[item] * \
+                            position_quant[item] - position_quant[item]*price
+                        position_quant[item] += quantity
+                        position_average[item] = price
+
+            # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(checktime, trader.run(state=TradingState(
-            timestamp=timestamp,
-            listings=listings,
-            order_depths=order_depths,
-            own_trades=own_trades,
-            market_trades=market_trades,
-            position=position,
-            observations=observations
-        )), file=f)
+        print(checktime, result, file=f)
     checktime += 100
+
+print(profit)
