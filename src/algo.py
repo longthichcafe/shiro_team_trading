@@ -183,7 +183,12 @@ class Trader:
         and outputs a list of orders to be sent
         """
         # Initialize the method output dict as an empty dict
-        result = {}
+        result = {
+            'PEARLS': [],
+            'BANANAS': [],
+            'COCONUTS': [],
+            'PINA_COLADAS': []
+        }
 
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
@@ -414,7 +419,8 @@ class Trader:
                                     print("SELL", str(state.position[product]) + "x", best_bid)
                                     orders.append(
                                         Order(product, best_bid, -state.position[product]))
-            
+
+
                 # Add all the above the orders to the result dict
                 result[product] = orders
 
@@ -527,7 +533,7 @@ class Trader:
             # --- STRATEGY ---
             # Identify GAP
 
-            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.4:
+            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.3:
 
                 orders: list[Order] = []
                 
@@ -566,7 +572,6 @@ class Trader:
                                 Order(product, best_ask, -best_ask_volume)
                             )
                     result[product] = orders
-                    print(1)
                     
                 # DOWNward trend
                 elif n_decrease > 7:
@@ -611,7 +616,7 @@ class Trader:
                 order_depth: OrderDepth = state.order_depths[product]
 
                 if product in state.position.keys():
-                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.1:
+                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.05:
 
                         if state.position[product] > 0:
                             
