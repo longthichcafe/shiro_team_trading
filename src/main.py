@@ -57,7 +57,7 @@ observations = {}
 # ==============================================================  TEST ==============================================================
 # ==============================================================  TEST ==============================================================
 
-filepath = "src/prices_round_2_day_-1.csv"
+filepath = "src/test.csv"
 df = pd.read_csv(filepath, delimiter=';', usecols=['product', 'bid_price_1', 'bid_volume_1', 'bid_price_2', 'bid_volume_2',
                                                    'bid_price_3', 'bid_volume_3', 'ask_price_1', 'ask_volume_1', 'ask_price_2', 'ask_volume_2', 'ask_price_3', 'ask_volume_3'])
 

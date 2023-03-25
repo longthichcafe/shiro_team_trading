@@ -183,11 +183,16 @@ class Trader:
         and outputs a list of orders to be sent
         """
         # Initialize the method output dict as an empty dict
-        result = {}
+        result = {
+            'PEARLS': [],
+            'BANANAS': [],
+            'COCONUTS': [],
+            'PINA_COLADAS': []
+        }
 
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
-
+            
             if product == 'PEARLS':
                 order_depth: OrderDepth = state.order_depths[product]
 
@@ -564,8 +569,8 @@ class Trader:
                             orders.append(
                                 Order(product, best_ask, -best_ask_volume)
                             )
-                    result[product] = orders
-                    print(1)
+                    
+                        result[product] = orders
                     
                 # DOWNward trend
                 elif n_decrease > 7:
