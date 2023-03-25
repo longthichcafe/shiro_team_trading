@@ -12,14 +12,14 @@ listings = {
         denomination="SEASHELLS"
     ),
     "COCONUTS": Listing(
-    symbol="COCONUTS",
-    product="COCONUTS",
-    denomination="SEASHELLS"
+        symbol="COCONUTS",
+        product="COCONUTS",
+        denomination="SEASHELLS"
     ),
     "PINA_COLADAS": Listing(
-    symbol="PINA_COLADAS",
-    product="PINA_COLADAS",
-    denomination="PINA_COLADAS"
+        symbol="PINA_COLADAS",
+        product="PINA_COLADAS",
+        denomination="PINA_COLADAS"
     ),
 }
 # Orders sent by trading bots  == TEST INPUT
@@ -63,7 +63,7 @@ df = pd.read_csv(filepath, delimiter=';', usecols=['product', 'bid_price_1', 'bi
 
 checktime = 0
 
-trader = Trader() 
+trader = Trader()
 index = 0
 row_index = 0
 
@@ -110,10 +110,9 @@ while checktime <= 100000:
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
         sell_orders={ask_price_1: ask_volume_1,
-                        ask_price_2: ask_volume_2,
-                        ask_price_3: ask_volume_3}
+                     ask_price_2: ask_volume_2,
+                     ask_price_3: ask_volume_3}
     )
-    
 
     coconuts_df = df[df['product'] == 'COCONUTS']
 
@@ -151,10 +150,9 @@ while checktime <= 100000:
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
         sell_orders={ask_price_1: ask_volume_1,
-                        ask_price_2: ask_volume_2,
-                        ask_price_3: ask_volume_3}
+                     ask_price_2: ask_volume_2,
+                     ask_price_3: ask_volume_3}
     )
-
 
     pinas_df = df[df['product'] == 'PINA_COLADAS']
 
@@ -192,10 +190,9 @@ while checktime <= 100000:
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
         sell_orders={ask_price_1: ask_volume_1,
-                        ask_price_2: ask_volume_2,
-                        ask_price_3: ask_volume_3}
+                     ask_price_2: ask_volume_2,
+                     ask_price_3: ask_volume_3}
     )
-
 
     # print(bid_price_1, bid_volume_1, bid_price_2, bid_volume_2)
     print(checktime, trader.run(state=TradingState(
@@ -209,4 +206,3 @@ while checktime <= 100000:
     )))
 
     checktime += 100
-
