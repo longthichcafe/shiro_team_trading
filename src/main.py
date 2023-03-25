@@ -195,14 +195,16 @@ while checktime <= 100000:
     )
 
     # print(bid_price_1, bid_volume_1, bid_price_2, bid_volume_2)
-    print(checktime, trader.run(state=TradingState(
-        timestamp=timestamp,
-        listings=listings,
-        order_depths=order_depths,
-        own_trades=own_trades,
-        market_trades=market_trades,
-        position=position,
-        observations=observations
-    )))
 
+    # put the result in to output.csv file
+    with open("output.csv", "a") as f:
+        print(checktime, trader.run(state=TradingState(
+            timestamp=timestamp,
+            listings=listings,
+            order_depths=order_depths,
+            own_trades=own_trades,
+            market_trades=market_trades,
+            position=position,
+            observations=observations
+        )), file=f)
     checktime += 100
