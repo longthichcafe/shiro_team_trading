@@ -99,7 +99,7 @@ row_index = 0
 
 order_depths = {}
 
-TIMESTAMP = 1000000
+TIMESTAMP = 100000
 
 coconnuts = "COCONUTS"
 bananas = "BANANAS"
@@ -139,6 +139,7 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
+    row_index += 1
 
     if bana_flag:
         # append to the order_depths
@@ -181,6 +182,7 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
+    row_index += 1
 
     if coco_flag:
         # append to the order_depths
@@ -223,6 +225,7 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
+    row_index += 1
 
     if pina_flag:
         # append to the order_depths
@@ -234,17 +237,6 @@ while checktime <= TIMESTAMP:
                          ask_price_2: -ask_volume_2,
                          ask_price_3: -ask_volume_3}
         )
-
-    # call the function
-    result = trader.run(state=TradingState(
-        timestamp=timestamp,
-        listings=listings,
-        order_depths=order_depths,
-        own_trades=own_trades,
-        market_trades=market_trades,
-        position=position_quant,
-        observations=observations
-    ))
 
     berries_df = df[df['product'] == berrie]
 
@@ -276,6 +268,7 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
+    row_index += 1
 
     # append to the order_depths
     if berrie_flag:
@@ -287,17 +280,6 @@ while checktime <= TIMESTAMP:
                          ask_price_2: -ask_volume_2,
                          ask_price_3: -ask_volume_3}
         )
-
-    # call the function
-    result = trader.run(state=TradingState(
-        timestamp=checktime,
-        listings=listings,
-        order_depths=order_depths,
-        own_trades=own_trades,
-        market_trades=market_trades,
-        position=position_quant,
-        observations=observations
-    ))
 
     diving_df = df[df['product'] == diving]
 
@@ -329,6 +311,7 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
+    row_index += 1
 
     # append to the order_depths
     if diving_flag:
@@ -354,7 +337,7 @@ while checktime <= TIMESTAMP:
         # check if row contains PINA_COLADAS
         if row['product'] == "DOLPHIN_SIGHTINGS":
             product = row['product']
-            observations["DOLPHIN_SIGHTINGS"] = row["lon"]
+            observations["DOLPHIN_SIGHTINGS"] = row["mid_price"]
             dolphin_flag = True
             break
         else:
