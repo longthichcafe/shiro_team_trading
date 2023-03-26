@@ -582,8 +582,8 @@ class Trader:
                             orders.append(
                                 Order(product, best_ask, -best_ask_volume)
                             )
-                    result[product] = orders
-                    print(1)
+
+                        result[product] = orders
 
                 # DOWNward trend
                 elif n_decrease > 7:
@@ -624,7 +624,7 @@ class Trader:
                                 Order(product, best_bid, -best_bid_volume)
                             )
 
-                    result[product] = orders
+                        result[product] = orders
 
             # CLOSE positions
 
@@ -645,7 +645,9 @@ class Trader:
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
 
-                        else:
+                            result[product] = orders
+
+                        elif state.position[product] < 0:
 
                             best_ask = min(order_depth.sell_orders.keys())
                             best_ask_volume = order_depth.sell_orders[best_ask]
@@ -656,6 +658,6 @@ class Trader:
                             orders.append(
                                 Order(product, best_ask, -state.position[product]))
 
-                        result[product] = orders
+                            result[product] = orders
 
         return result
