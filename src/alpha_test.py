@@ -22,6 +22,11 @@ listings = {
         product="PINA_COLADAS",
         denomination="PINA_COLADAS"
     ),
+    "BERRIES": Listing(
+        symbol="BERRIES",
+        product="BERRIES",
+        denomination="BERRIES"
+    ),
 }
 # Orders sent by trading bots  == TEST INPUT
 
@@ -49,19 +54,22 @@ market_trades = {
 position_quant = {
     "COCONUTS": 0,
     "BANANAS": 0,
-    "PINA_COLADAS": 0
+    "PINA_COLADAS": 0,
+    "BERRIES": 0
 }
 
 position_average = {
     "COCONUTS": 0,
     "BANANAS": 0,
-    "PINA_COLADAS": 0
+    "PINA_COLADAS": 0,
+    "BERRIES": 0
 }
 
 profit = {
     "COCONUTS": 0,
     "BANANAS": 0,
-    "PINA_COLADAS": 0
+    "PINA_COLADAS": 0,
+    "BERRIES": 0
 }
 
 observations = {}
@@ -83,13 +91,15 @@ row_index = 0
 
 order_depths = {}
 
+TIMESTAMP = 1000000
 
 coconnuts = "COCONUTS"
 bananas = "BANANAS"
 pina = "PINA_COLADAS"
+berrie = "BERRIES"
 
 
-while checktime <= 500000:
+while checktime <= TIMESTAMP:
 
     bananas_df = df[df['product'] == bananas]
 
@@ -97,7 +107,7 @@ while checktime <= 500000:
     num_rows = len(bananas_df)
 
     # initialize the row index to 0
-
+    bana_flag = False
     # loop through each row and access values one at a time using a while loop
     while row_index < num_rows:
         row = bananas_df.iloc[row_index]
@@ -117,20 +127,22 @@ while checktime <= 500000:
             ask_volume_2 = row['ask_volume_2']
             ask_price_3 = row['ask_price_3']
             ask_volume_3 = row['ask_volume_3']
+            bana_flag = True
             break
         else:
             row_index += 1
     row_index += 1
 
-    # append to the order_depths
-    order_depths[bananas] = OrderDepth(
-        buy_orders={bid_price_1: bid_volume_1,
-                    bid_price_2: bid_volume_2,
-                    bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: -ask_volume_1,
-                     ask_price_2: -ask_volume_2,
-                     ask_price_3: -ask_volume_3}
-    )
+    if bana_flag:
+        # append to the order_depths
+        order_depths[bananas] = OrderDepth(
+            buy_orders={bid_price_1: bid_volume_1,
+                        bid_price_2: bid_volume_2,
+                        bid_price_3: bid_volume_3},
+            sell_orders={ask_price_1: -ask_volume_1,
+                        ask_price_2: -ask_volume_2,
+                        ask_price_3: -ask_volume_3}
+        )
 
     coconuts_df = df[df['product'] == coconnuts]
 
@@ -138,7 +150,7 @@ while checktime <= 500000:
     num_rows = len(coconuts_df)
 
     # initialize the row index to 0
-
+    coco_flag = False
     # loop through each row and access values one at a time using a while loop
     while row_index < num_rows:
         row = coconuts_df.iloc[row_index]
@@ -158,20 +170,22 @@ while checktime <= 500000:
             ask_volume_2 = row['ask_volume_2']
             ask_price_3 = row['ask_price_3']
             ask_volume_3 = row['ask_volume_3']
+            coco_flag = True
             break
         else:
             row_index += 1
     row_index += 1
 
-    # append to the order_depths
-    order_depths[coconnuts] = OrderDepth(
-        buy_orders={bid_price_1: bid_volume_1,
-                    bid_price_2: bid_volume_2,
-                    bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: -ask_volume_1,
-                     ask_price_2: -ask_volume_2,
-                     ask_price_3: -ask_volume_3}
-    )
+    if coco_flag:
+        # append to the order_depths
+        order_depths[coconnuts] = OrderDepth(
+            buy_orders={bid_price_1: bid_volume_1,
+                        bid_price_2: bid_volume_2,
+                        bid_price_3: bid_volume_3},
+            sell_orders={ask_price_1: -ask_volume_1,
+                        ask_price_2: -ask_volume_2,
+                        ask_price_3: -ask_volume_3}
+        )
 
     pinas_df = df[df['product'] == pina]
 
@@ -179,7 +193,7 @@ while checktime <= 500000:
     num_rows = len(pinas_df)
 
     # initialize the row index to 0
-
+    pina_flag = False
     # loop through each row and access values one at a time using a while loop
     while row_index < num_rows:
         row = pinas_df.iloc[row_index]
@@ -199,20 +213,22 @@ while checktime <= 500000:
             ask_volume_2 = row['ask_volume_2']
             ask_price_3 = row['ask_price_3']
             ask_volume_3 = row['ask_volume_3']
+            pina_flag = True
             break
         else:
             row_index += 1
     row_index += 1
 
-    # append to the order_depths
-    order_depths[pina] = OrderDepth(
-        buy_orders={bid_price_1: bid_volume_1,
-                    bid_price_2: bid_volume_2,
-                    bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: -ask_volume_1,
-                     ask_price_2: -ask_volume_2,
-                     ask_price_3: -ask_volume_3}
-    )
+    if pina_flag:
+        # append to the order_depths
+        order_depths[pina] = OrderDepth(
+            buy_orders={bid_price_1: bid_volume_1,
+                        bid_price_2: bid_volume_2,
+                        bid_price_3: bid_volume_3},
+            sell_orders={ask_price_1: -ask_volume_1,
+                        ask_price_2: -ask_volume_2,
+                        ask_price_3: -ask_volume_3}
+        )
 
     # call the function
     result = trader.run(state=TradingState(
@@ -225,10 +241,73 @@ while checktime <= 500000:
         observations=observations
     ))
 
+    """berries_df = df[df['product'] == berrie]
+
+    # get the number of rows in the dataframe
+    num_rows = len(berries_df)
+
+    # initialize the row index to 0
+
+    # loop through each row and access values one at a time using a while loop
+    while row_index < num_rows:
+        row = berries_df.iloc[row_index]
+
+        # check if row contains PINA_COLADAS
+        if row['product'] == berrie:
+            product = row['product']
+            bid_price_1 = row['bid_price_1']
+            bid_volume_1 = row['bid_volume_1']
+            bid_price_2 = row['bid_price_2']
+            bid_volume_2 = row['bid_volume_2']
+            bid_price_3 = row['bid_price_3']
+            bid_volume_3 = row['bid_volume_3']
+            ask_price_1 = row['ask_price_1']
+            ask_volume_1 = row['ask_volume_1']
+            ask_price_2 = row['ask_price_2']
+            ask_volume_2 = row['ask_volume_2']
+            ask_price_3 = row['ask_price_3']
+            ask_volume_3 = row['ask_volume_3']
+            break
+        else:
+            row_index += 1
+    row_index += 1
+
+    # append to the order_depths
+    order_depths[berrie] = OrderDepth(
+        buy_orders={bid_price_1: bid_volume_1,
+                    bid_price_2: bid_volume_2,
+                    bid_price_3: bid_volume_3},
+        sell_orders={ask_price_1: -ask_volume_1,
+                     ask_price_2: -ask_volume_2,
+                     ask_price_3: -ask_volume_3}
+    )
+
+    # call the function
+    result = trader.run(state=TradingState(
+        timestamp=checktime,
+        listings=listings,
+        order_depths=order_depths,
+        own_trades=own_trades,
+        market_trades=market_trades,
+        position=position_quant,
+        observations=observations
+    ))"""
+
     # get positon from orders
     for item in profit:
         if result[item]:
-            quantity = result[item][0].quantity
+            quantity_temp = result[item][0].quantity
+            if np.sign(quantity_temp) == 1:
+                if quantity_temp > -list(order_depths[item].sell_orders.values())[0]:
+                    quantity = -list(order_depths[item].sell_orders.values())[0]
+                else: 
+                    quantity = quantity_temp
+            elif np.sign(quantity_temp) == -1:
+                if quantity_temp < -list(order_depths[item].buy_orders.values())[0]:
+                    quantity = -list(order_depths[item].buy_orders.values())[0]
+                else: 
+                    quantity = quantity_temp
+
             price = result[item][0].price
 
             # profit = profit[item]
@@ -278,6 +357,7 @@ while checktime <= 500000:
     with open("output.csv", "a") as f:
         print(checktime, result, file=f)
     checktime += 100
+
 
 # print(profit)
 print(position_quant)
