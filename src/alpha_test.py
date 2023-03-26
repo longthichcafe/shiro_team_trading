@@ -139,7 +139,6 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
-    row_index += 1
 
     if bana_flag:
         # append to the order_depths
@@ -182,7 +181,6 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
-    row_index += 1
 
     if coco_flag:
         # append to the order_depths
@@ -225,7 +223,6 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
-    row_index += 1
 
     if pina_flag:
         # append to the order_depths
@@ -279,7 +276,6 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
-    row_index += 1
 
     # append to the order_depths
     if berrie_flag:
@@ -333,7 +329,6 @@ while checktime <= TIMESTAMP:
             break
         else:
             row_index += 1
-    row_index += 1
 
     # append to the order_depths
     if diving_flag:
@@ -354,11 +349,12 @@ while checktime <= TIMESTAMP:
     dolphin_flag = False
 
     while row_index < num_rows:
-        row = diving_df.iloc[row_index]
+        row = dolphin_df.iloc[row_index]
         
         # check if row contains PINA_COLADAS
         if row['product'] == "DOLPHIN_SIGHTINGS":
-            observations["DOLPHIN_SIGHTINGS"] = row["mid_price"]
+            product = row['product']
+            observations["DOLPHIN_SIGHTINGS"] = row["lon"]
             dolphin_flag = True
             break
         else:
