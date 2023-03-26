@@ -218,7 +218,7 @@ class Trader:
                         # The code below therefore sends a BUY order at the price level of the ask,
                         # with "same quantity"
                         # We expect this order to trade with the sell order
-                        if product in state.position.keys():
+                        if product in state.position.keys() and state.position[product] != 0:
                             remaining_position = upperlimit - \
                                 state.position[product]
                         else:
@@ -249,7 +249,7 @@ class Trader:
 
                     # SELL conditions
                     if best_bid > 10000:
-                        if product in state.position.keys():
+                        if product in state.position.keys() and state.position[product] != 0:
                             remaining_position = lowerlimit - \
                                 state.position[product]
                         else:
@@ -353,7 +353,7 @@ class Trader:
                         # UPward trend and undefined trend
                         if not n_decrease >= 6:
                             if best_ask < adaptive_ma20:
-                                if product in state.position.keys():
+                                if product in state.position.keys() and state.position[product] != 0:
                                     remaining_position = upperlimit - \
                                         state.position[product]
                                 else:
@@ -401,7 +401,7 @@ class Trader:
                         # DOWNward trend and undefined
                         if not n_increase >= 6:
                             if best_bid > adaptive_ma20:
-                                if product in state.position.keys():
+                                if product in state.position.keys()  and state.position[product] != 0:
                                     remaining_position = lowerlimit - \
                                         state.position[product]
                                 else:
@@ -561,7 +561,7 @@ class Trader:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
 
-                        if product in state.position.keys():
+                        if product in state.position.keys() and state.position[product] != 0:
                             remaining_position = Trader.position_limit[product] - \
                                 state.position[product]
                         else:
@@ -599,7 +599,7 @@ class Trader:
                         best_bid = max(order_depth.buy_orders.keys())
                         best_bid_volume = order_depth.buy_orders[best_bid]
 
-                        if product in state.position.keys():
+                        if product in state.position.keys() and state.position[product] != 0:
                             remaining_position = - \
                                 Trader.position_limit[product] - \
                                 state.position[product]
