@@ -194,6 +194,12 @@ class Trader:
         for product in state.order_depths.keys():
 
             if product == 'PEARLS':
+                """
+                The strategy for PEARLS starts here: 
+
+                Enter position when current price cross 10000
+                """
+
                 order_depth: OrderDepth = state.order_depths[product]
 
                 # Initialize the list of Orders to be sent as an empty list
@@ -272,9 +278,9 @@ class Trader:
             
             if product == 'BANANAS':
                 """
-                The strategy starts here: 
+                The strategy for BANANAS starts here: 
 
-                Enter position when current price cross MA20 (trend is considered)
+                Enter position when current price cross MA20 (long trend is not considered)
                 """
                 # Retrieve the Order Depth containing all the market BUY and SELL orders for PEARLS
                 order_depth: OrderDepth = state.order_depths[product]
@@ -407,8 +413,36 @@ class Trader:
                 result[product] = orders
 
                 # Return the dict of orders
-                # These possibly contain buy or sell orders for PEARLS
+                # These possibly contain buy or sell orders for BANANAS
                 # Depending on the logic above
+
+            if product == 'BERRIES':
+                """
+                The strategy for BERRIES starts here: 
+
+                Enter position based on MA100 (favor Long before 450000, favor Short after 550000)
+                """
+                
+                # Retrieve the Order Depth containing all the market BUY and SELL orders for PEARLS
+                order_depth: OrderDepth = state.order_depths[product]
+
+                # Initialize the list of Orders to be sent as an empty list
+                orders: list[Order] = []
+
+                # Take the market price (mid price)
+                if order_depth.buy_orders and order_depth.sell_orders:
+                    best_bid = max(order_depth.buy_orders.keys())
+                    best_ask = min(order_depth.sell_orders.keys())
+                    current_price = np.average([best_ask, best_bid])
+
+                elif order_depth.buy_orders:
+                    current_price = best_ask
+
+                elif order_depth.sell_orders:
+                    current_price = best_bid
+
+                Trader.pre_trades[product].append(current_price)
+                pre_trade = Trader.pre_trades[product] 
 
 
             if product == 'COCONUTS':
@@ -479,10 +513,15 @@ class Trader:
                     Trader.pre_ma200s[product].append(ma_200)
 
 
-        '''
-        Pairs trading with COCONUTS and PINA_COLADAS
-        '''
+        """
+        The strategy for COCONUTS and PINA_COLADAS starts here: 
 
+        Pairs trading:
+        - Rescale
+        - Long/Short on widened Gap with trend identified
+        - Close positions when Gap narrows
+
+        """
     
         pre_ma200_coco = Trader.pre_ma200s['COCONUTS']
         pre_ma200_pina = Trader.pre_ma200s['PINA_COLADAS']
