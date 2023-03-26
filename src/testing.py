@@ -92,11 +92,9 @@ df = pd.read_csv(filepath, delimiter=';', usecols=['product', 'bid_price_1', 'bi
                                                    'bid_price_3', 'bid_volume_3', 'ask_price_1', 'ask_volume_1', 'ask_price_2', 'ask_volume_2', 'ask_price_3', 'ask_volume_3', 'mid_price'])
 
 checktime = 0
-
 trader = Trader()
 index = 0
 row_index = 0
-
 order_depths = {}
 
 TIMESTAMP = 100000
@@ -106,6 +104,7 @@ bananas = "BANANAS"
 pina = "PINA_COLADAS"
 berrie = "BERRIES"
 diving = "DIVING_GEAR"
+pearl = "PEARLS"
 
 
 def assign(row, product):
@@ -142,6 +141,7 @@ while checktime <= TIMESTAMP:
     assign(index, pina)
     assign(index, berrie)
     assign(index, diving)
+    assign(index, pearl)
 
     result = trader.run(state=TradingState(
         timestamp=checktime,
@@ -171,8 +171,6 @@ while checktime <= TIMESTAMP:
                 quantity = 0
 
             price = result[item][0].price
-
-            # profit = profit[item]
 
             if np.sign(quantity) == np.sign(position_quant[item]) or position_quant[item] == 0 or quantity == 0:
                 # calculate average
@@ -221,5 +219,12 @@ while checktime <= TIMESTAMP:
 
     checktime += 100
     index += 1
+
+
 print(profit)
-print(order_depths[bananas].buy_orders)
+# print(order_depths[coconnuts].buy_orders)
+# print(order_depths[berrie].buy_orders)
+# print(order_depths[diving].buy_orders)
+# print(order_depths[pearl].buy_orders)
+# print(order_depths[bananas].buy_orders)
+# print(order_depths[pina].buy_orders)
