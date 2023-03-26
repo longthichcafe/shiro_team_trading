@@ -122,13 +122,14 @@ while checktime <= 100000:
             row_index += 1
     row_index += 1
 
+    # append to the order_depths
     order_depths[bananas] = OrderDepth(
         buy_orders={bid_price_1: bid_volume_1,
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: ask_volume_1,
-                     ask_price_2: ask_volume_2,
-                     ask_price_3: ask_volume_3}
+        sell_orders={ask_price_1: -ask_volume_1,
+                     ask_price_2: -ask_volume_2,
+                     ask_price_3: -ask_volume_3}
     )
 
     coconuts_df = df[df['product'] == coconnuts]
@@ -162,13 +163,14 @@ while checktime <= 100000:
             row_index += 1
     row_index += 1
 
-    order_depths["COCONUTS"] = OrderDepth(
+    # append to the order_depths
+    order_depths[coconnuts] = OrderDepth(
         buy_orders={bid_price_1: bid_volume_1,
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: ask_volume_1,
-                     ask_price_2: ask_volume_2,
-                     ask_price_3: ask_volume_3}
+        sell_orders={ask_price_1: -ask_volume_1,
+                     ask_price_2: -ask_volume_2,
+                     ask_price_3: -ask_volume_3}
     )
 
     pinas_df = df[df['product'] == pina]
@@ -202,13 +204,14 @@ while checktime <= 100000:
             row_index += 1
     row_index += 1
 
+    # append to the order_depths
     order_depths[pina] = OrderDepth(
         buy_orders={bid_price_1: bid_volume_1,
                     bid_price_2: bid_volume_2,
                     bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: ask_volume_1,
-                     ask_price_2: ask_volume_2,
-                     ask_price_3: ask_volume_3}
+        sell_orders={ask_price_1: -ask_volume_1,
+                     ask_price_2: -ask_volume_2,
+                     ask_price_3: -ask_volume_3}
     )
 
     # call the function
@@ -223,10 +226,11 @@ while checktime <= 100000:
     ))
 
     # get positon from orders
-    for item in result:
+    for item in profit:
         if result[item]:
             quantity = result[item][0].quantity
             price = result[item][0].price
+
             # profit = profit[item]
 
             if np.sign(quantity) == np.sign(position_quant[item]) or position_quant[item] == 0:
@@ -270,9 +274,10 @@ while checktime <= 100000:
                         position_quant[item] += quantity
                         position_average[item] = price
 
-            # put the result in to output.csv file
+    # put the result in to output.csv file
     with open("output.csv", "a") as f:
         print(checktime, result, file=f)
     checktime += 100
 
-print(profit)
+# print(profit)
+print(position_quant)
