@@ -20,12 +20,17 @@ listings = {
     "PINA_COLADAS": Listing(
         symbol="PINA_COLADAS",
         product="PINA_COLADAS",
-        denomination="PINA_COLADAS"
+        denomination="SEASHELLS"
     ),
     "BERRIES": Listing(
         symbol="BERRIES",
         product="BERRIES",
-        denomination="BERRIES"
+        denomination="SEASHELLS"
+    ),
+    "DIVING_GEAR" : Listing(
+        symbol="DIVING_GEAR",
+        product="DIVING_GEAR",
+        denomination="SEASHELLS"
     ),
 }
 # Orders sent by trading bots  == TEST INPUT
@@ -55,21 +60,24 @@ position_quant = {
     "COCONUTS": 0,
     "BANANAS": 0,
     "PINA_COLADAS": 0,
-    "BERRIES": 0
+    "BERRIES": 0,
+    "DIVING_GEAR": 0
 }
 
 position_average = {
     "COCONUTS": 0,
     "BANANAS": 0,
     "PINA_COLADAS": 0,
-    "BERRIES": 0
+    "BERRIES": 0,
+    "DIVING_GEAR": 0
 }
 
 profit = {
     "COCONUTS": 0,
     "BANANAS": 0,
     "PINA_COLADAS": 0,
-    "BERRIES": 0
+    "BERRIES": 0,
+    "DIVING_GEAR": 0
 }
 
 observations = {}
@@ -97,7 +105,7 @@ coconnuts = "COCONUTS"
 bananas = "BANANAS"
 pina = "PINA_COLADAS"
 berrie = "BERRIES"
-
+diving = "DIVING_GEAR"
 
 while checktime <= TIMESTAMP:
 
@@ -241,13 +249,13 @@ while checktime <= TIMESTAMP:
         observations=observations
     ))
 
-    """berries_df = df[df['product'] == berrie]
+    berries_df = df[df['product'] == berrie]
 
     # get the number of rows in the dataframe
     num_rows = len(berries_df)
 
     # initialize the row index to 0
-
+    berrie_flag = False
     # loop through each row and access values one at a time using a while loop
     while row_index < num_rows:
         row = berries_df.iloc[row_index]
@@ -267,20 +275,22 @@ while checktime <= TIMESTAMP:
             ask_volume_2 = row['ask_volume_2']
             ask_price_3 = row['ask_price_3']
             ask_volume_3 = row['ask_volume_3']
+            berrie_flag = True
             break
         else:
             row_index += 1
     row_index += 1
 
     # append to the order_depths
-    order_depths[berrie] = OrderDepth(
-        buy_orders={bid_price_1: bid_volume_1,
-                    bid_price_2: bid_volume_2,
-                    bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: -ask_volume_1,
-                     ask_price_2: -ask_volume_2,
-                     ask_price_3: -ask_volume_3}
-    )
+    if berrie_flag:
+        order_depths[berrie] = OrderDepth(
+            buy_orders={bid_price_1: bid_volume_1,
+                        bid_price_2: bid_volume_2,
+                        bid_price_3: bid_volume_3},
+            sell_orders={ask_price_1: -ask_volume_1,
+                        ask_price_2: -ask_volume_2,
+                        ask_price_3: -ask_volume_3}
+        )
 
     # call the function
     result = trader.run(state=TradingState(
@@ -291,7 +301,82 @@ while checktime <= TIMESTAMP:
         market_trades=market_trades,
         position=position_quant,
         observations=observations
-    ))"""
+    ))
+
+    diving_df = df[df['product'] == diving]
+
+    # get the number of rows in the dataframe
+    num_rows = len(diving_df)
+
+    # initialize the row index to 0
+    diving_flag = False
+    # loop through each row and access values one at a time using a while loop
+    while row_index < num_rows:
+        row = diving_df.iloc[row_index]
+
+        # check if row contains PINA_COLADAS
+        if row['product'] == diving:
+            product = row['product']
+            bid_price_1 = row['bid_price_1']
+            bid_volume_1 = row['bid_volume_1']
+            bid_price_2 = row['bid_price_2']
+            bid_volume_2 = row['bid_volume_2']
+            bid_price_3 = row['bid_price_3']
+            bid_volume_3 = row['bid_volume_3']
+            ask_price_1 = row['ask_price_1']
+            ask_volume_1 = row['ask_volume_1']
+            ask_price_2 = row['ask_price_2']
+            ask_volume_2 = row['ask_volume_2']
+            ask_price_3 = row['ask_price_3']
+            ask_volume_3 = row['ask_volume_3']
+            diving_flag = True
+            break
+        else:
+            row_index += 1
+    row_index += 1
+
+    # append to the order_depths
+    if diving_flag:
+        order_depths[diving] = OrderDepth(
+            buy_orders={bid_price_1: bid_volume_1,
+                        bid_price_2: bid_volume_2,
+                        bid_price_3: bid_volume_3},
+            sell_orders={ask_price_1: -ask_volume_1,
+                        ask_price_2: -ask_volume_2,
+                        ask_price_3: -ask_volume_3}
+        )
+
+    dolphin_df = df[df['product'] == "DOLPHIN_SIGHTINGS"]
+
+    # get the number of rows in the dataframe
+    num_rows = len(dolphin_df)
+
+    dolphin_flag = False
+
+    while row_index < num_rows:
+        row = diving_df.iloc[row_index]
+        
+        # check if row contains PINA_COLADAS
+        if row['product'] == "DOLPHIN_SIGHTINGS":
+            observations["DOLPHIN_SIGHTINGS"] = row["mid_price"]
+            dolphin_flag = True
+            break
+        else:
+            row_index += 1
+    row_index += 1
+    
+
+    # call the function
+    result = trader.run(state=TradingState(
+        timestamp=checktime,
+        listings=listings,
+        order_depths=order_depths,
+        own_trades=own_trades,
+        market_trades=market_trades,
+        position=position_quant,
+        observations=observations
+    ))
+
 
     # get positon from orders
     for item in profit:
@@ -307,12 +392,14 @@ while checktime <= TIMESTAMP:
                     quantity = -list(order_depths[item].buy_orders.values())[0]
                 else: 
                     quantity = quantity_temp
+            else:
+                quantity = 0
 
             price = result[item][0].price
 
             # profit = profit[item]
 
-            if np.sign(quantity) == np.sign(position_quant[item]) or position_quant[item] == 0:
+            if np.sign(quantity) == np.sign(position_quant[item]) or position_quant[item] == 0 or quantity == 0:
                 # calculate average
                 position_average[item] = (
                     position_quant[item]*position_average[item] + quantity*price) / (quantity + position_quant[item])
