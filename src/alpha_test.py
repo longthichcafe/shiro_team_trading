@@ -27,7 +27,7 @@ listings = {
         product="BERRIES",
         denomination="SEASHELLS"
     ),
-    "DIVING_GEAR" : Listing(
+    "DIVING_GEAR": Listing(
         symbol="DIVING_GEAR",
         product="DIVING_GEAR",
         denomination="SEASHELLS"
@@ -89,7 +89,7 @@ observations = {}
 
 filepath = "src/test.csv"
 df = pd.read_csv(filepath, delimiter=';', usecols=['product', 'bid_price_1', 'bid_volume_1', 'bid_price_2', 'bid_volume_2',
-                                                   'bid_price_3', 'bid_volume_3', 'ask_price_1', 'ask_volume_1', 'ask_price_2', 'ask_volume_2', 'ask_price_3', 'ask_volume_3'])
+                                                   'bid_price_3', 'bid_volume_3', 'ask_price_1', 'ask_volume_1', 'ask_price_2', 'ask_volume_2', 'ask_price_3', 'ask_volume_3', 'mid_price'])
 
 checktime = 0
 
@@ -147,8 +147,8 @@ while checktime <= TIMESTAMP:
                         bid_price_2: bid_volume_2,
                         bid_price_3: bid_volume_3},
             sell_orders={ask_price_1: -ask_volume_1,
-                        ask_price_2: -ask_volume_2,
-                        ask_price_3: -ask_volume_3}
+                         ask_price_2: -ask_volume_2,
+                         ask_price_3: -ask_volume_3}
         )
 
     coconuts_df = df[df['product'] == coconnuts]
@@ -189,8 +189,8 @@ while checktime <= TIMESTAMP:
                         bid_price_2: bid_volume_2,
                         bid_price_3: bid_volume_3},
             sell_orders={ask_price_1: -ask_volume_1,
-                        ask_price_2: -ask_volume_2,
-                        ask_price_3: -ask_volume_3}
+                         ask_price_2: -ask_volume_2,
+                         ask_price_3: -ask_volume_3}
         )
 
     pinas_df = df[df['product'] == pina]
@@ -231,8 +231,8 @@ while checktime <= TIMESTAMP:
                         bid_price_2: bid_volume_2,
                         bid_price_3: bid_volume_3},
             sell_orders={ask_price_1: -ask_volume_1,
-                        ask_price_2: -ask_volume_2,
-                        ask_price_3: -ask_volume_3}
+                         ask_price_2: -ask_volume_2,
+                         ask_price_3: -ask_volume_3}
         )
 
     # call the function
@@ -284,8 +284,8 @@ while checktime <= TIMESTAMP:
                         bid_price_2: bid_volume_2,
                         bid_price_3: bid_volume_3},
             sell_orders={ask_price_1: -ask_volume_1,
-                        ask_price_2: -ask_volume_2,
-                        ask_price_3: -ask_volume_3}
+                         ask_price_2: -ask_volume_2,
+                         ask_price_3: -ask_volume_3}
         )
 
     # call the function
@@ -337,8 +337,8 @@ while checktime <= TIMESTAMP:
                         bid_price_2: bid_volume_2,
                         bid_price_3: bid_volume_3},
             sell_orders={ask_price_1: -ask_volume_1,
-                        ask_price_2: -ask_volume_2,
-                        ask_price_3: -ask_volume_3}
+                         ask_price_2: -ask_volume_2,
+                         ask_price_3: -ask_volume_3}
         )
 
     dolphin_df = df[df['product'] == "DOLPHIN_SIGHTINGS"]
@@ -350,7 +350,7 @@ while checktime <= TIMESTAMP:
 
     while row_index < num_rows:
         row = dolphin_df.iloc[row_index]
-        
+
         # check if row contains PINA_COLADAS
         if row['product'] == "DOLPHIN_SIGHTINGS":
             product = row['product']
@@ -360,7 +360,6 @@ while checktime <= TIMESTAMP:
         else:
             row_index += 1
     row_index += 1
-    
 
     # call the function
     result = trader.run(state=TradingState(
@@ -373,20 +372,20 @@ while checktime <= TIMESTAMP:
         observations=observations
     ))
 
-
     # get positon from orders
     for item in profit:
         if result[item]:
             quantity_temp = result[item][0].quantity
             if np.sign(quantity_temp) == 1:
                 if quantity_temp > -list(order_depths[item].sell_orders.values())[0]:
-                    quantity = -list(order_depths[item].sell_orders.values())[0]
-                else: 
+                    quantity = - \
+                        list(order_depths[item].sell_orders.values())[0]
+                else:
                     quantity = quantity_temp
             elif np.sign(quantity_temp) == -1:
                 if quantity_temp < -list(order_depths[item].buy_orders.values())[0]:
                     quantity = -list(order_depths[item].buy_orders.values())[0]
-                else: 
+                else:
                     quantity = quantity_temp
             else:
                 quantity = 0
@@ -438,7 +437,7 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(checktime, result, file=f)
+        print(checktime, result, profit, file=f)
     checktime += 100
 
 
