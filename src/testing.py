@@ -109,6 +109,7 @@ diving = "DIVING_GEAR"
 
 
 def assign(row, product):
+    # todo: do dolphin case
     dataframe = df[df['product'] == product]
     row = dataframe.iloc[row]
     bid_price_1 = row['bid_price_1']
@@ -135,12 +136,12 @@ def assign(row, product):
     # print(order_depths[product].buy_orders)
 
 
-print(assign(1, bananas))
-while checktime <= 10:
+while checktime <= TIMESTAMP:
     assign(index, coconnuts)
     assign(index, bananas)
     assign(index, pina)
     assign(index, berrie)
+    assign(index, diving)
 
     result = trader.run(state=TradingState(
         timestamp=checktime,
@@ -220,3 +221,5 @@ while checktime <= 10:
 
     checktime += 100
     index += 1
+print(profit)
+print(order_depths[bananas].buy_orders)
