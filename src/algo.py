@@ -583,7 +583,6 @@ class Trader:
                                 Order(product, best_ask, -best_ask_volume)
                             )
                     result[product] = orders
-                    print(1)
 
                 # DOWNward trend
                 elif n_decrease > 7:

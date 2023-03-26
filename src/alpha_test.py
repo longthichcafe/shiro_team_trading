@@ -239,37 +239,21 @@ while checktime <= 100000:
             else:
                 # Trade is smaller
                 if abs(quantity) < abs(position_quant[item]):
-                    # Close part of Long position
-                    if position_quant[item] > 0:
-                        profit[item] += abs(quantity)*price - \
-                            position_average[item]*abs(quantity)
-                        position_quant[item] += quantity
-                        # Position avg price stay same
-
-                    # Close part of Short position
-                    else:
-                        profit[item] += position_average[item] * \
-                            abs(quantity) - abs(quantity)*price
-                        position_quant[item] += quantity
-                        # Position avg price stay same
+                    profit[item] += -(quantity*position_average[item] + quantity*price)
+                    position_quant[item] += quantity
 
                 # Trade is larger
+                if abs(quantity) > abs(position_quant[item]):
+                    profit[item] += -(position_quant[item]*position_average[item] + \
+                        position_quant[item]*price)
+                    position_quant[item] += quantity
+                    position_average[item] = price
+
+                # Trade equals 
                 else:
-                    # Close all of Long position and turn to Short
-                    if position_quant[item] > 0:
-
-                        profit[item] += abs(position_quant)[item]*price - \
-                            position_average[item]*abs(position_quant)[item]
-                        position_quant[item] += quantity
-                        position_average[item] = price
-
-                    # Close part of Short position and turn to Long
-                    else:
-                        profit[item] += position_average[item] * \
-                            abs(position_quant[item]) - \
-                            abs(position_quant[item])*price
-                        position_quant[item] += quantity
-                        position_average[item] = price
+                    profit[item] += -(quantity*price + quantity*position_average[item])
+                    position_quant[item] = 0
+                    position_average[item] = 0
 
             # put the result in to output.csv file
     with open("output.csv", "a") as f:
