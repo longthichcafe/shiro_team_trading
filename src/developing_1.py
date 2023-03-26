@@ -814,7 +814,8 @@ class Trader:
                             orders.append(
                                 Order(product, best_ask, -best_ask_volume)
                             )
-                    result[product] = orders
+                    
+                        result[product] = orders
                     
                 # DOWNward trend
                 elif n_decrease > 7:
@@ -851,7 +852,7 @@ class Trader:
                                 Order(product, best_bid, -best_bid_volume)
                             )
 
-                    result[product] = orders
+                        result[product] = orders
 
             # CLOSE positions
 
