@@ -89,7 +89,7 @@ bananas = "BANANAS"
 pina = "PINA_COLADAS"
 
 
-while checktime <= 100000:
+while checktime <= 500000:
 
     bananas_df = df[df['product'] == bananas]
 
@@ -281,3 +281,4 @@ while checktime <= 100000:
 
 # print(profit)
 print(position_quant)
+print(profit)
