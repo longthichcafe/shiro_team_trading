@@ -147,30 +147,33 @@ class Trader:
         'PEARLS': [],
         'BANANAS': [],
         'COCONUTS': [],
-        'PINA_COLADAS': []
+        'PINA_COLADAS': [],
+        'BERRIES': []
     }
     pre_ma20s = {
         'PEARLS': [],
         'BANANAS': [],
         'COCONUTS': [],
-        'PINA_COLADAS': []
+        'PINA_COLADAS': [],
+        'BERRIES': []
     }
     pre_ma100s = {
         'PEARLS': [],
         'BANANAS': [],
         'COCONUTS': [],
-        'PINA_COLADAS': []
+        'PINA_COLADAS': [],
+        'BERRIES': []
     }
     pre_ma200s = {
         'COCONUTS': [],
         'PINA_COLADAS': []
     }
-
     position_limit = {
         'PEARLS': 20,
         'BANANAS': 20,
         'COCONUTS': 600,
-        'PINA_COLADAS': 300
+        'PINA_COLADAS': 300,
+        'BERRIES': 250
     }
 
     def run(
@@ -187,13 +190,15 @@ class Trader:
             'PEARLS': [],
             'BANANAS': [],
             'COCONUTS': [],
-            'PINA_COLADAS': []
+            'PINA_COLADAS': [],
+            'BERRIES': []
         }
 
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
 
             if product == 'PEARLS':
+
                 """
                 The strategy for PEARLS starts here: 
 
@@ -277,11 +282,13 @@ class Trader:
             
             
             if product == 'BANANAS':
+
                 """
                 The strategy for BANANAS starts here: 
 
                 Enter position when current price cross MA20 (long trend is not considered)
                 """
+
                 # Retrieve the Order Depth containing all the market BUY and SELL orders for PEARLS
                 order_depth: OrderDepth = state.order_depths[product]
 
@@ -308,8 +315,8 @@ class Trader:
                 lowerlimit = -Trader.position_limit[product]                
 
                 # Calculate moving avg 7 and 20
-                if len(pre_trade) > 99:
-                    ''' ma_7 = np.average(pre_trade[-7:]) '''
+                # if len(pre_trade) > 99:
+                if len(pre_trade) > 19:
                     ma_20 = ( 
                         0.08 * pre_trade[-1] +
                         0.3 * np.average(pre_trade[-5:-1]) + 
@@ -325,7 +332,8 @@ class Trader:
                     # Trader.pre_ma100s[product].append(ma_100)
                     # pre_ma100 = Trader.pre_ma100s[product]
                     
-                if len(pre_trade) > 129:
+                # if len(pre_trade) > 129:
+                if len(pre_trade) > 24:
                     adaptive_ma20 = (
                             1.0 * ma_20 +
                             1.5 * (pre_ma20[-1] - pre_ma20[-2]) +
@@ -417,6 +425,7 @@ class Trader:
                 # Depending on the logic above
 
             if product == 'BERRIES':
+
                 """
                 The strategy for BERRIES starts here: 
 
@@ -443,6 +452,138 @@ class Trader:
 
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product] 
+
+                if len(pre_trade) > 99:
+                    ma_20 = ( 
+                        0.08 * pre_trade[-1] +
+                        0.3 * np.average(pre_trade[-5:-1]) + 
+                        0.27 * np.average(pre_trade[-9:-5]) + 
+                        0.21 * np.average(pre_trade[-13:-9]) + 
+                        0.11 * np.average(pre_trade[-17:-13]) + 
+                        0.03 * np.average(pre_trade[-20:-17]) 
+                    )
+                    Trader.pre_ma20s[product].append(ma_20)
+                    pre_ma20 = Trader.pre_ma20s[product]
+
+                    ma_100 = np.average(pre_trade[-100:])
+                    Trader.pre_ma100s[product].append(ma_100)
+                    pre_ma100 = Trader.pre_ma100s[product]
+                    
+                if len(pre_trade) > 129:
+                    adaptive_ma20 = (
+                            1.0 * ma_20 +
+                            1.5 * (pre_ma20[-1] - pre_ma20[-2]) +
+                            1.0 * (pre_ma20[-1] - pre_ma20[-3]) +
+                            0.5 * (pre_ma20[-1] - pre_ma20[-4]) 
+                    )
+                    
+                    trend_index = []
+                    # compute the %change in moving avg 100 
+                    for i in [1,2,3,5,10,15,20,30,40,50]:
+                        trend_index.append(
+                            (pre_ma100[-1] - pre_ma100[-i - 1]) / pre_ma100[-i - 1]
+                        )
+                    
+                    # initialise variables to identify trend
+                    bullish_index = 8
+                    bearish_index = 8
+                    n_increase = 0
+                    n_decrease = 0
+
+                    for pct_change in trend_index:
+                        if pct_change < 0:
+                            n_decrease += 1
+
+                        if pct_change > 0:
+                            n_increase += 1
+
+                    
+                    if state.timestamp in range(200000, 450001):
+                        # favor Long
+                        bullish_index = 7            
+                        if state.timestamp in range(400000, 450001):
+                            # higher restriction for Short
+                            bearish_index = 9
+
+                    elif state.timestamp in range(550000, 800001):
+                        # favor Short
+                        bearish_index = 7
+                        if state.timestamp in range(550000, 600001):
+                            # higher restriction for Long
+                            bullish_index = 9 
+
+                    # Looking for sell orders to BUY
+                    if order_depth.sell_orders:
+            
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+               
+                        # UPward trend
+                        if n_increase >= bullish_index:
+                            if product in state.position.keys():
+                                remaining_position = upperlimit - \
+                                    state.position[product]
+                            else:
+                                remaining_position = upperlimit
+                            # remaining position is > 0
+
+                            if (-best_ask_volume) > remaining_position:
+                                print(
+                                    "BUY", str(
+                                        remaining_position) + "x", best_ask
+                                )
+                                orders.append(
+                                    Order(product, best_ask,
+                                            remaining_position)
+                                )
+                            else:
+                                print(
+                                    "BUY", str(-best_ask_volume) +
+                                    "x", best_ask
+                                )
+                                orders.append(
+                                    Order(product, best_ask, -
+                                            best_ask_volume)
+                                )
+
+
+                    # Looking for buy orders to SELL
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]
+
+                        # DOWNward trend and undefined
+                        if n_decrease >= bearish_index:
+                            if product in state.position.keys():
+                                remaining_position = lowerlimit - \
+                                    state.position[product]
+                            else:
+                                remaining_position = lowerlimit
+                            # remaining position is <0
+
+                            if best_bid_volume > (-remaining_position):
+                                print(
+                                    "SELL", str(-remaining_position) +
+                                    "x", best_bid
+                                )
+                                orders.append(
+                                    Order(product, best_bid,
+                                            remaining_position)
+                                )
+                            else:
+                                print(
+                                    "SELL", str(
+                                        best_bid_volume) + "x", best_bid
+                                )
+                                orders.append(
+                                    Order(product, best_bid, -
+                                            best_bid_volume)
+                                )                        
+
+                # Add all the above the orders to the result dict
+                result[product] = orders
+
+                
 
 
             if product == 'COCONUTS':
