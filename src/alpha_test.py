@@ -223,7 +223,6 @@ while checktime <= 100000:
     ))
 
     # get positon from orders
-
     for item in result:
         if result[item]:
             quantity = result[item][0].quantity
@@ -258,8 +257,8 @@ while checktime <= 100000:
                     # Close all of Long position and turn to Short
                     if position_quant[item] > 0:
 
-                        profit[item] += abs(position_quant)[item]*price - \
-                            position_average[item]*abs(position_quant)[item]
+                        profit[item] += abs(position_quant[item])*price - \
+                            position_average[item]*abs(position_quant[item])
                         position_quant[item] += quantity
                         position_average[item] = price
 
