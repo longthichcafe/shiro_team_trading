@@ -183,7 +183,12 @@ class Trader:
         and outputs a list of orders to be sent
         """
         # Initialize the method output dict as an empty dict
-        result = {}
+        result = {
+            'PEARLS': [],
+            'BANANAS': [],
+            'COCONUTS': [],
+            'PINA_COLADAS': []
+        }
 
         # Iterate over all the keys (the available products) contained in the order dephts
         for product in state.order_depths.keys():
@@ -310,9 +315,9 @@ class Trader:
                     Trader.pre_ma20s[product].append(ma_20)
                     pre_ma20 = Trader.pre_ma20s[product]
 
-                    ma_100 = np.average(pre_trade[-100:])
-                    Trader.pre_ma100s[product].append(ma_100)
-                    pre_ma100 = Trader.pre_ma100s[product]
+                    # ma_100 = np.average(pre_trade[-100:])
+                    # Trader.pre_ma100s[product].append(ma_100)
+                    # pre_ma100 = Trader.pre_ma100s[product]
                     
                 if len(pre_trade) > 129:
                     adaptive_ma20 = (
@@ -321,14 +326,15 @@ class Trader:
                             1.0 * (pre_ma20[-1] - pre_ma20[-3]) +
                             0.5 * (pre_ma20[-1] - pre_ma20[-4]) 
                     )
-                    i_trend = []
-                    # compute the %change in moving avg 100 
-                    for i in [1,2,3,5,10,15,20,30]:
-                        i_trend.append(
-                            (pre_ma100[-1] - pre_ma100[-i - 1]) / pre_ma100[-i - 1]
-                        )                    
+                    # i_trend = []
+                    # # compute the %change in moving avg 100 
+                    # for i in [1,2,3,5,10,15,20,30]:
+                    #     i_trend.append(
+                    #         (pre_ma100[-1] - pre_ma100[-i - 1]) / pre_ma100[-i - 1]
+                    #     )                    
 
                 # If statement checks if there are any SELL orders in the BANANAS market
+
                     if order_depth.sell_orders:
 
                         # Sort all the available sell orders by their price,
@@ -336,85 +342,67 @@ class Trader:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
 
-                        n_decrease = 0
-                        for pct_change in i_trend:
-                            if pct_change < 0:
-                                n_decrease += 1
 
                         # UPward trend and undefined trend
-                        if not n_decrease >= 6:
-                            if best_ask < adaptive_ma20:
-                                if product in state.position.keys():  
-                                    remaining_position = upperlimit - state.position[product]
-                                else: 
-                                    remaining_position = upperlimit
-                                # remaining position is > 0
 
-                                if (-best_ask_volume) > remaining_position:
-                                    print(
-                                        "BUY", str(remaining_position) + "x", best_ask
-                                    )
-                                    orders.append(
-                                        Order(product, best_ask, remaining_position)
-                                    )
-                                else:
-                                    print(
-                                        "BUY", str(-best_ask_volume) + "x", best_ask
-                                    )
-                                    orders.append(
-                                        Order(product, best_ask, -best_ask_volume)
-                                    )
+                        if best_ask < adaptive_ma20:
+                            if product in state.position.keys():  
+                                remaining_position = upperlimit - state.position[product]
+                            else: 
+                                remaining_position = upperlimit
+                            # remaining position is > 0
+
+                            if (-best_ask_volume) > remaining_position:
+                                print(
+                                    "BUY", str(remaining_position) + "x", best_ask
+                                )
+                                orders.append(
+                                    Order(product, best_ask, remaining_position)
+                                )
+                            else:
+                                print(
+                                    "BUY", str(-best_ask_volume) + "x", best_ask
+                                )
+                                orders.append(
+                                    Order(product, best_ask, -best_ask_volume)
+                                )
 
                         # DOWNward trend                        
-                        else:
-                            if product in state.position.keys() and state.position[product] < 0:
-                                if best_ask < adaptive_ma20:
-                                    print("BUY", str(-state.position[product]) + "x", best_ask)
-                                    orders.append(
-                                        Order(product, best_ask, -state.position[product]))
+
 
                     # The below code block is similar to the one above,
                     # the difference is that it find the highest bid (buy order)
                     if order_depth.buy_orders:
                         best_bid = max(order_depth.buy_orders.keys())
                         best_bid_volume = order_depth.buy_orders[best_bid]
-                        n_increase = 0
-                        for pct_change in i_trend:
-                            if pct_change > 0:
-                                n_increase += 1
+
 
                         # DOWNward trend and undefined
-                        if not n_increase >= 6:
-                            if best_bid > adaptive_ma20:       
-                                if product in state.position.keys():  
-                                    remaining_position = lowerlimit - state.position[product]
-                                else: 
-                                    remaining_position = lowerlimit
-                                # remaining position is <0
-                                
-                                if best_bid_volume > (-remaining_position):
-                                    print(
-                                        "SELL", str(-remaining_position) + "x", best_bid
-                                    )
-                                    orders.append(
-                                        Order(product, best_bid, remaining_position)
-                                    )
-                                else:
-                                    print(
-                                        "SELL", str(best_bid_volume) + "x", best_bid
-                                    )
-                                    orders.append(
-                                        Order(product, best_bid, -best_bid_volume)
-                                    )
+
+                        if best_bid > adaptive_ma20:       
+                            if product in state.position.keys():  
+                                remaining_position = lowerlimit - state.position[product]
+                            else: 
+                                remaining_position = lowerlimit
+                            # remaining position is <0
+                            
+                            if best_bid_volume > (-remaining_position):
+                                print(
+                                    "SELL", str(-remaining_position) + "x", best_bid
+                                )
+                                orders.append(
+                                    Order(product, best_bid, remaining_position)
+                                )
+                            else:
+                                print(
+                                    "SELL", str(best_bid_volume) + "x", best_bid
+                                )
+                                orders.append(
+                                    Order(product, best_bid, -best_bid_volume)
+                                )
 
                         # UPward trend        
-                        else:
-                            if product in state.position.keys() and state.position[product] > 0:
-                                if best_bid > adaptive_ma20:
-                                    print("SELL", str(state.position[product]) + "x", best_bid)
-                                    orders.append(
-                                        Order(product, best_bid, -state.position[product]))
-            
+
                 # Add all the above the orders to the result dict
                 result[product] = orders
 
@@ -527,7 +515,7 @@ class Trader:
             # --- STRATEGY ---
             # Identify GAP
 
-            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.4:
+            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.3:
 
                 orders: list[Order] = []
                 
@@ -610,7 +598,7 @@ class Trader:
                 order_depth: OrderDepth = state.order_depths[product]
 
                 if product in state.position.keys():
-                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.1:
+                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.05:
 
                         if state.position[product] > 0:
                             
