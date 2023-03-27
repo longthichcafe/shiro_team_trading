@@ -82,14 +82,30 @@ profit = {
 
 observations = {}
 
-
 # ==============================================================  TEST ==============================================================
 # ==============================================================  TEST ==============================================================
 # ==============================================================  TEST ==============================================================
 
 filepath = "src/test.csv"
-df = pd.read_csv(filepath, delimiter=';', usecols=['product', 'bid_price_1', 'bid_volume_1', 'bid_price_2', 'bid_volume_2',
-                                                   'bid_price_3', 'bid_volume_3', 'ask_price_1', 'ask_volume_1', 'ask_price_2', 'ask_volume_2', 'ask_price_3', 'ask_volume_3', 'mid_price'])
+df = pd.read_csv(filepath, 
+    delimiter = ';', 
+    usecols = [
+        'product', 
+        'bid_price_1', 
+        'bid_volume_1', 
+        'bid_price_2', 
+        'bid_volume_2',
+        'bid_price_3', 
+        'bid_volume_3', 
+        'ask_price_1', 
+        'ask_volume_1', 
+        'ask_price_2', 
+        'ask_volume_2', 
+        'ask_price_3', 
+        'ask_volume_3', 
+        'mid_price'
+    ]
+)
 
 checktime = 0
 trader = Trader()
@@ -125,12 +141,16 @@ def assign(row, product):
     ask_volume_3 = row['ask_volume_3']
 
     order_depths[product] = OrderDepth(
-        buy_orders={bid_price_1: bid_volume_1,
-                    bid_price_2: bid_volume_2,
-                    bid_price_3: bid_volume_3},
-        sell_orders={ask_price_1: -ask_volume_1,
-                     ask_price_2: -ask_volume_2,
-                     ask_price_3: -ask_volume_3}
+        buy_orders = {
+            bid_price_1: bid_volume_1,
+            bid_price_2: bid_volume_2,
+            bid_price_3: bid_volume_3
+        },
+        sell_orders = {
+            ask_price_1: -ask_volume_1,
+            ask_price_2: -ask_volume_2,
+            ask_price_3: -ask_volume_3
+        }
     )
     # print(order_depths[product].buy_orders)
 
