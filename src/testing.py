@@ -7,6 +7,11 @@ import numpy as np
 timestamp = 0
 
 listings = {
+    "PEARLS": Listing(
+        symbol="PEARLS",
+        product="PEARLS",
+        denomination="SEASHELLS"
+    ),
     "BANANAS": Listing(
         symbol="BANANAS",
         product="BANANAS",
@@ -57,24 +62,27 @@ market_trades = {
 
 # what we have
 position_quant = {
-    "COCONUTS": 0,
+    "PEARLS": 0,
     "BANANAS": 0,
+    "COCONUTS": 0,
     "PINA_COLADAS": 0,
     "BERRIES": 0,
     "DIVING_GEAR": 0
 }
 
 position_average = {
-    "COCONUTS": 0,
+    "PEARLS": 0,
     "BANANAS": 0,
+    "COCONUTS": 0,
     "PINA_COLADAS": 0,
     "BERRIES": 0,
     "DIVING_GEAR": 0
 }
 
 profit = {
-    "COCONUTS": 0,
+    "PEARLS": 0,
     "BANANAS": 0,
+    "COCONUTS": 0,
     "PINA_COLADAS": 0,
     "BERRIES": 0,
     "DIVING_GEAR": 0
@@ -113,14 +121,14 @@ index = 0
 row_index = 0
 order_depths = {}
 
-TIMESTAMP = 100000
+TIMESTAMP = 500000
 
-coconnuts = "COCONUTS"
+pearl = "PEARLS"
 bananas = "BANANAS"
+coconuts = "COCONUTS"
 pina = "PINA_COLADAS"
 berrie = "BERRIES"
 diving = "DIVING_GEAR"
-pearl = "PEARLS"
 
 
 def assign(row, product):
@@ -156,12 +164,15 @@ def assign(row, product):
 
 
 while checktime <= TIMESTAMP:
-    assign(index, coconnuts)
+    assign(index, pearl)
     assign(index, bananas)
+    assign(index, coconuts)
     assign(index, pina)
     assign(index, berrie)
     assign(index, diving)
-    assign(index, pearl)
+
+    if checktime == 42000:
+        print("STOP")
 
     result = trader.run(state=TradingState(
         timestamp=checktime,

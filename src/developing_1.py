@@ -205,7 +205,8 @@ class Trader:
             'BANANAS': [],
             'COCONUTS': [],
             'PINA_COLADAS': [],
-            'BERRIES': []
+            'BERRIES': [],
+            'DIVING_GEAR': []
         }
 
         # Iterate over all the keys (the available products) 
@@ -267,7 +268,7 @@ class Trader:
         def get_pre_trade(
             product,
             order_depth
-        ) -> tuple(List, int):
+        ):
             if order_depth.buy_orders and order_depth.sell_orders:
                 best_bid = max(order_depth.buy_orders.keys())
                 best_ask = min(order_depth.sell_orders.keys())
@@ -317,7 +318,7 @@ class Trader:
                             product,
                             upperlimit
                         )
-                        orders = buy(
+                        result[product] = buy(
                             product,
                             best_ask_volume,
                             remaining_position,
@@ -333,13 +334,12 @@ class Trader:
                             product,
                             lowerlimit
                         )
-                        orders = sell(
+                        result[product] = sell(
                             product,
                             best_bid_volume,
                             remaining_position,
                             best_bid
                         )
-                    result[product] = orders
             
             if product == 'BANANAS':
                 """
@@ -365,9 +365,9 @@ class Trader:
                     )
                     Trader.pre_ma20s[product].append(ma_20)
                     pre_ma20 = Trader.pre_ma20s[product]
-                    # ma_100 = np.average(pre_trade[-100:])
-                    # Trader.pre_ma100s[product].append(ma_100)
-                    # pre_ma100 = Trader.pre_ma100s[product]
+                    """ma_100 = np.average(pre_trade[-100:])
+                    Trader.pre_ma100s[product].append(ma_100)
+                    pre_ma100 = Trader.pre_ma100s[product]"""
                 # if len(pre_trade) > 129:
                 if len(pre_trade) > 24:
                     adaptive_ma20 = (
@@ -376,12 +376,12 @@ class Trader:
                             1.0 * (pre_ma20[-1] - pre_ma20[-3]) +
                             0.5 * (pre_ma20[-1] - pre_ma20[-4]) 
                     )
-                    # i_trend = []
-                    # # compute the %change in moving avg 100 
-                    # for i in [1,2,3,5,10,15,20,30]:
-                    #     i_trend.append(
-                    #         (pre_ma100[-1] - pre_ma100[-i - 1]) / pre_ma100[-i - 1]
-                    #     )                    
+                    """i_trend = []
+                    # compute the %change in moving avg 100 
+                    for i in [1,2,3,5,10,15,20,30]:
+                        i_trend.append(
+                            (pre_ma100[-1] - pre_ma100[-i - 1]) / pre_ma100[-i - 1]
+                        )     """               
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
@@ -391,7 +391,7 @@ class Trader:
                                 upperlimit
                             )
                             # remaining position is > 0
-                            orders = buy(
+                            result[product] = buy(
                                 product,
                                 best_ask_volume,
                                 remaining_position,
@@ -405,13 +405,12 @@ class Trader:
                                 product,
                                 lowerlimit
                                 )
-                            orders = sell(
+                            result[product] = sell(
                                 product,
                                 best_bid_volume,
                                 remaining_position,
                                 best_bid
                             )
-                    result[product] = orders
 
             if product == 'BERRIES':
                 """
@@ -437,11 +436,11 @@ class Trader:
                     ma_100 = np.average(pre_trade[-100:])
                     Trader.pre_ma100s[product].append(ma_100)
                     pre_ma100 = Trader.pre_ma100s[product]
-                # if len(pre_trade) > 199:                   
-                #     ma_200 = np.average(pre_trade[-200:])
-                #     Trader.pre_ma200s[product].append(ma_200)
-                #     pre_ma200 = Trader.pre_ma200s[product]
-                # if len(pre_trade) > 299:  
+                """if len(pre_trade) > 199:                   
+                    ma_200 = np.average(pre_trade[-200:])
+                    Trader.pre_ma200s[product].append(ma_200)
+                    pre_ma200 = Trader.pre_ma200s[product]
+                if len(pre_trade) > 299:"""
                 if len(pre_trade) > 149:
                     adaptive_ma20 = (
                             1.0 * ma_20 +
@@ -455,12 +454,12 @@ class Trader:
                         trend_index.append(
                             (pre_ma100[-1] - pre_ma100[-i - 1]) / pre_ma100[-i - 1]
                         )
-                    # trend_index = []
-                    # # compute the %change in moving avg 200 
-                    # for i in [10,20,30,40,50,60,70,80,90,100]:
-                    #     trend_index.append(
-                    #         (pre_ma200[-1] - pre_ma200[-i - 1]) / pre_ma200[-i - 1]
-                    #     )
+                    """trend_index = []
+                    # compute the %change in moving avg 200 
+                    for i in [10,20,30,40,50,60,70,80,90,100]:
+                        trend_index.append(
+                            (pre_ma200[-1] - pre_ma200[-i - 1]) / pre_ma200[-i - 1]
+                        )"""
                     # initialise variables to identify trend
                     bullish_index = 8
                     bearish_index = 8
@@ -494,20 +493,20 @@ class Trader:
                                 upperlimit
                             )
                             # remaining position is > 0
-                            orders = buy(
+                            result[product] = buy(
                                 product,
                                 best_ask_volume,
                                 remaining_position,
                                 best_ask
                             )
-                        # # Close any Short position
-                        # if product in state.position.keys() and state.position[product] < 0:
-                        #     # The Down trend is reversing
-                        #     if np.sum(trend_index[0:8]) - np.sum(trend_index[8:]) > 0:
-                        #         print(
-                        #             "BUY", str(-state.position[product]) + "x", best_ask)
-                        #         orders.append(
-                        #             Order(product, best_ask, -state.position[product]))
+                        """# Close any Short position
+                        if product in state.position.keys() and state.position[product] < 0:
+                            # The Down trend is reversing
+                            if np.sum(trend_index[0:8]) - np.sum(trend_index[8:]) > 0:
+                                print(
+                                    "BUY", str(-state.position[product]) + "x", best_ask)
+                                orders.append(
+                                    Order(product, best_ask, -state.position[product]))"""
                     if order_depth.buy_orders:
                         best_bid = max(order_depth.buy_orders.keys())
                         best_bid_volume = order_depth.buy_orders[best_bid]
@@ -517,22 +516,21 @@ class Trader:
                                 product,
                                 lowerlimit
                             )
-                            orders = sell(
+                            result[product] = sell(
                                 product,
                                 best_bid_volume,
                                 remaining_position,
                                 best_bid
                             )
-                    result[product] = orders
 
-                        # # Close any Long position
-                        # if product in state.position.keys() and state.position[product] > 0:
-                        #     # The Up trend is reversing
-                        #     if np.sum(trend_index[0:8]) - np.sum(trend_index[8:]) < 0:
-                        #         print("SELL", str(
-                        #             state.position[product]) + "x", best_bid)
-                        #         orders.append(
-                        #             Order(product, best_bid, -state.position[product]))
+                    """# Close any Long position
+                    if product in state.position.keys() and state.position[product] > 0:
+                        # The Up trend is reversing
+                        if np.sum(trend_index[0:8]) - np.sum(trend_index[8:]) < 0:
+                            print("SELL", str(
+                                state.position[product]) + "x", best_bid)
+                            orders.append(
+                                Order(product, best_bid, -state.position[product]))"""
 
             if product == 'DIVING_GEAR':
                 order_depth: OrderDepth = state.order_depths[product]
@@ -546,13 +544,13 @@ class Trader:
                 current_price = (current_price - mean) / sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]
-                # Calculate moving avg 20 and 200
-                # if len(pre_trade) > 99:
-                #     ma_20 = np.average(pre_trade[-20:])
-                #     Trader.pre_ma20s[product].append(ma_20)
+                """Calculate moving avg 20 and 200
+                if len(pre_trade) > 99:
+                    ma_20 = np.average(pre_trade[-20:])
+                    Trader.pre_ma20s[product].append(ma_20)
 
-                #     ma_100 = np.average(pre_trade[-100:])
-                #     Trader.pre_ma100s[product].append(ma_100)
+                    ma_100 = np.average(pre_trade[-100:])
+                    Trader.pre_ma100s[product].append(ma_100)"""
                 if len(pre_trade) > 199:
                     ma_200 = np.average(pre_trade[-200:])
                     Trader.pre_ma200s[product].append(ma_200)
@@ -649,13 +647,12 @@ class Trader:
                             upperlimit
                         )
                         # remaining position is > 0
-                        orders = buy(
+                        result[product] = buy(
                             product,
                             best_ask_volume,
                             remaining_position,
                             best_ask
                         )
-                        result[product] = orders
                     
                 # DOWNward trend
                 elif n_decrease > 7:
@@ -674,13 +671,12 @@ class Trader:
                             product,
                             lowerlimit
                             )
-                        orders = sell(
+                        result[product] = sell(
                             product,
                             best_bid_volume,
                             remaining_position,
                             best_bid
                         )
-                        result[product] = orders
 
             # CLOSE positions
             for product in ['COCONUTS', 'PINA_COLADAS']:
@@ -720,13 +716,13 @@ class Trader:
                 current_obs = (current_obs - mean)/sd
                 Trader.pre_observes[observe].append(current_obs)
                 pre_observe = Trader.pre_observes[observe]
-                # Calculate moving avg
-                # if len(pre_observe) > 99:
-                #     ma_20 = np.average(pre_observe[-20:])
-                #     Trader.pre_ma20s[observe].append(ma_20)
+                """Calculate moving avg
+                if len(pre_observe) > 99:
+                    ma_20 = np.average(pre_observe[-20:])
+                    Trader.pre_ma20s[observe].append(ma_20)
 
-                #     ma_100 = np.average(pre_observe[-100:])
-                #     Trader.pre_ma100s[observe].append(ma_100)
+                    ma_100 = np.average(pre_observe[-100:])
+                    Trader.pre_ma100s[observe].append(ma_100)"""
                 if len(pre_observe) > 199:
                     ma_200 = np.average(pre_observe[-200:])
                     Trader.pre_ma200s[observe].append(ma_200)
@@ -780,7 +776,7 @@ class Trader:
                     upperlimit
                 )
                 # remaining position is > 0
-                orders = buy(
+                result[product] = buy(
                     product,
                     best_ask_volume,
                     remaining_position,
@@ -793,7 +789,7 @@ class Trader:
                     product,
                     lowerlimit
                     )
-                orders = sell(
+                result[product] = sell(
                     product,
                     best_bid_volume,
                     remaining_position,
