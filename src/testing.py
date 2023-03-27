@@ -121,7 +121,7 @@ index = 0
 row_index = 0
 order_depths = {}
 
-TIMESTAMP = 500000
+TIMESTAMP = 200000
 
 pearl = "PEARLS"
 bananas = "BANANAS"
@@ -171,8 +171,8 @@ while checktime <= TIMESTAMP:
     assign(index, berrie)
     assign(index, diving)
 
-    if checktime == 42000:
-        print("STOP")
+    if checktime in [200, 1000]:
+        print(order_depths)
 
     result = trader.run(state=TradingState(
         timestamp=checktime,
@@ -193,23 +193,25 @@ while checktime <= TIMESTAMP:
                         list(order_depths[item].sell_orders.values())[0]
                 else:
                     quantity = quantity_temp
+
             elif np.sign(quantity_temp) == -1:
                 if quantity_temp < -list(order_depths[item].buy_orders.values())[0]:
                     quantity = -list(order_depths[item].buy_orders.values())[0]
                 else:
                     quantity = quantity_temp
+
             else:
                 quantity = 0
 
             price = result[item][0].price
 
-            if np.sign(quantity) == np.sign(position_quant[item]) or position_quant[item] == 0 or quantity == 0:
+            if np.sign(quantity) == np.sign(position_quant[item]) or position_quant[item] == 0:
                 # calculate average
                 position_average[item] = (
                     position_quant[item]*position_average[item] + quantity*price) / (quantity + position_quant[item])
                 position_quant[item] += quantity
 
-            else:
+            if np.sign(quantity) + np.sign(position_quant[item]) == 0:
                 # Trade is smaller
                 if abs(quantity) < abs(position_quant[item]):
                     # Close part of Long position
@@ -227,7 +229,7 @@ while checktime <= TIMESTAMP:
                         # Position avg price stay same
 
                 # Trade is larger
-                else:
+                elif abs(quantity) > abs(position_quant[item]):
                     # Close all of Long position and turn to Short
                     if position_quant[item] > 0:
 
@@ -243,10 +245,29 @@ while checktime <= TIMESTAMP:
                             abs(position_quant[item])*price
                         position_quant[item] += quantity
                         position_average[item] = price
+                
+                # Trade equals position
+                else:
+                    # Close all of Long position
+                    if position_quant[item] > 0:
+
+                        profit[item] += abs(quantity)*price - \
+                            position_average[item]*abs(quantity)
+                        position_quant[item] = 0
+                        position_average[item] = 0
+
+                    # Close part of Short position
+                    else:
+                        profit[item] += position_average[item] * \
+                            abs(quantity) - \
+                            abs(quantity)*price
+                        position_quant[item] = 0
+                        position_average[item] = 0
+
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(checktime, result, profit, file=f)
+        print(checktime, result[berrie], position_quant[berrie], position_average[berrie], profit[berrie], file=f)
 
     checktime += 100
     index += 1

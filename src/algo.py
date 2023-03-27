@@ -410,6 +410,10 @@ class Trader:
                     product,
                     order_depth
                 )
+
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product]
+                
                 if len(pre_trade) > 99:
                     ma_20 = ( 
                         0.08 * pre_trade[-1] +

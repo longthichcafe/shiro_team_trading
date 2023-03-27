@@ -687,6 +687,7 @@ class Trader:
                 if product in state.position.keys() and state.position[product] != 0:
                     if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.05:
                         if state.position[product] > 0:
+                            # close long position 
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
 
@@ -695,6 +696,7 @@ class Trader:
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
                         else:
+                            # close short position
                             best_ask = min(order_depth.sell_orders.keys())
                             best_ask_volume = order_depth.sell_orders[best_ask]
 
