@@ -1,4 +1,4 @@
-from algo import *
+from developing_1 import *
 
 import random
 import pandas as pd
@@ -50,6 +50,11 @@ listings = {
     "UKULELE": Listing(
         symbol="UKULELE",
         product="UKULELE",
+        denomination="SEASHELLS"
+    ),
+    "PICNIC_BASKET": Listing(
+        symbol="PICNIC_BASKET",
+        product="PICNIC_BASKET",
         denomination="SEASHELLS"
     ),
     "PICNIC_BASKET": Listing(
@@ -204,13 +209,13 @@ def assign(row, product):
 
 
 while checktime <= TIMESTAMP:
-    # assign(index, pearl)
-    # assign(index, bananas)
-    # assign(index, coconuts)
-    # assign(index, pina)
-    # assign(index, berrie)
-    # assign(index, diving)
-    # assign(index, dolphin)
+    assign(index, pearl)
+    assign(index, bananas)
+    assign(index, coconuts)
+    assign(index, pina)
+    assign(index, berrie)
+    assign(index, diving)
+    assign(index, dolphin)
     assign(index, baguette)
     assign(index, dip)
     assign(index, uku)
@@ -311,10 +316,7 @@ while checktime <= TIMESTAMP:
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
         print(
-            checktime, 
-            position_quant, 
-            profit, 
-            position_quant, 
+            checktime,         
             profit, 
             file=f
         )
