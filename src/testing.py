@@ -121,7 +121,7 @@ index = 0
 row_index = 0
 order_depths = {}
 
-TIMESTAMP = 200000
+TIMESTAMP = 1000000
 
 pearl = "PEARLS"
 bananas = "BANANAS"
@@ -176,9 +176,6 @@ while checktime <= TIMESTAMP:
     assign(index, diving)
     assign(index, dolphin)
     
-
-    if checktime in [200, 1000]:
-        print(order_depths)
 
     result = trader.run(state=TradingState(
         timestamp=checktime,
@@ -273,7 +270,7 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-         print(checktime, result, profit, file=f)
+        print(checktime, result[berrie], position_quant[berrie], position_average[berrie], profit[berrie], file=f)
 
     checktime += 100
     index += 1
