@@ -1,4 +1,4 @@
-from algo import *
+from developing_2 import *
 
 import random
 import pandas as pd
@@ -267,7 +267,7 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(checktime, result[berrie], position_quant[berrie], position_average[berrie], profit[berrie], file=f)
+        print(checktime, result[pina], position_quant[pina], position_average[pina], profit[pina], file=f)
 
     checktime += 100
     index += 1

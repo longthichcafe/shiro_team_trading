@@ -587,7 +587,7 @@ class Trader:
                         best_bid_volume = order_depth.buy_orders[best_bid]
 
                         # DOWNward trend and undefined
-                        if n_decrease >= bearish_index and np.sum(trend_index) > 0.0002:
+                        if n_decrease >= bearish_index and np.sum(trend_index) < -0.0002:
                             if product in state.position.keys() and state.position[product] != 0:
                                 remaining_position = lowerlimit - \
                                     state.position[product]
@@ -937,7 +937,6 @@ class Trader:
                 trend_index_dophin.append(
                     pre_ma200_dolphin[-1] - pre_ma200_dolphin[-i-1]
                 )
-
             n_increase = 0
             n_decrease = 0
             trend_index_gear = []
