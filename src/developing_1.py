@@ -278,16 +278,16 @@ class Trader:
             orders: list[Order] = []
 
             if best_bid_volume > (-remaining_position):
-                # print(
-                #     "SELL", str(-remaining_position) + "x", best_bid
-                # )
+                print(
+                    "SELL", str(-remaining_position) + "x", best_bid
+                )
                 orders.append(
                     Order(product, best_bid, remaining_position)
                 )
             else:
-                # print(
-                #     "SELL", str(best_bid_volume) + "x", best_bid
-                # )
+                print(
+                    "SELL", str(best_bid_volume) + "x", best_bid
+                )
                 orders.append(
                     Order(product, best_bid, -best_bid_volume)
                 )
@@ -712,14 +712,14 @@ class Trader:
                         if state.position[product] > 0:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
-                            # print("SELL", str(state.position[product]) + "x", best_bid)
+                            print("SELL", str(state.position[product]) + "x", best_bid)
                             orders: list[Order] = []  
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
                         else:
                             best_ask = min(order_depth.sell_orders.keys())
                             best_ask_volume = order_depth.sell_orders[best_ask]
-                            # print("BUY", str(-state.position[product]) + "x", best_ask)
+                            print("BUY", str(-state.position[product]) + "x", best_ask)
                             orders: list[Order] = []
                             orders.append(
                                 Order(product, best_ask, -state.position[product]))
@@ -800,16 +800,16 @@ class Trader:
                     remaining_position = Trader.position_limit[product]
                 # remaining position is >0
                 if (-best_ask_volume) > remaining_position:
-                    # print(
-                    #     "BUY", str(remaining_position) + "x", best_ask
-                    # )
+                    print(
+                        "BUY", str(remaining_position) + "x", best_ask
+                    )
                     orders.append(
                         Order(product, best_ask, remaining_position)
                     )
                 else:
-                    # print(
-                    #     "BUY", str(-best_ask_volume) + "x", best_ask
-                    # )
+                    print(
+                        "BUY", str(-best_ask_volume) + "x", best_ask
+                    )
                     orders.append(
                         Order(product, best_ask, -best_ask_volume)
                     )
@@ -818,9 +818,9 @@ class Trader:
             elif product in state.position.keys() and state.position[product] > 0:
                 # when uptrend weaken
                 if not n_increase >= 6:
-                    # print(
-                    #     "SELL", str(state.position[product]) + "x", best_bid
-                    # )
+                    print(
+                        "SELL", str(state.position[product]) + "x", best_bid
+                    )
                     orders.append(
                         Order(product, best_bid, -state.position[product])
                     )
@@ -834,16 +834,16 @@ class Trader:
                     remaining_position = -Trader.position_limit[product]
                 # remaining position is <0
                 if best_bid_volume > (-remaining_position):
-                    # print(
-                    #     "SELL", str(-remaining_position) + "x", best_bid
-                    # )
+                    print(
+                        "SELL", str(-remaining_position) + "x", best_bid
+                    )
                     orders.append(
                         Order(product, best_bid, remaining_position)
                     )
                 else:
-                    # print(
-                    #     "SELL", str(best_bid_volume) + "x", best_bid
-                    # )
+                    print(
+                        "SELL", str(best_bid_volume) + "x", best_bid
+                    )
                     orders.append(
                         Order(product, best_bid, -best_bid_volume)
                     )
@@ -852,9 +852,9 @@ class Trader:
             elif product in state.position.keys() and state.position[product] < 0: 
                 # when downtrend weaken
                 if not n_decrease >= 6:
-                    # print(
-                    #     "BUY", str(-state.position[product]) + "x", best_ask
-                    # )
+                    print(
+                        "BUY", str(-state.position[product]) + "x", best_ask
+                    )
                     orders.append(
                         Order(product, best_ask, -state.position[product])
                     )
@@ -942,6 +942,7 @@ class Trader:
         PICNIC BASKET
         '''
         product = 'PICNIC_BASKET'
+        order_depth: OrderDepth = state.order_depths[product]
         # GET DIFFERENCE IN PICNIC
         current_sum = (
             4*current_price_dip + 2*current_price_baguette + current_price_ukulele
@@ -1016,6 +1017,7 @@ class Trader:
         mean = 7087
         upperlimit = Trader.position_limit[product]
         lowerlimit = -Trader.position_limit[product] 
+        order_depth: OrderDepth = state.order_depths[product]
         # SELL when higher than mean
         if (current_price_dip - mean) > 30:
             if order_depth.buy_orders:
