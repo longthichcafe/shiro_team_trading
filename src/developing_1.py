@@ -634,7 +634,7 @@ class Trader:
         # Identify trend
         if len(pre_ma200_coco) > 100:
             i_trend = []
-            # compute the %change in moving avg 200 
+            # compute the change in moving avg 200 
             for i in [10,20,30,40,50,60,70,80,90,100]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
@@ -773,7 +773,7 @@ class Trader:
                 trend_index_gear.append(
                     pre_ma100_gear[-1] - pre_ma100_gear[-i-1]
                 )
-            for pct_change in i_trend:
+            for pct_change in trend_index_gear:
                 if pct_change < 0:
                     n_decrease += 1
                 if pct_change > 0:
