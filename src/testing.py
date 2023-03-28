@@ -1,4 +1,4 @@
-from developing_1 import *
+from algo import *
 
 import random
 import pandas as pd
@@ -172,9 +172,9 @@ while checktime <= TIMESTAMP:
     assign(index, bananas)
     assign(index, coconuts)
     assign(index, pina)
-    assign(index, berrie)
-    assign(index, diving)
-    assign(index, dolphin)
+    # assign(index, berrie)
+    # assign(index, diving)
+    # assign(index, dolphin)
     
 
     result = trader.run(state=TradingState(
@@ -270,7 +270,14 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(checktime, result[berrie], position_quant[berrie], position_average[berrie], profit[berrie], file=f)
+        print(
+            checktime, 
+            position_quant[coconuts], 
+            profit[coconuts], 
+            position_quant[pina], 
+            profit[pina], 
+            file=f
+        )
 
     checktime += 100
     index += 1
