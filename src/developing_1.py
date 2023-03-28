@@ -251,16 +251,16 @@ class Trader:
             orders: list[Order] = []
 
             if (-best_ask_volume) > remaining_position:
-                # print(
-                #     "BUY", str(remaining_position) + "x", best_ask
-                # )
+                print(
+                    "BUY", str(remaining_position) + "x", best_ask
+                )
                 orders.append(
                     Order(product, best_ask, remaining_position)
                 )
             else:
-                # print(
-                #     "BUY", str(-best_ask_volume) + "x", best_ask
-                # )
+                print(
+                    "BUY", str(-best_ask_volume) + "x", best_ask
+                )
                 orders.append(
                     Order(product, best_ask, -best_ask_volume)
                 )
@@ -979,35 +979,33 @@ class Trader:
                 if current_diff > 100 and n_increase < 8:
                     if order_depth.buy_orders:
                         best_bid = max(order_depth.buy_orders.keys())
-                        best_bid_volume = order_depth.buy_orders[best_bid]
-                        if best_bid > adaptive_ma20:       
-                            remaining_position = limit_calculation(
-                                product,
-                                lowerlimit
-                                )
-                            result[product] = sell(
-                                product,
-                                best_bid_volume,
-                                remaining_position,
-                                best_bid
+                        best_bid_volume = order_depth.buy_orders[best_bid]      
+                        remaining_position = limit_calculation(
+                            product,
+                            lowerlimit
                             )
+                        result[product] = sell(
+                            product,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )
                 # BUY condition
                 if current_diff < 100 and n_decrease < 8:
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
-                        if best_ask < adaptive_ma20:
-                            remaining_position = limit_calculation(
-                                product,
-                                upperlimit
-                            )
-                            # remaining position is > 0
-                            result[product] = buy(
-                                product,
-                                best_ask_volume,
-                                remaining_position,
-                                best_ask
-                            )
+                        remaining_position = limit_calculation(
+                            product,
+                            upperlimit
+                        )
+                        # remaining position is > 0
+                        result[product] = buy(
+                            product,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
 
         '''
         DIP
@@ -1023,36 +1021,34 @@ class Trader:
         if (current_price_dip - mean) > 30:
             if order_depth.buy_orders:
                 best_bid = max(order_depth.buy_orders.keys())
-                best_bid_volume = order_depth.buy_orders[best_bid]
-                if best_bid > adaptive_ma20:       
-                    remaining_position = limit_calculation(
-                        product,
-                        lowerlimit
-                        )
-                    result[product] = sell(
-                        product,
-                        best_bid_volume,
-                        remaining_position,
-                        best_bid
+                best_bid_volume = order_depth.buy_orders[best_bid]     
+                remaining_position = limit_calculation(
+                    product,
+                    lowerlimit
                     )
+                result[product] = sell(
+                    product,
+                    best_bid_volume,
+                    remaining_position,
+                    best_bid
+                )
         
         # BUY when lower than mean
         if (current_price_dip - mean) < -30:
             if order_depth.sell_orders:
                 best_ask = min(order_depth.sell_orders.keys())
                 best_ask_volume = order_depth.sell_orders[best_ask]
-                if best_ask < adaptive_ma20:
-                    remaining_position = limit_calculation(
-                        product,
-                        upperlimit
-                    )
-                    # remaining position is > 0
-                    result[product] = buy(
-                        product,
-                        best_ask_volume,
-                        remaining_position,
-                        best_ask
-                    )
+                remaining_position = limit_calculation(
+                    product,
+                    upperlimit
+                )
+                # remaining position is > 0
+                result[product] = buy(
+                    product,
+                    best_ask_volume,
+                    remaining_position,
+                    best_ask
+                )
 
 
         return result
