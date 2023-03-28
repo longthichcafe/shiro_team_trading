@@ -426,7 +426,7 @@ class Trader:
                         upperlimit = 50
                         lowerlimit = 0
                         buy_flag = True
-                    elif state.timestamp in range(120000, 130000, 500):
+                    elif state.timestamp in range(120000, 130000, 1000):
                         upperlimit = 200
                         lowerlimit = 0
                         buy_flag = True
@@ -450,7 +450,7 @@ class Trader:
                         )
 
                 # Only SELL
-                elif state.timestamp in range(490000, 510000, 500):
+                elif state.timestamp in range(490000, 520000, 500):
                     upperlimit = 0
                     lowerlimit = -250
 
@@ -471,15 +471,15 @@ class Trader:
                 # Close SHORT Position  
                 elif state.timestamp in range(510000, 1000000):
                     buy_flag = False
-                    if state.timestamp in range(740000, 760000, 1000):
+                    if state.timestamp in range(740000, 755000, 1000):
                         upperlimit = 0
-                        lowerlimit = -200
+                        lowerlimit = -175
                         buy_flag = True
-                    elif state.timestamp in range(490000, 510000, 1000):
+                    elif state.timestamp in range(874000, 875500, 1000):
                         upperlimit = 0
-                        lowerlimit = -150
+                        lowerlimit = -100
                         buy_flag = True
-                    elif state.timestamp in range(490000, 510000, 500):
+                    elif state.timestamp in range(990000, 1000000, 500):
                         upperlimit = 0
                         lowerlimit = 0
                         buy_flag = True
