@@ -37,6 +37,26 @@ listings = {
         product="DIVING_GEAR",
         denomination="SEASHELLS"
     ),
+    "BAGUETTE": Listing(
+        symbol="BAGUETTE",
+        product="BAGUETTE",
+        denomination="SEASHELLS"
+    ),
+    "DIP": Listing(
+        symbol="DIP",
+        product="DIP",
+        denomination="SEASHELLS"
+    ),
+    "UKULELE": Listing(
+        symbol="UKULELE",
+        product="UKULELE",
+        denomination="SEASHELLS"
+    ),
+    "PICNIC_BASKET": Listing(
+        symbol="PICNIC_BASKET",
+        product="PICNIC_BASKET",
+        denomination="SEASHELLS"
+    ),
 }
 # Orders sent by trading bots  == TEST INPUT
 
@@ -67,7 +87,11 @@ position_quant = {
     "COCONUTS": 0,
     "PINA_COLADAS": 0,
     "BERRIES": 0,
-    "DIVING_GEAR": 0
+    "DIVING_GEAR": 0,
+    "BAGUETTE": 0,
+    "DIP": 0,
+    "UKULELE": 0,
+    "PICNIC_BASKET": 0,
 }
 
 position_average = {
@@ -76,7 +100,11 @@ position_average = {
     "COCONUTS": 0,
     "PINA_COLADAS": 0,
     "BERRIES": 0,
-    "DIVING_GEAR": 0
+    "DIVING_GEAR": 0,
+    "BAGUETTE": 0,
+    "DIP": 0,
+    "UKULELE": 0,
+    "PICNIC_BASKET": 0,
 }
 
 profit = {
@@ -85,7 +113,11 @@ profit = {
     "COCONUTS": 0,
     "PINA_COLADAS": 0,
     "BERRIES": 0,
-    "DIVING_GEAR": 0
+    "DIVING_GEAR": 0,
+    "BAGUETTE": 0,
+    "DIP": 0,
+    "UKULELE": 0,
+    "PICNIC_BASKET": 0,
 }
 
 observations = {}
@@ -130,6 +162,10 @@ pina = "PINA_COLADAS"
 berrie = "BERRIES"
 diving = "DIVING_GEAR"
 dolphin = "DOLPHIN_SIGHTINGS"
+baguette = "BAGUETTE"
+dip = "DIP"
+uku = "UKULELE"
+basket = "PICNIC_BASKET"
 
 
 def assign(row, product):
@@ -168,13 +204,17 @@ def assign(row, product):
 
 
 while checktime <= TIMESTAMP:
-    assign(index, pearl)
-    assign(index, bananas)
-    assign(index, coconuts)
-    assign(index, pina)
+    # assign(index, pearl)
+    # assign(index, bananas)
+    # assign(index, coconuts)
+    # assign(index, pina)
     # assign(index, berrie)
     # assign(index, diving)
     # assign(index, dolphin)
+    assign(index, baguette)
+    assign(index, dip)
+    assign(index, uku)
+    assign(index, basket)
     
 
     result = trader.run(state=TradingState(
@@ -272,10 +312,10 @@ while checktime <= TIMESTAMP:
     with open("output.csv", "a") as f:
         print(
             checktime, 
-            position_quant[coconuts], 
-            profit[coconuts], 
-            position_quant[pina], 
-            profit[pina], 
+            position_quant, 
+            profit, 
+            position_quant, 
+            profit, 
             file=f
         )
 
