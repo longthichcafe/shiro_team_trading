@@ -1,4 +1,4 @@
-from developing_2 import *
+from developing_1 import *
 
 import random
 import pandas as pd
@@ -129,37 +129,41 @@ coconuts = "COCONUTS"
 pina = "PINA_COLADAS"
 berrie = "BERRIES"
 diving = "DIVING_GEAR"
+dolphin = "DOLPHIN_SIGHTINGS"
 
 
 def assign(row, product):
-    # todo: do dolphin case
+    # assign diving gear
     dataframe = df[df['product'] == product]
     row = dataframe.iloc[row]
-    bid_price_1 = row['bid_price_1']
-    bid_volume_1 = row['bid_volume_1']
-    bid_price_2 = row['bid_price_2']
-    bid_volume_2 = row['bid_volume_2']
-    bid_price_3 = row['bid_price_3']
-    bid_volume_3 = row['bid_volume_3']
-    ask_price_1 = row['ask_price_1']
-    ask_volume_1 = row['ask_volume_1']
-    ask_price_2 = row['ask_price_2']
-    ask_volume_2 = row['ask_volume_2']
-    ask_price_3 = row['ask_price_3']
-    ask_volume_3 = row['ask_volume_3']
+    if product == "DOLPHIN_SIGHTINGS":
+        observations["DOLPHIN_SIGHTINGS"] = row["mid_price"]
+    else:
+        bid_price_1 = row['bid_price_1']
+        bid_volume_1 = row['bid_volume_1']
+        bid_price_2 = row['bid_price_2']
+        bid_volume_2 = row['bid_volume_2']
+        bid_price_3 = row['bid_price_3']
+        bid_volume_3 = row['bid_volume_3']
+        ask_price_1 = row['ask_price_1']
+        ask_volume_1 = row['ask_volume_1']
+        ask_price_2 = row['ask_price_2']
+        ask_volume_2 = row['ask_volume_2']
+        ask_price_3 = row['ask_price_3']
+        ask_volume_3 = row['ask_volume_3']
 
-    order_depths[product] = OrderDepth(
-        buy_orders = {
-            bid_price_1: bid_volume_1,
-            bid_price_2: bid_volume_2,
-            bid_price_3: bid_volume_3
-        },
-        sell_orders = {
-            ask_price_1: -ask_volume_1,
-            ask_price_2: -ask_volume_2,
-            ask_price_3: -ask_volume_3
-        }
-    )
+        order_depths[product] = OrderDepth(
+            buy_orders = {
+                bid_price_1: bid_volume_1,
+                bid_price_2: bid_volume_2,
+                bid_price_3: bid_volume_3
+            },
+            sell_orders = {
+                ask_price_1: -ask_volume_1,
+                ask_price_2: -ask_volume_2,
+                ask_price_3: -ask_volume_3
+            }
+        )
     # print(order_depths[product].buy_orders)
 
 
@@ -170,6 +174,8 @@ while checktime <= TIMESTAMP:
     assign(index, pina)
     assign(index, berrie)
     assign(index, diving)
+    assign(index, dolphin)
+    
 
     if checktime in [200, 1000]:
         print(order_depths)
@@ -267,7 +273,7 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(checktime, result[pina], position_quant[pina], position_average[pina], profit[pina], file=f)
+         print(checktime, result, profit, file=f)
 
     checktime += 100
     index += 1
