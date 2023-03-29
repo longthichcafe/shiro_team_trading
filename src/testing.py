@@ -57,11 +57,7 @@ listings = {
         product="PICNIC_BASKET",
         denomination="SEASHELLS"
     ),
-    "PICNIC_BASKET": Listing(
-        symbol="PICNIC_BASKET",
-        product="PICNIC_BASKET",
-        denomination="SEASHELLS"
-    ),
+
 }
 # Orders sent by trading bots  == TEST INPUT
 
@@ -321,34 +317,34 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        if result[pina]:
-            print(
-                checktime,
-                pina,
-                result[pina][0].price,
-                result[pina][0].quantity,          
-                profit[pina], 
-                sep=';',
-                file=f
-            )
-        if result[coconuts]:
-            print(
-                checktime,
-                coconuts,
-                result[coconuts][0].price,
-                result[coconuts][0].quantity,          
-                profit[coconuts], 
-                sep=';',
-                file=f
-            )
-            
-        # TEST ALL:
-        # print(
+        # if result[pina]:
+        #     print(
         #         checktime,
-        #         result,
-        #         profit,
+        #         pina,
+        #         result[pina][0].price,
+        #         result[pina][0].quantity,          
+        #         profit[pina], 
+        #         sep=';',
         #         file=f
         #     )
+        # if result[coconuts]:
+        #     print(
+        #         checktime,
+        #         coconuts,
+        #         result[coconuts][0].price,
+        #         result[coconuts][0].quantity,          
+        #         profit[coconuts], 
+        #         sep=';',
+        #         file=f
+        #     )
+            
+        # TEST ALL:
+        print(
+                checktime,
+                result,
+                profit,
+                file=f
+            )
         
             
     checktime += 100
