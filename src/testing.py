@@ -341,7 +341,7 @@ while checktime <= TIMESTAMP:
         # TEST ALL:
         print(
                 checktime,
-                result,
+                # result,
                 profit,
                 file=f
             )

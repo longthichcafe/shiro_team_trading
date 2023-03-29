@@ -711,7 +711,7 @@ class Trader:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
                             # print("SELL", str(state.position[product]) + "x", best_bid)
-                            orders: list[Order] = []  
+                            orders: list[Order] = []
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
                         else:
