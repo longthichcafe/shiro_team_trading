@@ -708,7 +708,11 @@ class Trader:
                 order_depth: OrderDepth = state.order_depths[product]
 
                 if product in state.position.keys() and state.position[product] != 0:
+<<<<<<< Updated upstream
                     if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.08:
+=======
+                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.01:
+>>>>>>> Stashed changes
                         if state.position[product] > 0:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]

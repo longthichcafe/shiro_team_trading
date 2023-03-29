@@ -222,6 +222,11 @@ while checktime <= TIMESTAMP:
     assign(index, uku)
     assign(index, basket)
     
+    # test pina and coco only
+    # assign(index, pina)
+    # assign(index, coconuts)
+    
+    
 
     result = trader.run(state=TradingState(
         timestamp=checktime,
