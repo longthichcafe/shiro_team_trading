@@ -158,8 +158,10 @@ def assign(row, product):
 
 while checktime <= TIMESTAMP:    
     # test dip 
-    assign(index, basket)
+    assign(index, baguette)
     assign(index, dip)
+    assign(index, uku)
+    assign(index, basket)
     
     
     result = trader.run(state=TradingState(
@@ -279,7 +281,7 @@ while checktime <= TIMESTAMP:
         #         sep=';',
         #         file=f
         #     )
-        if result[dip]:
+        # if result[dip]:
             print(
                 checktime,  
                 dip,       
