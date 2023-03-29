@@ -579,8 +579,8 @@ class Trader:
                     current_price = best_bid
                 # rescale the price
                 # rescale the price
-                mean = 8000
-                sd = 44.08487
+                mean = 7926.96
+                sd = 12.5475
                 current_price = (current_price - mean) / sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]              
@@ -606,8 +606,8 @@ class Trader:
                 elif order_depth.sell_orders:
                     current_price = best_bid
                 # rescale the price
-                mean = 15000
-                sd = 84.45238
+                mean = 14885.35
+                sd = 29.1494
                 current_price = (current_price - mean)/sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]             
@@ -713,7 +713,7 @@ class Trader:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
                             # print("SELL", str(state.position[product]) + "x", best_bid)
-                            orders: list[Order] = []  
+                            orders: list[Order] = []
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
                         else:
