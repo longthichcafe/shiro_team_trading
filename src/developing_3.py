@@ -971,43 +971,117 @@ class Trader:
                     if pct_change > 0:
                         n_increase += 1
 
-                product_basket = 'PICNIC_BASKET'
-                upperlimit_picnic = Trader.position_limit[product_basket]
-                lowerlimit_picnic = -Trader.position_limit[product_basket] 
+                product_picnic = 'PICNIC_BASKET'
+                product_baguette = 'BAGUETTE'
+                product_ukulele = 'UKULELE'
 
-                # SELL Basket condition
+                upperlimit_picnic = Trader.position_limit[product_picnic]
+                lowerlimit_picnic = -Trader.position_limit[product_picnic]
+                upperlimit_baguette = Trader.position_limit[product_baguette]
+                lowerlimit_baguette = -Trader.position_limit[product_baguette] 
+                upperlimit_ukulele = Trader.position_limit[product_ukulele]
+                lowerlimit_ukulele = -Trader.position_limit[product_ukulele] 
+
+                # SELL Basket, BUY Uku & Bag condition
                 if current_diff > 100 and n_increase < 8:
-                    
-                    order_depth: OrderDepth = state.order_depths[product_basket]
+                    # Basket
+                    order_depth: OrderDepth = state.order_depths[product_picnic]
                     if order_depth.buy_orders:
                         best_bid = max(order_depth.buy_orders.keys())
                         best_bid_volume = order_depth.buy_orders[best_bid]      
                         remaining_position = limit_calculation(
-                            product_basket,
+                            product_picnic,
                             lowerlimit_picnic
                             )
-                        result[product_basket] = sell(
-                            product_basket,
+                        result[product_picnic] = sell(
+                            product_picnic,
                             best_bid_volume,
                             remaining_position,
                             best_bid
                         )
-                    # B
-                # BUY Basket condition
-                if current_diff < 100 and n_decrease < 8:
+
+                    # Baguette
+                    order_depth: OrderDepth = state.order_depths[product_baguette]
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
                         remaining_position = limit_calculation(
-                            product_basket,
-                            upperlimit_picnic
+                            product_baguette,
+                            upperlimit_baguette
                         )
                         # remaining position is > 0
-                        result[product_basket] = buy(
-                            product_basket,
+                        result[product_baguette] = buy(
+                            product_baguette,
                             best_ask_volume,
                             remaining_position,
                             best_ask
+                        )
+
+                    # Ukulele
+                    order_depth: OrderDepth = state.order_depths[product_ukulele]
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product_ukulele,
+                            upperlimit_ukulele
+                        )
+                        # remaining position is > 0
+                        result[product_ukulele] = buy(
+                            product_ukulele,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+
+                # BUY Basket, SELL Uku & Bag condition
+                if current_diff < 100 and n_decrease < 8:
+                    # Picnic basket
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product_picnic,
+                            upperlimit_picnic
+                        )
+                        # remaining position is > 0
+                        result[product_picnic] = buy(
+                            product_picnic,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+
+                    # Baguette
+                    order_depth: OrderDepth = state.order_depths[product_baguette]
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]      
+                        remaining_position = limit_calculation(
+                            product_baguette,
+                            lowerlimit_baguette
+                            )
+                        result[product_baguette] = sell(
+                            product_baguette,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )
+
+                    # Ukulele
+                    order_depth: OrderDepth = state.order_depths[product_ukulele]
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]      
+                        remaining_position = limit_calculation(
+                            product_ukulele,
+                            lowerlimit_ukulele
+                            )
+                        result[product_ukulele] = sell(
+                            product_ukulele,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
                         )
 
         '''
