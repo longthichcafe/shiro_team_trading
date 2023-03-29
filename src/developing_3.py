@@ -946,7 +946,7 @@ class Trader:
         current_sum = (
             4*current_price_dip + 2*current_price_baguette + current_price_ukulele
         )
-        current_diff = current_price_picnic - current_sum - 375.7248
+        current_diff = current_price_picnic - current_sum - 366.9504
         Trader.pre_trades['DIFF_PICNIC'].append(current_diff)
         pre_diff = Trader.pre_trades['DIFF_PICNIC']
 
