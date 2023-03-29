@@ -1,4 +1,4 @@
-from algo import *
+from algo_pina_coco import *
 
 import random
 import pandas as pd
@@ -242,20 +242,16 @@ while checktime <= TIMESTAMP:
     with open("outputPINA-COCO.csv", "a") as f:
         if result[pina]:
             print(
-                checktime,
-                pina,
-                result[pina][0].price,
-                result[pina][0].quantity,          
+                checktime, 
+                pina,        
                 profit[pina], 
                 sep=';',
                 file=f
             )
         if result[coconuts]:
             print(
-                checktime,
-                coconuts,
-                result[coconuts][0].price,
-                result[coconuts][0].quantity,          
+                checktime,  
+                coconuts,       
                 profit[coconuts], 
                 sep=';',
                 file=f

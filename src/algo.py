@@ -632,10 +632,10 @@ class Trader:
         pre_ma20_pina = Trader.pre_ma20s['PINA_COLADAS']
 
         # Identify trend
-        if len(pre_ma200_coco) > 100:
+        if len(pre_ma200_coco) > 200:
             i_trend = []
             # compute the change in moving avg 200 
-            for i in [10,20,30,40,50,60,70,80,90,100]:
+            for i in [20,40,60,80,100,120,140,160,180,200]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
                      - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))
@@ -653,7 +653,7 @@ class Trader:
             # Identify GAP
             if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.3:
                 # UPward trend
-                # if n_increase > 3:
+                # if n_increase > 6:
                 if pre_ma20_coco[-1] > pre_ma20_pina[-1]:
                     product = 'PINA_COLADAS'
                 else:
@@ -678,7 +678,7 @@ class Trader:
                     )
                     
                 # DOWNward trend
-                # elif n_decrease > 3:
+                # elif n_decrease > 6:
                 if pre_ma20_coco[-1] < pre_ma20_pina[-1]:
                     product = 'PINA_COLADAS'
                 else:
@@ -699,7 +699,7 @@ class Trader:
                         best_bid_volume,
                         remaining_position,
                         best_bid
-                    )
+                    )   
 
             # CLOSE positions
             for product in ['COCONUTS', 'PINA_COLADAS']:
@@ -708,11 +708,7 @@ class Trader:
                 order_depth: OrderDepth = state.order_depths[product]
 
                 if product in state.position.keys() and state.position[product] != 0:
-<<<<<<< Updated upstream
                     if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.08:
-=======
-                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.01:
->>>>>>> Stashed changes
                         if state.position[product] > 0:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
