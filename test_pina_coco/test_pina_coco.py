@@ -62,7 +62,7 @@ observations = {}
 # ==============================================================  TEST ==============================================================
 # ==============================================================  TEST ==============================================================
 
-filepath = "src/test.csv"
+filepath = "test_pina_coco/test.csv"
 df = pd.read_csv(filepath, 
     delimiter = ';', 
     usecols = [
@@ -140,7 +140,8 @@ def assign(row, product):
     # print(order_depths[product].buy_orders)
 
 
-while checktime <= TIMESTAMP:    
+# while checktime <= TIMESTAMP:    
+while True:
     # test pina and coco only
     assign(index, pina)
     assign(index, coconuts)

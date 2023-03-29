@@ -398,63 +398,82 @@ class Trader:
         pre_ma20_pina = Trader.pre_ma20s['PINA_COLADAS']
 
         # Identify trend
-        if len(pre_ma200_coco) > 200:
+        """if len(pre_ma200_coco) > 200:
+            i_trend = []
+            # compute the change in moving avg 200 
+            for i in [20,40,60,80,100,120,140,160,180,200]:"""
+        if len(pre_ma200_coco) > 400:
+            i_trend = []
+            # compute the change in moving avg 200 
+            for i in [40,80,120,160,200,240,280,320,360,400]:
+                i_trend.append(
+                    (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
+                     - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))
+                )
+            n_increase = 0
+            n_decrease = 0
+
+            for pct_change in i_trend:
+                if pct_change < 0:
+                    n_decrease += 1
+                if pct_change > 0:
+                    n_increase += 1
+
             # --- STRATEGY ---
             # Identify GAP
-            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) >= 0.3:
-                for item in ['PINA_COLADAS', 'COCONUTS']:
+            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.3:
+                # UPward trend
+                if n_increase > 6:
                     if pre_ma20_coco[-1] > pre_ma20_pina[-1]:
-                        product_l = 'PINA_COLADAS'
-                        product_h = 'COCONUTS'
-                    else:
-                        product_h = 'PINA_COLADAS'
-                        product_l = 'COCONUTS'
+                        product = 'PINA_COLADAS'
+                        order_depth: OrderDepth = state.order_depths[product]
+                        upperlimit = Trader.position_limit[product]
+                        lowerlimit = -Trader.position_limit[product]                    
 
-                    order_depth: OrderDepth = state.order_depths[product_l]
-                    upperlimit = Trader.position_limit[product_l]
-                    lowerlimit = -Trader.position_limit[product_l]                    
-
-                    if order_depth.sell_orders:
-                        best_ask = min(order_depth.sell_orders.keys())
-                        best_ask_volume = order_depth.sell_orders[best_ask]
-                        remaining_position = limit_calculation(
-                            product_h,
-                            upperlimit
-                        )
-                        # remaining position is > 0
-                        result[product_h] = buy(
-                            product_l,
-                            best_ask_volume,
-                            remaining_position,
-                            best_ask
-                        )
-
-                    order_depth: OrderDepth = state.order_depths[product_h]
-                    upperlimit = Trader.position_limit[product_h]
-                    lowerlimit = -Trader.position_limit[product_h]    
-
-                    if order_depth.buy_orders:
-                        best_bid = max(order_depth.buy_orders.keys())
-                        best_bid_volume = order_depth.buy_orders[best_bid]
-                        remaining_position = limit_calculation(
-                            product_h,
-                            lowerlimit
+                        if order_depth.sell_orders:
+                            best_ask = min(order_depth.sell_orders.keys())
+                            best_ask_volume = order_depth.sell_orders[best_ask]
+                            remaining_position = limit_calculation(
+                                product,
+                                upperlimit
                             )
-                        result[product_h] = sell(
-                            product_h,
-                            best_bid_volume,
-                            remaining_position,
-                            best_bid
-                        )   
+                            result[product] = buy(
+                                product,
+                                best_ask_volume,
+                                remaining_position,
+                                best_ask
+                            )
+                    
+                # DOWNward trend
+                elif n_decrease > 6:
+                    if pre_ma20_coco[-1] < pre_ma20_pina[-1]:
+                        product = 'PINA_COLADAS'
+                        order_depth: OrderDepth = state.order_depths[product]
+                        upperlimit = Trader.position_limit[product]
+                        lowerlimit = -Trader.position_limit[product]
+
+                        if order_depth.buy_orders:
+                            best_bid = max(order_depth.buy_orders.keys())
+                            best_bid_volume = order_depth.buy_orders[best_bid]
+                            remaining_position = limit_calculation(
+                                product,
+                                lowerlimit
+                                )
+                            result[product] = sell(
+                                product,
+                                best_bid_volume,
+                                remaining_position,
+                                best_bid
+                            )
 
             # CLOSE positions
-            for product in ['COCONUTS', 'PINA_COLADAS']:
+            
+            for product in ['PINA_COLADAS']:
                 upperlimit = Trader.position_limit[product]
                 lowerlimit = -Trader.position_limit[product]
                 order_depth: OrderDepth = state.order_depths[product]
-
                 if product in state.position.keys() and state.position[product] != 0:
-                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.02:
+                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.01:
                         if state.position[product] > 0:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
