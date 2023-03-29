@@ -257,27 +257,35 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("outputBASKET.csv", "a") as f:
-        if result[uku]:
-            print(
-                checktime, 
-                uku,        
-                profit[uku], 
-                sep=';',
-                file=f
-            )
-        if result[baguette]:
+        # if result[uku]:
+        #     print(
+        #         checktime, 
+        #         uku,        
+        #         profit[uku], 
+        #         sep=';',
+        #         file=f
+        #     )
+        # if result[baguette]:
+        #     print(
+        #         checktime,  
+        #         baguette,       
+        #         profit[baguette], 
+        #         sep=';',
+        #         file=f
+        #     )
+        # if result[basket]:
+        #     print(
+        #         checktime,  
+        #         basket,       
+        #         profit[basket], 
+        #         sep=';',
+        #         file=f
+        #     )
+        if result[dip]:
             print(
                 checktime,  
-                baguette,       
-                profit[baguette], 
-                sep=';',
-                file=f
-            )
-        if result[basket]:
-            print(
-                checktime,  
-                basket,       
-                profit[basket], 
+                dip,       
+                profit[dip], 
                 sep=';',
                 file=f
             )

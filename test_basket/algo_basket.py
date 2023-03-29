@@ -152,10 +152,11 @@ class Trader:
         'BERRIES': [],
         'DIVING_GEAR': [],
         'DIP': [],
+        'RATIO_DIP':[],
         'BAGUETTE': [],
         'UKULELE': [],
         'PICNIC_BASKET': [],
-        'DIFF_PICNIC': []
+        'DIFF_PICNIC': [],
     }
     pre_observes = {
         'DOLPHIN_SIGHTINGS': []
@@ -183,6 +184,7 @@ class Trader:
         'DIVING_GEAR': [],
         'DOLPHIN_SIGHTINGS': [],
         'DIP': [],
+        'RATIO_DIP':[],
         'BAGUETTE': [],
         'UKULELE': [],
         'PICNIC_BASKET': [],
@@ -1037,6 +1039,7 @@ class Trader:
                 # BUY Basket, SELL Uku & Bag condition
                 if current_diff < 100 and n_decrease < 8:
                     # Picnic basket
+                    order_depth: OrderDepth = state.order_depths[product_picnic]
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
@@ -1090,42 +1093,69 @@ class Trader:
         Buy/sell based on average line
         '''
         product = 'DIP'
-        mean = 7087
-        upperlimit = Trader.position_limit[product]
-        lowerlimit = -Trader.position_limit[product] 
-        order_depth: OrderDepth = state.order_depths[product]
-        # SELL when higher than mean
-        if (current_price_dip - mean) > 30:
-            if order_depth.buy_orders:
-                best_bid = max(order_depth.buy_orders.keys())
-                best_bid_volume = order_depth.buy_orders[best_bid]     
-                remaining_position = limit_calculation(
-                    product,
-                    lowerlimit
-                    )
-                result[product] = sell(
-                    product,
-                    best_bid_volume,
-                    remaining_position,
-                    best_bid
-                )
         
-        # BUY when lower than mean
-        if (current_price_dip - mean) < -30:
-            if order_depth.sell_orders:
-                best_ask = min(order_depth.sell_orders.keys())
-                best_ask_volume = order_depth.sell_orders[best_ask]
-                remaining_position = limit_calculation(
-                    product,
-                    upperlimit
-                )
-                # remaining position is > 0
-                result[product] = buy(
-                    product,
-                    best_ask_volume,
-                    remaining_position,
-                    best_ask
-                )
+        ratio_dip_mean = 0.3829186
+        ratio_dip = (4*current_price_dip / current_price_picnic - ratio_dip_mean)*100
+
+        Trader.pre_trades['RATIO_DIP'].append(ratio_dip)
+        pre_ratio_dip = Trader.pre_trades['RATIO_DIP']
+
+        # Calculate moving avg 20 and 200
+        if len(pre_ratio_dip) > 99:
+            ma_100 = np.average(pre_ratio_dip[-100:])
+            Trader.pre_ma100s['RATIO_DIP'].append(ma_100)
+            pre_ma100_r_dip = Trader.pre_ma100s['RATIO_DIP']
+
+            if len(pre_ma100_r_dip) > 70:
+                n_increase = 0
+                n_decrease = 0
+                trend_index_r_dip = []
+                # compute the change in moving avg 200 
+                for i in [5,10,15,20,25,30,40,50,60,70]:
+                    trend_index_r_dip.append(
+                        pre_ma100_r_dip[-1] - pre_ma100_r_dip[-i-1]
+                    )
+                for pct_change in trend_index_r_dip:
+                    if pct_change < 0:
+                        n_decrease += 1
+                    if pct_change > 0:
+                        n_increase += 1
+
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product] 
+                order_depth: OrderDepth = state.order_depths[product]
+                
+                # SELL when higher than 0
+                if ratio_dip > 0.1 and n_increase < 8:
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]     
+                        remaining_position = limit_calculation(
+                            product,
+                            lowerlimit
+                            )
+                        result[product] = sell(
+                            product,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )                
+                # BUY when lower than 0
+                if ratio_dip < -0.1 and n_decrease < 8:
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product,
+                            upperlimit
+                        )
+                        # remaining position is > 0
+                        result[product] = buy(
+                            product,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
 
 
         return result
