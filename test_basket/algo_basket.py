@@ -1095,7 +1095,7 @@ class Trader:
         product = 'DIP'
         
         ratio_dip_mean = 0.3829186
-        ratio_dip = (4*current_price_dip / current_price_picnic - ratio_dip_mean)*100
+        ratio_dip = 4*current_price_dip / current_price_picnic - ratio_dip_mean
 
         Trader.pre_trades['RATIO_DIP'].append(ratio_dip)
         pre_ratio_dip = Trader.pre_trades['RATIO_DIP']
@@ -1141,7 +1141,7 @@ class Trader:
                             best_bid
                         )                
                 # BUY when lower than 0
-                if ratio_dip < -0.1 and n_decrease < 8:
+                if ratio_dip < 0.1 and n_decrease < 8:
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]

@@ -157,10 +157,8 @@ def assign(row, product):
 
 
 while checktime <= TIMESTAMP:    
-    # test pina and coco only
+    # test dip 
     assign(index, basket)
-    assign(index, uku)
-    assign(index, baguette)
     assign(index, dip)
     
     
