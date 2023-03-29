@@ -151,11 +151,11 @@ class Trader:
         'PINA_COLADAS': [],
         'BERRIES': [],
         'DIVING_GEAR': [],
-        "BAGUETTE": [],
-        "DIP": [],
-        "UKULELE": [],
-        "PICNIC_BASKET": [],
-        "DIFF_PICNIC": [],
+        'DIP': [],
+        'BAGUETTE': [],
+        'UKULELE': [],
+        'PICNIC_BASKET': [],
+        'DIFF_PICNIC': []
     }
     pre_observes = {
         'DOLPHIN_SIGHTINGS': []
@@ -168,11 +168,11 @@ class Trader:
         'BERRIES': [],
         'DIVING_GEAR': [],
         'DOLPHIN_SIGHTINGS': [],
-        "BAGUETTE": [],
-        "DIP": [],
-        "UKULELE": [],
-        "PICNIC_BASKET": [],
-        "DIFF_PICNIC": [],
+        'DIP': [],
+        'BAGUETTE': [],
+        'UKULELE': [],
+        'PICNIC_BASKET': [],
+        'DIFF_PICNIC': []
     }
     pre_ma100s = {
         'PEARLS': [],
@@ -182,11 +182,11 @@ class Trader:
         'BERRIES': [],
         'DIVING_GEAR': [],
         'DOLPHIN_SIGHTINGS': [],
-        "BAGUETTE": [],
-        "DIP": [],
-        "UKULELE": [],
-        "PICNIC_BASKET": [],
-        "DIFF_PICNIC": [],
+        'DIP': [],
+        'BAGUETTE': [],
+        'UKULELE': [],
+        'PICNIC_BASKET': [],
+        'DIFF_PICNIC': []
     }
     pre_ma200s = {
         'COCONUTS': [],
@@ -194,11 +194,11 @@ class Trader:
         'BERRIES': [],
         'DIVING_GEAR': [],
         'DOLPHIN_SIGHTINGS': [],
-        "BAGUETTE": [],
-        "DIP": [],
-        "UKULELE": [],
-        "PICNIC_BASKET": [],
-        "DIFF_PICNIC": [],
+        'DIP': [],
+        'BAGUETTE': [],
+        'UKULELE': [],
+        'PICNIC_BASKET': [],
+        'DIFF_PICNIC': []
     }
     position_limit = {
         'PEARLS': 20,
@@ -207,10 +207,10 @@ class Trader:
         'PINA_COLADAS': 300,
         'BERRIES': 250,
         'DIVING_GEAR': 50,
-        "BAGUETTE": 150,
-        "DIP": 300,
-        "UKULELE": 70,
-        "PICNIC_BASKET": 70,
+        'DIP': 300,
+        'BAGUETTE': 150,
+        'UKULELE': 70,
+        'PICNIC_BASKET': 70
     }
 
     def run(
@@ -231,10 +231,10 @@ class Trader:
             'PINA_COLADAS': [],
             'BERRIES': [],
             'DIVING_GEAR': [],
-            "BAGUETTE": [],
-            "DIP": [],
-            "UKULELE": [],
-            "PICNIC_BASKET": [],
+            'DIP': [],
+            'BAGUETTE': [],
+            'UKULELE': [],
+            'PICNIC_BASKET': []
         }
 
         # Iterate over all the keys (the available products) 
@@ -577,8 +577,8 @@ class Trader:
                     current_price = best_bid
                 # rescale the price
                 # rescale the price
-                mean = 8000
-                sd = 44.08487
+                mean = 7926.96
+                sd = 12.5475
                 current_price = (current_price - mean) / sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]              
@@ -604,8 +604,8 @@ class Trader:
                 elif order_depth.sell_orders:
                     current_price = best_bid
                 # rescale the price
-                mean = 15000
-                sd = 84.45238
+                mean = 14885.35
+                sd = 29.1494
                 current_price = (current_price - mean)/sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]             
@@ -651,117 +651,68 @@ class Trader:
                     n_increase += 1
             # --- STRATEGY ---
             # Identify GAP
-            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.2:
+            if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.3:
                 # UPward trend
-                if n_increase > 7:
-                    if pre_ma20_coco[-1] > pre_ma20_pina[-1]:
-                        product = 'PINA_COLADAS'
-                    else:
-                        product = 'COCONUTS'
-                    order_depth: OrderDepth = state.order_depths[product]
-                    upperlimit = Trader.position_limit[product]
-                    lowerlimit = -Trader.position_limit[product]                    
+                # if n_increase > 3:
+                if pre_ma20_coco[-1] > pre_ma20_pina[-1]:
+                    product = 'PINA_COLADAS'
+                else:
+                    product = 'COCONUTS'
+                order_depth: OrderDepth = state.order_depths[product]
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product]                    
 
-                    if order_depth.sell_orders:
-                        best_ask = min(order_depth.sell_orders.keys())
-                        best_ask_volume = order_depth.sell_orders[best_ask]
-                        remaining_position = limit_calculation(
-                            product,
-                            upperlimit
-                        )
-                        # remaining position is > 0
-                        result[product] = buy(
-                            product,
-                            best_ask_volume,
-                            remaining_position,
-                            best_ask
-                        )
-                    """
-                    for item in ['PINA_COLADAS','COCONUTS']:
-                        product = item
-                        order_depth: OrderDepth = state.order_depths[product]
-                        upperlimit = Trader.position_limit[product]
-                        lowerlimit = -Trader.position_limit[product]                    
-
-                        if order_depth.sell_orders:
-                            best_ask = min(order_depth.sell_orders.keys())
-                            best_ask_volume = order_depth.sell_orders[best_ask]
-                            remaining_position = limit_calculation(
-                                product,
-                                upperlimit
-                            )
-                            # remaining position is > 0
-                            result[product] = buy(
-                                product,
-                                best_ask_volume,
-                                remaining_position,
-                                best_ask
-                            )
-                    """
-                # DOWNward trend
-                elif n_decrease > 7:
-                    if pre_ma20_coco[-1] < pre_ma20_pina[-1]:
-                        product = 'PINA_COLADAS'
-                    else:
-                        product = 'COCONUTS'
-                    order_depth: OrderDepth = state.order_depths[product]
-                    upperlimit = Trader.position_limit[product]
-                    lowerlimit = -Trader.position_limit[product]
-
-                    if order_depth.buy_orders:
-                        best_bid = max(order_depth.buy_orders.keys())
-                        best_bid_volume = order_depth.buy_orders[best_bid]
-                        remaining_position = limit_calculation(
-                            product,
-                            lowerlimit
-                            )
-                        result[product] = sell(
-                            product,
-                            best_bid_volume,
-                            remaining_position,
-                            best_bid
-                        )
+                if order_depth.sell_orders:
+                    best_ask = min(order_depth.sell_orders.keys())
+                    best_ask_volume = order_depth.sell_orders[best_ask]
+                    remaining_position = limit_calculation(
+                        product,
+                        upperlimit
+                    )
+                    # remaining position is > 0
+                    result[product] = buy(
+                        product,
+                        best_ask_volume,
+                        remaining_position,
+                        best_ask
+                    )
                     
-                    """
-                    for item in ['PINA_COLADAS','COCONUTS']:
-                        product = item
-                        order_depth: OrderDepth = state.order_depths[product]
-                        upperlimit = Trader.position_limit[product]
-                        lowerlimit = -Trader.position_limit[product]                    
+                # DOWNward trend
+                # elif n_decrease > 3:
+                if pre_ma20_coco[-1] < pre_ma20_pina[-1]:
+                    product = 'PINA_COLADAS'
+                else:
+                    product = 'COCONUTS'
+                order_depth: OrderDepth = state.order_depths[product]
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product]
 
-                        if order_depth.buy_orders:
-                            best_bid = max(order_depth.buy_orders.keys())
-                            best_bid_volume = order_depth.buy_orders[best_bid]
-                            remaining_position = limit_calculation(
-                                product,
-                                lowerlimit
-                                )
-                            result[product] = sell(
-                                product,
-                                best_bid_volume,
-                                remaining_position,
-                                best_bid
-                            )
-                    """
-            """
-            if pre_ma20_coco[-1] > pre_ma20_pina[-1]:
-                coconuts = 'COCONUTS'
-            else:
-                pina_coladas = 'PINA_COLADAS'
-            """
+                if order_depth.buy_orders:
+                    best_bid = max(order_depth.buy_orders.keys())
+                    best_bid_volume = order_depth.buy_orders[best_bid]
+                    remaining_position = limit_calculation(
+                        product,
+                        lowerlimit
+                        )
+                    result[product] = sell(
+                        product,
+                        best_bid_volume,
+                        remaining_position,
+                        best_bid
+                    )
+
             # CLOSE positions
             for product in ['COCONUTS', 'PINA_COLADAS']:
-                if product == 'COCONUTS':
-                    CLOSE_GAP = 0.04
-                else:
-                    CLOSE_GAP = 0.06
-
                 upperlimit = Trader.position_limit[product]
                 lowerlimit = -Trader.position_limit[product]
                 order_depth: OrderDepth = state.order_depths[product]
-                
+
                 if product in state.position.keys() and state.position[product] != 0:
-                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < CLOSE_GAP:
+<<<<<<< Updated upstream
+                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.08:
+=======
+                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.01:
+>>>>>>> Stashed changes
                         if state.position[product] > 0:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
@@ -913,6 +864,7 @@ class Trader:
                     )
             result[product] = orders
 
+
         '''
         Strategy for PICNIC
         
@@ -994,6 +946,7 @@ class Trader:
         PICNIC BASKET
         '''
         product = 'PICNIC_BASKET'
+        order_depth: OrderDepth = state.order_depths[product]
         # GET DIFFERENCE IN PICNIC
         current_sum = (
             4*current_price_dip + 2*current_price_baguette + current_price_ukulele
@@ -1008,29 +961,29 @@ class Trader:
             Trader.pre_ma100s['DIFF_PICNIC'].append(ma_100)
             pre_ma100_diff = Trader.pre_ma100s['DIFF_PICNIC']
 
-            n_increase = 0
-            n_decrease = 0
-            trend_index_diff = []
-            # compute the change in moving avg 200 
-            for i in [5,10,15,20,25,30,40,50,60,70]:
-                trend_index_diff.append(
-                    pre_ma100_diff[-1] - pre_ma100_diff[-i-1]
-                )
-            for pct_change in trend_index_diff:
-                if pct_change < 0:
-                    n_decrease += 1
-                if pct_change > 0:
-                    n_increase += 1
+            if len(pre_ma100_diff) > 70:
+                n_increase = 0
+                n_decrease = 0
+                trend_index_diff = []
+                # compute the change in moving avg 200 
+                for i in [5,10,15,20,25,30,40,50,60,70]:
+                    trend_index_diff.append(
+                        pre_ma100_diff[-1] - pre_ma100_diff[-i-1]
+                    )
+                for pct_change in trend_index_diff:
+                    if pct_change < 0:
+                        n_decrease += 1
+                    if pct_change > 0:
+                        n_increase += 1
 
-            upperlimit = Trader.position_limit[product]
-            lowerlimit = -Trader.position_limit[product] 
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product] 
 
-            # SELL condition
-            if current_diff > 100 and n_increase < 8:
-                if order_depth.buy_orders:
-                    best_bid = max(order_depth.buy_orders.keys())
-                    best_bid_volume = order_depth.buy_orders[best_bid]
-                    if best_bid > adaptive_ma20:       
+                # SELL condition
+                if current_diff > 100 and n_increase < 8:
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]      
                         remaining_position = limit_calculation(
                             product,
                             lowerlimit
@@ -1041,12 +994,11 @@ class Trader:
                             remaining_position,
                             best_bid
                         )
-            # BUY condition
-            if current_diff < 100 and n_decrease < 8:
-                if order_depth.sell_orders:
-                    best_ask = min(order_depth.sell_orders.keys())
-                    best_ask_volume = order_depth.sell_orders[best_ask]
-                    if best_ask < adaptive_ma20:
+                # BUY condition
+                if current_diff < 100 and n_decrease < 8:
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
                         remaining_position = limit_calculation(
                             product,
                             upperlimit
@@ -1058,5 +1010,49 @@ class Trader:
                             remaining_position,
                             best_ask
                         )
+
+        '''
+        DIP
+
+        Buy/sell based on average line
+        '''
+        product = 'DIP'
+        mean = 7087
+        upperlimit = Trader.position_limit[product]
+        lowerlimit = -Trader.position_limit[product] 
+        order_depth: OrderDepth = state.order_depths[product]
+        # SELL when higher than mean
+        if (current_price_dip - mean) > 30:
+            if order_depth.buy_orders:
+                best_bid = max(order_depth.buy_orders.keys())
+                best_bid_volume = order_depth.buy_orders[best_bid]     
+                remaining_position = limit_calculation(
+                    product,
+                    lowerlimit
+                    )
+                result[product] = sell(
+                    product,
+                    best_bid_volume,
+                    remaining_position,
+                    best_bid
+                )
+        
+        # BUY when lower than mean
+        if (current_price_dip - mean) < -30:
+            if order_depth.sell_orders:
+                best_ask = min(order_depth.sell_orders.keys())
+                best_ask_volume = order_depth.sell_orders[best_ask]
+                remaining_position = limit_calculation(
+                    product,
+                    upperlimit
+                )
+                # remaining position is > 0
+                result[product] = buy(
+                    product,
+                    best_ask_volume,
+                    remaining_position,
+                    best_ask
+                )
+
 
         return result

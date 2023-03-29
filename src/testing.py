@@ -57,6 +57,11 @@ listings = {
         product="PICNIC_BASKET",
         denomination="SEASHELLS"
     ),
+    "PICNIC_BASKET": Listing(
+        symbol="PICNIC_BASKET",
+        product="PICNIC_BASKET",
+        denomination="SEASHELLS"
+    ),
 }
 # Orders sent by trading bots  == TEST INPUT
 
@@ -155,6 +160,7 @@ order_depths = {}
 
 TIMESTAMP = 1000000
 
+# PRODUCT:
 pearl = "PEARLS"
 bananas = "BANANAS"
 coconuts = "COCONUTS"
@@ -204,17 +210,22 @@ def assign(row, product):
 
 
 while checktime <= TIMESTAMP:
-    # assign(index, pearl)
-    # assign(index, bananas)
-    # assign(index, coconuts)
-    # assign(index, pina)
-    # assign(index, berrie)
-    # assign(index, diving)
-    # assign(index, dolphin)
+    assign(index, pearl)
+    assign(index, bananas)
+    assign(index, coconuts)
+    assign(index, pina)
+    assign(index, berrie)
+    assign(index, diving)
+    assign(index, dolphin)
     assign(index, baguette)
     assign(index, dip)
     assign(index, uku)
     assign(index, basket)
+    
+    # test pina and coco only
+    # assign(index, pina)
+    # assign(index, coconuts)
+    
     
 
     result = trader.run(state=TradingState(
@@ -310,15 +321,36 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(
-            checktime, 
-            position_quant, 
-            profit, 
-            position_quant, 
-            profit, 
-            file=f
-        )
-
+        if result[pina]:
+            print(
+                checktime,
+                pina,
+                result[pina][0].price,
+                result[pina][0].quantity,          
+                profit[pina], 
+                sep=';',
+                file=f
+            )
+        if result[coconuts]:
+            print(
+                checktime,
+                coconuts,
+                result[coconuts][0].price,
+                result[coconuts][0].quantity,          
+                profit[coconuts], 
+                sep=';',
+                file=f
+            )
+            
+        # TEST ALL:
+        # print(
+        #         checktime,
+        #         result,
+        #         profit,
+        #         file=f
+        #     )
+        
+            
     checktime += 100
     index += 1
 
