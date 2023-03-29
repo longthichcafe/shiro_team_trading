@@ -1,4 +1,4 @@
-from developing_1 import *
+from algo import *
 
 import random
 import pandas as pd
