@@ -160,6 +160,7 @@ order_depths = {}
 
 TIMESTAMP = 1000000
 
+# PRODUCT:
 pearl = "PEARLS"
 bananas = "BANANAS"
 coconuts = "COCONUTS"
