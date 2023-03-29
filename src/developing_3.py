@@ -1095,7 +1095,7 @@ class Trader:
         product = 'DIP'
         
         ratio_dip_mean = 0.3829186
-        ratio_dip = 4*current_price_dip / current_price_picnic - ratio_dip_mean
+        ratio_dip = (4*current_price_dip / current_price_picnic - ratio_dip_mean)*100
 
         Trader.pre_trades['RATIO_DIP'].append(ratio_dip)
         pre_ratio_dip = Trader.pre_trades['RATIO_DIP']
@@ -1110,7 +1110,7 @@ class Trader:
                 n_increase = 0
                 n_decrease = 0
                 trend_index_r_dip = []
-                # compute the change in moving avg 200 
+                # compute the change in moving avg 100 
                 for i in [5,10,15,20,25,30,40,50,60,70]:
                     trend_index_r_dip.append(
                         pre_ma100_r_dip[-1] - pre_ma100_r_dip[-i-1]
@@ -1126,7 +1126,7 @@ class Trader:
                 order_depth: OrderDepth = state.order_depths[product]
                 
                 # SELL when higher than 0
-                if ratio_dip > 0.1 and n_increase < 8:
+                if ratio_dip > 0.1 and n_increase < 9:
                     if order_depth.buy_orders:
                         best_bid = max(order_depth.buy_orders.keys())
                         best_bid_volume = order_depth.buy_orders[best_bid]     
@@ -1141,7 +1141,7 @@ class Trader:
                             best_bid
                         )                
                 # BUY when lower than 0
-                if ratio_dip < 0.1 and n_decrease < 8:
+                if ratio_dip < -0.1 and n_decrease < 9:
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
