@@ -315,12 +315,36 @@ while checktime <= TIMESTAMP:
 
     # put the result in to output.csv file
     with open("output.csv", "a") as f:
-        print(
-            checktime,         
-            profit, 
-            file=f
-        )
-
+        if result[pina]:
+            print(
+                checktime,
+                pina,
+                result[pina][0].price,
+                result[pina][0].quantity,          
+                profit[pina], 
+                sep=';',
+                file=f
+            )
+        if result[coconuts]:
+            print(
+                checktime,
+                coconuts,
+                result[coconuts][0].price,
+                result[coconuts][0].quantity,          
+                profit[coconuts], 
+                sep=';',
+                file=f
+            )
+            
+        # TEST ALL:
+        # print(
+        #         checktime,
+        #         result,
+        #         profit,
+        #         file=f
+        #     )
+        
+            
     checktime += 100
     index += 1
 
