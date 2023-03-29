@@ -1037,6 +1037,7 @@ class Trader:
                 # BUY Basket, SELL Uku & Bag condition
                 if current_diff < 100 and n_decrease < 8:
                     # Picnic basket
+                    order_depth: OrderDepth = state.order_depths[product_picnic]
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
