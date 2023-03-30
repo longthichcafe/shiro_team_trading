@@ -1,4 +1,4 @@
-from developing_3 import *
+from algo import *
 
 import random
 import pandas as pd
@@ -342,7 +342,7 @@ while checktime <= TIMESTAMP:
         print(
                 checktime,
                 # result,
-                profit,
+                profit[pina],
                 file=f
             )
         

@@ -349,10 +349,10 @@ class Trader:
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]              
                 # Calculate moving avg 20 and 200
-                if len(pre_trade) > 299:
+                if len(pre_trade) > 199:
                     ma_20 = np.average(pre_trade[-20:])
                     Trader.pre_ma20s[product].append(ma_20)
-                    ma_200 = np.average(pre_trade[-300:])
+                    ma_200 = np.average(pre_trade[-200:])
                     Trader.pre_ma200s[product].append(ma_200)
          
             if product == 'PINA_COLADAS':
@@ -376,11 +376,11 @@ class Trader:
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]             
                 # Calculate moving avg 200
-                if len(pre_trade) > 299:                    
+                if len(pre_trade) > 199:                    
                     ma_20 = np.average(pre_trade[-20:])
                     Trader.pre_ma20s[product].append(ma_20)
 
-                    ma_200 = np.average(pre_trade[-300:])
+                    ma_200 = np.average(pre_trade[-200:])
                     Trader.pre_ma200s[product].append(ma_200)
         """
         The strategy for COCONUTS and PINA_COLADAS starts here: 
@@ -398,14 +398,10 @@ class Trader:
         pre_ma20_pina = Trader.pre_ma20s['PINA_COLADAS']
 
         # Identify trend
-        """if len(pre_ma200_coco) > 200:
+        if len(pre_ma200_coco) > 200:
             i_trend = []
             # compute the change in moving avg 200 
-            for i in [20,40,60,80,100,120,140,160,180,200]:"""
-        if len(pre_ma200_coco) > 300:
-            i_trend = []
-            # compute the change in moving avg 200 
-            for i in [30,60,90,120,150,180,210,240,270,300]:
+            for i in [20,40,60,80,100,120,140,160,180,200]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
                      - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))
@@ -467,7 +463,6 @@ class Trader:
                             )
 
             # CLOSE positions
-            
             for product in ['PINA_COLADAS']:
                 upperlimit = Trader.position_limit[product]
                 lowerlimit = -Trader.position_limit[product]
@@ -478,7 +473,7 @@ class Trader:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
                             # print("SELL", str(state.position[product]) + "x", best_bid)
-                            orders: list[Order] = []  
+                            orders: list[Order] = []
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
                         else:

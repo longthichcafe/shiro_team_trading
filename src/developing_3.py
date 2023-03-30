@@ -583,8 +583,8 @@ class Trader:
                     current_price = best_bid
                 # rescale the price
                 # rescale the price
-                mean = 7926.96
-                sd = 12.5475
+                mean = 8000
+                sd = 44.08487
                 current_price = (current_price - mean) / sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]              
@@ -610,8 +610,8 @@ class Trader:
                 elif order_depth.sell_orders:
                     current_price = best_bid
                 # rescale the price
-                mean = 14885.35
-                sd = 29.1494
+                mean = 15000
+                sd = 84.45238
                 current_price = (current_price - mean)/sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]             
@@ -638,10 +638,6 @@ class Trader:
         pre_ma20_pina = Trader.pre_ma20s['PINA_COLADAS']
 
         # Identify trend
-        """if len(pre_ma200_coco) > 200:
-            i_trend = []
-            # compute the change in moving avg 200 
-            for i in [20,40,60,80,100,120,140,160,180,200]:"""
         if len(pre_ma200_coco) > 200:
             i_trend = []
             # compute the change in moving avg 200 
