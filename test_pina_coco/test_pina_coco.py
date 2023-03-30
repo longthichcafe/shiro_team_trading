@@ -244,7 +244,8 @@ while True:
         if result[pina]:
             print(
                 checktime, 
-                pina,        
+                result[pina][0].price,  
+                result[pina][0].quantity,      
                 profit[pina], 
                 sep=';',
                 file=f
@@ -252,7 +253,8 @@ while True:
         if result[coconuts]:
             print(
                 checktime,  
-                coconuts,       
+                result[coconuts][0].price,  
+                result[coconuts][0].quantity,       
                 profit[coconuts], 
                 sep=';',
                 file=f
