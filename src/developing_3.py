@@ -638,10 +638,10 @@ class Trader:
             i_trend = []
             # compute the change in moving avg 200 
             for i in [20,40,60,80,100,120,140,160,180,200]:"""
-        if len(pre_ma200_coco) > 400:
+        if len(pre_ma200_coco) > 200:
             i_trend = []
             # compute the change in moving avg 200 
-            for i in [40,80,120,160,200,240,280,320,360,400]:
+            for i in [20,40,60,80,100,120,140,160,180,200]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
                      - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))
