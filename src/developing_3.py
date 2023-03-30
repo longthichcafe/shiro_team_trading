@@ -152,9 +152,11 @@ class Trader:
         'BERRIES': [],
         'DIVING_GEAR': [],
         'DIP': [],
-        'RATIO_DIP':[],
+        'ratio_DIP':[],
         'BAGUETTE': [],
+        'scale_BAGUETTE': [],
         'UKULELE': [],
+        'scale_UKULELE': [],
         'PICNIC_BASKET': [],
         'DIFF_PICNIC': [],
     }
@@ -184,9 +186,11 @@ class Trader:
         'DIVING_GEAR': [],
         'DOLPHIN_SIGHTINGS': [],
         'DIP': [],
-        'RATIO_DIP':[],
+        'ratio_DIP':[],
         'BAGUETTE': [],
+        'scale_BAGUETTE': [],
         'UKULELE': [],
+        'scale_UKULELE': [],
         'PICNIC_BASKET': [],
         'DIFF_PICNIC': []
     }
@@ -1095,14 +1099,14 @@ class Trader:
         ratio_dip_mean = 0.3829186
         ratio_dip = (4*current_price_dip / current_price_picnic - ratio_dip_mean)*100
 
-        Trader.pre_trades['RATIO_DIP'].append(ratio_dip)
-        pre_ratio_dip = Trader.pre_trades['RATIO_DIP']
+        Trader.pre_trades['ratio_DIP'].append(ratio_dip)
+        pre_ratio_dip = Trader.pre_trades['ratio_DIP']
 
         # Calculate moving avg 20 and 200
         if len(pre_ratio_dip) > 99:
             ma_100 = np.average(pre_ratio_dip[-100:])
-            Trader.pre_ma100s['RATIO_DIP'].append(ma_100)
-            pre_ma100_r_dip = Trader.pre_ma100s['RATIO_DIP']
+            Trader.pre_ma100s['ratio_DIP'].append(ma_100)
+            pre_ma100_r_dip = Trader.pre_ma100s['ratio_DIP']
 
             if len(pre_ma100_r_dip) > 70:
                 n_increase = 0
@@ -1140,6 +1144,152 @@ class Trader:
                         )                
                 # BUY when lower than 0
                 if ratio_dip < -0.1 and n_decrease < 9:
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product,
+                            upperlimit
+                        )
+                        # remaining position is > 0
+                        result[product] = buy(
+                            product,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+        
+        '''
+        BAGUETTE
+
+        Scale: price/ratio
+        Assumption: price strongly correlated with ratio
+        '''
+        product = 'BAGUETTE'
+                
+        ratio_baguette = (2*current_price_baguette / current_price_picnic)*100
+
+        mean_s_baguette = 369.0429
+        scale_baguette = current_price_baguette/ratio_baguette - mean_s_baguette
+
+        Trader.pre_trades['scale_BAGUETTE'].append(scale_baguette)
+        pre_scale_baguette = Trader.pre_trades['scale_BAGUETTE']
+
+        # Calculate moving avg 20 and 200
+        if len(pre_scale_baguette) > 99:
+            ma_100 = np.average(pre_scale_baguette[-100:])
+            Trader.pre_ma100s['scale_BAGUETTE'].append(ma_100)
+            pre_ma100_s_baguette = Trader.pre_ma100s['scale_BAGUETTE']
+
+            if len(pre_ma100_s_baguette) > 70:
+                n_increase = 0
+                n_decrease = 0
+                trend_index_s_baguette = []
+                # compute the change in moving avg 100 
+                for i in [5,10,15,20,25,30,40,50,60,70]:
+                    trend_index_s_baguette.append(
+                        pre_ma100_s_baguette[-1] - pre_ma100_s_baguette[-i-1]
+                    )
+                for pct_change in trend_index_s_baguette:
+                    if pct_change < 0:
+                        n_decrease += 1
+                    if pct_change > 0:
+                        n_increase += 1
+
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product] 
+                order_depth: OrderDepth = state.order_depths[product]
+                
+                # SELL when higher than 1
+                if scale_baguette > 1.2 and n_increase < 9:
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]     
+                        remaining_position = limit_calculation(
+                            product,
+                            lowerlimit
+                            )
+                        result[product] = sell(
+                            product,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )                
+                # BUY when lower than 1
+                if scale_baguette < -1.2 and n_decrease < 9:
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product,
+                            upperlimit
+                        )
+                        # remaining position is > 0
+                        result[product] = buy(
+                            product,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+
+        '''
+        UKULELE
+
+        Scale: price/ratio
+        Assumption: price strongly correlated with ratio
+        '''
+        product = 'UKULELE'
+                
+        ratio_ukulele = (current_price_ukulele / current_price_picnic)*100
+
+        mean_s_ukulele = 738.0857
+        scale_ukulele = current_price_ukulele/ratio_ukulele - mean_s_ukulele
+
+        Trader.pre_trades['scale_UKULELE'].append(scale_ukulele)
+        pre_scale_ukulele = Trader.pre_trades['scale_UKULELE']
+
+        # Calculate moving avg 20 and 200
+        if len(pre_scale_ukulele) > 99:
+            ma_100 = np.average(pre_scale_ukulele[-100:])
+            Trader.pre_ma100s['scale_UKULELE'].append(ma_100)
+            pre_ma100_s_ukulele = Trader.pre_ma100s['scale_UKULELE']
+
+            if len(pre_ma100_s_ukulele) > 70:
+                n_increase = 0
+                n_decrease = 0
+                trend_index_s_ukulele = []
+                # compute the change in moving avg 100 
+                for i in [5,10,15,20,25,30,40,50,60,70]:
+                    trend_index_s_ukulele.append(
+                        pre_ma100_s_ukulele[-1] - pre_ma100_s_ukulele[-i-1]
+                    )
+                for pct_change in trend_index_s_ukulele:
+                    if pct_change < 0:
+                        n_decrease += 1
+                    if pct_change > 0:
+                        n_increase += 1
+
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product] 
+                order_depth: OrderDepth = state.order_depths[product]
+                
+                # SELL when higher than 1
+                if scale_ukulele > 2.5 and n_increase < 9:
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]     
+                        remaining_position = limit_calculation(
+                            product,
+                            lowerlimit
+                            )
+                        result[product] = sell(
+                            product,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )                
+                # BUY when lower than 1
+                if scale_ukulele < -2.5 and n_decrease < 9:
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
