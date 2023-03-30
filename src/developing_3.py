@@ -583,8 +583,8 @@ class Trader:
                     current_price = best_bid
                 # rescale the price
                 # rescale the price
-                mean = 8000
-                sd = 44.08487
+                mean = 7926.96
+                sd = 12.5475
                 current_price = (current_price - mean) / sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]              
@@ -610,8 +610,8 @@ class Trader:
                 elif order_depth.sell_orders:
                     current_price = best_bid
                 # rescale the price
-                mean = 15000
-                sd = 84.45238
+                mean = 14885.35
+                sd = 29.1494
                 current_price = (current_price - mean)/sd
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]             
@@ -642,10 +642,10 @@ class Trader:
             i_trend = []
             # compute the change in moving avg 200 
             for i in [20,40,60,80,100,120,140,160,180,200]:"""
-        if len(pre_ma200_coco) > 400:
+        if len(pre_ma200_coco) > 200:
             i_trend = []
             # compute the change in moving avg 200 
-            for i in [40,80,120,160,200,240,280,320,360,400]:
+            for i in [20,40,60,80,100,120,140,160,180,200]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
                      - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))
@@ -717,7 +717,7 @@ class Trader:
                             best_bid = max(order_depth.buy_orders.keys())
                             best_bid_volume = order_depth.buy_orders[best_bid]
                             # print("SELL", str(state.position[product]) + "x", best_bid)
-                            orders: list[Order] = []  
+                            orders: list[Order] = []
                             orders.append(
                                 Order(product, best_bid, -state.position[product]))
                         else:

@@ -349,10 +349,10 @@ class Trader:
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]              
                 # Calculate moving avg 20 and 200
-                if len(pre_trade) > 199:
+                if len(pre_trade) > 299:
                     ma_20 = np.average(pre_trade[-20:])
                     Trader.pre_ma20s[product].append(ma_20)
-                    ma_200 = np.average(pre_trade[-200:])
+                    ma_200 = np.average(pre_trade[-300:])
                     Trader.pre_ma200s[product].append(ma_200)
          
             if product == 'PINA_COLADAS':
@@ -376,11 +376,11 @@ class Trader:
                 Trader.pre_trades[product].append(current_price)
                 pre_trade = Trader.pre_trades[product]             
                 # Calculate moving avg 200
-                if len(pre_trade) > 199:                    
+                if len(pre_trade) > 299:                    
                     ma_20 = np.average(pre_trade[-20:])
                     Trader.pre_ma20s[product].append(ma_20)
 
-                    ma_200 = np.average(pre_trade[-200:])
+                    ma_200 = np.average(pre_trade[-300:])
                     Trader.pre_ma200s[product].append(ma_200)
         """
         The strategy for COCONUTS and PINA_COLADAS starts here: 
@@ -402,10 +402,10 @@ class Trader:
             i_trend = []
             # compute the change in moving avg 200 
             for i in [20,40,60,80,100,120,140,160,180,200]:"""
-        if len(pre_ma200_coco) > 400:
+        if len(pre_ma200_coco) > 300:
             i_trend = []
             # compute the change in moving avg 200 
-            for i in [40,80,120,160,200,240,280,320,360,400]:
+            for i in [30,60,90,120,150,180,210,240,270,300]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
                      - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))

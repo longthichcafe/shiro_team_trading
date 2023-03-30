@@ -156,7 +156,8 @@ def assign(row, product):
     # print(order_depths[product].buy_orders)
 
 
-while checktime <= TIMESTAMP:    
+# while checktime <= TIMESTAMP:   
+while True: 
     # test dip 
     assign(index, baguette)
     assign(index, dip)
