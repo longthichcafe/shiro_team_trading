@@ -152,10 +152,13 @@ class Trader:
         'BERRIES': [],
         'DIVING_GEAR': [],
         'DIP': [],
+        'ratio_DIP':[],
         'BAGUETTE': [],
+        'scale_BAGUETTE': [],
         'UKULELE': [],
+        'scale_UKULELE': [],
         'PICNIC_BASKET': [],
-        'DIFF_PICNIC': []
+        'DIFF_PICNIC': [],
     }
     pre_observes = {
         'DOLPHIN_SIGHTINGS': []
@@ -183,8 +186,11 @@ class Trader:
         'DIVING_GEAR': [],
         'DOLPHIN_SIGHTINGS': [],
         'DIP': [],
+        'ratio_DIP':[],
         'BAGUETTE': [],
+        'scale_BAGUETTE': [],
         'UKULELE': [],
+        'scale_UKULELE': [],
         'PICNIC_BASKET': [],
         'DIFF_PICNIC': []
     }
@@ -251,16 +257,16 @@ class Trader:
             orders: list[Order] = []
 
             if (-best_ask_volume) > remaining_position:
-                # print(
-                #     "BUY", str(remaining_position) + "x", best_ask
-                # )
+                print(
+                    "BUY", str(remaining_position) + "x", best_ask
+                )
                 orders.append(
                     Order(product, best_ask, remaining_position)
                 )
             else:
-                # print(
-                #     "BUY", str(-best_ask_volume) + "x", best_ask
-                # )
+                print(
+                    "BUY", str(-best_ask_volume) + "x", best_ask
+                )
                 orders.append(
                     Order(product, best_ask, -best_ask_volume)
                 )
@@ -278,16 +284,16 @@ class Trader:
             orders: list[Order] = []
 
             if best_bid_volume > (-remaining_position):
-                # print(
-                #     "SELL", str(-remaining_position) + "x", best_bid
-                # )
+                print(
+                    "SELL", str(-remaining_position) + "x", best_bid
+                )
                 orders.append(
                     Order(product, best_bid, remaining_position)
                 )
             else:
-                # print(
-                #     "SELL", str(best_bid_volume) + "x", best_bid
-                # )
+                print(
+                    "SELL", str(best_bid_volume) + "x", best_bid
+                )
                 orders.append(
                     Order(product, best_bid, -best_bid_volume)
                 )
@@ -623,7 +629,6 @@ class Trader:
         - Rescale
         - Long/Short on widened Gap with trend identified
         - Close positions when Gap narrows
-
         """
         pre_ma200_coco = Trader.pre_ma200s['COCONUTS']
         pre_ma200_pina = Trader.pre_ma200s['PINA_COLADAS']
@@ -632,14 +637,10 @@ class Trader:
         pre_ma20_pina = Trader.pre_ma20s['PINA_COLADAS']
 
         # Identify trend
-        """if len(pre_ma200_coco) > 200:
+        if len(pre_ma200_coco) > 200:
             i_trend = []
             # compute the change in moving avg 200 
-            for i in [20,40,60,80,100,120,140,160,180,200]:"""
-        if len(pre_ma200_coco) > 400:
-            i_trend = []
-            # compute the change in moving avg 200 
-            for i in [40,80,120,160,200,240,280,320,360,400]:
+            for i in [20,40,60,80,100,120,140,160,180,200]:
                 i_trend.append(
                     (np.average([pre_ma200_coco[-1],pre_ma200_pina[-1]]) 
                      - np.average([pre_ma200_coco[-i-1],pre_ma200_pina[-i-1]]))
@@ -798,16 +799,16 @@ class Trader:
                     remaining_position = Trader.position_limit[product]
                 # remaining position is >0
                 if (-best_ask_volume) > remaining_position:
-                    # print(
-                    #     "BUY", str(remaining_position) + "x", best_ask
-                    # )
+                    print(
+                        "BUY", str(remaining_position) + "x", best_ask
+                    )
                     orders.append(
                         Order(product, best_ask, remaining_position)
                     )
                 else:
-                    # print(
-                    #     "BUY", str(-best_ask_volume) + "x", best_ask
-                    # )
+                    print(
+                        "BUY", str(-best_ask_volume) + "x", best_ask
+                    )
                     orders.append(
                         Order(product, best_ask, -best_ask_volume)
                     )
@@ -816,9 +817,9 @@ class Trader:
             elif product in state.position.keys() and state.position[product] > 0:
                 # when uptrend weaken
                 if not n_increase >= 6:
-                    # print(
-                    #     "SELL", str(state.position[product]) + "x", best_bid
-                    # )
+                    print(
+                        "SELL", str(state.position[product]) + "x", best_bid
+                    )
                     orders.append(
                         Order(product, best_bid, -state.position[product])
                     )
@@ -832,16 +833,16 @@ class Trader:
                     remaining_position = -Trader.position_limit[product]
                 # remaining position is <0
                 if best_bid_volume > (-remaining_position):
-                    # print(
-                    #     "SELL", str(-remaining_position) + "x", best_bid
-                    # )
+                    print(
+                        "SELL", str(-remaining_position) + "x", best_bid
+                    )
                     orders.append(
                         Order(product, best_bid, remaining_position)
                     )
                 else:
-                    # print(
-                    #     "SELL", str(best_bid_volume) + "x", best_bid
-                    # )
+                    print(
+                        "SELL", str(best_bid_volume) + "x", best_bid
+                    )
                     orders.append(
                         Order(product, best_bid, -best_bid_volume)
                     )
@@ -850,18 +851,16 @@ class Trader:
             elif product in state.position.keys() and state.position[product] < 0: 
                 # when downtrend weaken
                 if not n_decrease >= 6:
-                    # print(
-                    #     "BUY", str(-state.position[product]) + "x", best_ask
-                    # )
+                    print(
+                        "BUY", str(-state.position[product]) + "x", best_ask
+                    )
                     orders.append(
                         Order(product, best_ask, -state.position[product])
                     )
             result[product] = orders
 
-
         '''
         Strategy for PICNIC
-        
         '''
         for product in state.order_depths.keys():
             if product == 'DIP':
@@ -939,13 +938,12 @@ class Trader:
         '''
         PICNIC BASKET
         '''
-        product = 'PICNIC_BASKET'
-        order_depth: OrderDepth = state.order_depths[product]
+        
         # GET DIFFERENCE IN PICNIC
         current_sum = (
             4*current_price_dip + 2*current_price_baguette + current_price_ukulele
         )
-        current_diff = current_price_picnic - current_sum - 375.7248
+        current_diff = current_price_picnic - current_sum - 366.9504
         Trader.pre_trades['DIFF_PICNIC'].append(current_diff)
         pre_diff = Trader.pre_trades['DIFF_PICNIC']
 
@@ -970,14 +968,163 @@ class Trader:
                     if pct_change > 0:
                         n_increase += 1
 
-                upperlimit = Trader.position_limit[product]
-                lowerlimit = -Trader.position_limit[product] 
+                product_picnic = 'PICNIC_BASKET'
+                product_baguette = 'BAGUETTE'
+                product_ukulele = 'UKULELE'
 
-                # SELL condition
+                upperlimit_picnic = Trader.position_limit[product_picnic]
+                lowerlimit_picnic = -Trader.position_limit[product_picnic]
+                upperlimit_baguette = Trader.position_limit[product_baguette]
+                lowerlimit_baguette = -Trader.position_limit[product_baguette] 
+                upperlimit_ukulele = Trader.position_limit[product_ukulele]
+                lowerlimit_ukulele = -Trader.position_limit[product_ukulele] 
+
+                # SELL Basket, BUY Uku & Bag condition
                 if current_diff > 100 and n_increase < 8:
+                    # Basket
+                    order_depth: OrderDepth = state.order_depths[product_picnic]
                     if order_depth.buy_orders:
                         best_bid = max(order_depth.buy_orders.keys())
                         best_bid_volume = order_depth.buy_orders[best_bid]      
+                        remaining_position = limit_calculation(
+                            product_picnic,
+                            lowerlimit_picnic
+                            )
+                        result[product_picnic] = sell(
+                            product_picnic,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )
+
+                    # Baguette
+                    order_depth: OrderDepth = state.order_depths[product_baguette]
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product_baguette,
+                            upperlimit_baguette
+                        )
+                        # remaining position is > 0
+                        result[product_baguette] = buy(
+                            product_baguette,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+
+                    # Ukulele
+                    order_depth: OrderDepth = state.order_depths[product_ukulele]
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product_ukulele,
+                            upperlimit_ukulele
+                        )
+                        # remaining position is > 0
+                        result[product_ukulele] = buy(
+                            product_ukulele,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+
+                # BUY Basket, SELL Uku & Bag condition
+                if current_diff < 100 and n_decrease < 8:
+                    # Picnic basket
+                    order_depth: OrderDepth = state.order_depths[product_picnic]
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product_picnic,
+                            upperlimit_picnic
+                        )
+                        # remaining position is > 0
+                        result[product_picnic] = buy(
+                            product_picnic,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+
+                    # Baguette
+                    order_depth: OrderDepth = state.order_depths[product_baguette]
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]      
+                        remaining_position = limit_calculation(
+                            product_baguette,
+                            lowerlimit_baguette
+                            )
+                        result[product_baguette] = sell(
+                            product_baguette,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )
+
+                    # Ukulele
+                    order_depth: OrderDepth = state.order_depths[product_ukulele]
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]      
+                        remaining_position = limit_calculation(
+                            product_ukulele,
+                            lowerlimit_ukulele
+                            )
+                        result[product_ukulele] = sell(
+                            product_ukulele,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )
+
+        '''
+        DIP
+
+        Buy/sell based on average line
+        '''
+        product = 'DIP'
+        
+        ratio_dip_mean = 0.3829186
+        ratio_dip = (4*current_price_dip / current_price_picnic - ratio_dip_mean)*100
+
+        Trader.pre_trades['ratio_DIP'].append(ratio_dip)
+        pre_ratio_dip = Trader.pre_trades['ratio_DIP']
+
+        # Calculate moving avg 20 and 200
+        if len(pre_ratio_dip) > 99:
+            ma_100 = np.average(pre_ratio_dip[-100:])
+            Trader.pre_ma100s['ratio_DIP'].append(ma_100)
+            pre_ma100_r_dip = Trader.pre_ma100s['ratio_DIP']
+
+            if len(pre_ma100_r_dip) > 70:
+                n_increase = 0
+                n_decrease = 0
+                trend_index_r_dip = []
+                # compute the change in moving avg 100 
+                for i in [5,10,15,20,25,30,40,50,60,70]:
+                    trend_index_r_dip.append(
+                        pre_ma100_r_dip[-1] - pre_ma100_r_dip[-i-1]
+                    )
+                for pct_change in trend_index_r_dip:
+                    if pct_change < 0:
+                        n_decrease += 1
+                    if pct_change > 0:
+                        n_increase += 1
+
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product] 
+                order_depth: OrderDepth = state.order_depths[product]
+                
+                # SELL when higher than 0
+                if ratio_dip > 0.1 and n_increase < 9:
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]     
                         remaining_position = limit_calculation(
                             product,
                             lowerlimit
@@ -987,9 +1134,82 @@ class Trader:
                             best_bid_volume,
                             remaining_position,
                             best_bid
+                        )                
+                # BUY when lower than 0
+                if ratio_dip < -0.1 and n_decrease < 9:
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product,
+                            upperlimit
                         )
-                # BUY condition
-                if current_diff < 100 and n_decrease < 8:
+                        # remaining position is > 0
+                        result[product] = buy(
+                            product,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
+        
+        '''
+        BAGUETTE
+
+        Scale: price/ratio
+        Assumption: price strongly correlated with ratio
+        '''
+        product = 'BAGUETTE'
+                
+        ratio_baguette = (2*current_price_baguette / current_price_picnic)*100
+
+        mean_s_baguette = 369.0429
+        scale_baguette = current_price_baguette/ratio_baguette - mean_s_baguette
+
+        Trader.pre_trades['scale_BAGUETTE'].append(scale_baguette)
+        pre_scale_baguette = Trader.pre_trades['scale_BAGUETTE']
+
+        # Calculate moving avg 20 and 200
+        if len(pre_scale_baguette) > 99:
+            ma_100 = np.average(pre_scale_baguette[-100:])
+            Trader.pre_ma100s['scale_BAGUETTE'].append(ma_100)
+            pre_ma100_s_baguette = Trader.pre_ma100s['scale_BAGUETTE']
+
+            if len(pre_ma100_s_baguette) > 70:
+                n_increase = 0
+                n_decrease = 0
+                trend_index_s_baguette = []
+                # compute the change in moving avg 100 
+                for i in [5,10,15,20,25,30,40,50,60,70]:
+                    trend_index_s_baguette.append(
+                        pre_ma100_s_baguette[-1] - pre_ma100_s_baguette[-i-1]
+                    )
+                for pct_change in trend_index_s_baguette:
+                    if pct_change < 0:
+                        n_decrease += 1
+                    if pct_change > 0:
+                        n_increase += 1
+
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product] 
+                order_depth: OrderDepth = state.order_depths[product]
+                
+                # SELL when higher than 1
+                if scale_baguette > 1.2 and n_increase < 9:
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]     
+                        remaining_position = limit_calculation(
+                            product,
+                            lowerlimit
+                            )
+                        result[product] = sell(
+                            product,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )                
+                # BUY when lower than 1
+                if scale_baguette < -1.2 and n_decrease < 9:
                     if order_depth.sell_orders:
                         best_ask = min(order_depth.sell_orders.keys())
                         best_ask_volume = order_depth.sell_orders[best_ask]
@@ -1006,47 +1226,77 @@ class Trader:
                         )
 
         '''
-        DIP
+        UKULELE
 
-        Buy/sell based on average line
+        Scale: price/ratio
+        Assumption: price strongly correlated with ratio
         '''
-        product = 'DIP'
-        mean = 7087
-        upperlimit = Trader.position_limit[product]
-        lowerlimit = -Trader.position_limit[product] 
-        order_depth: OrderDepth = state.order_depths[product]
-        # SELL when higher than mean
-        if (current_price_dip - mean) > 30:
-            if order_depth.buy_orders:
-                best_bid = max(order_depth.buy_orders.keys())
-                best_bid_volume = order_depth.buy_orders[best_bid]     
-                remaining_position = limit_calculation(
-                    product,
-                    lowerlimit
+        product = 'UKULELE'
+                
+        ratio_ukulele = (current_price_ukulele / current_price_picnic)*100
+
+        mean_s_ukulele = 738.0857
+        scale_ukulele = current_price_ukulele/ratio_ukulele - mean_s_ukulele
+
+        Trader.pre_trades['scale_UKULELE'].append(scale_ukulele)
+        pre_scale_ukulele = Trader.pre_trades['scale_UKULELE']
+
+        # Calculate moving avg 20 and 200
+        if len(pre_scale_ukulele) > 99:
+            ma_100 = np.average(pre_scale_ukulele[-100:])
+            Trader.pre_ma100s['scale_UKULELE'].append(ma_100)
+            pre_ma100_s_ukulele = Trader.pre_ma100s['scale_UKULELE']
+
+            if len(pre_ma100_s_ukulele) > 70:
+                n_increase = 0
+                n_decrease = 0
+                trend_index_s_ukulele = []
+                # compute the change in moving avg 100 
+                for i in [5,10,15,20,25,30,40,50,60,70]:
+                    trend_index_s_ukulele.append(
+                        pre_ma100_s_ukulele[-1] - pre_ma100_s_ukulele[-i-1]
                     )
-                result[product] = sell(
-                    product,
-                    best_bid_volume,
-                    remaining_position,
-                    best_bid
-                )
-        
-        # BUY when lower than mean
-        if (current_price_dip - mean) < -30:
-            if order_depth.sell_orders:
-                best_ask = min(order_depth.sell_orders.keys())
-                best_ask_volume = order_depth.sell_orders[best_ask]
-                remaining_position = limit_calculation(
-                    product,
-                    upperlimit
-                )
-                # remaining position is > 0
-                result[product] = buy(
-                    product,
-                    best_ask_volume,
-                    remaining_position,
-                    best_ask
-                )
+                for pct_change in trend_index_s_ukulele:
+                    if pct_change < 0:
+                        n_decrease += 1
+                    if pct_change > 0:
+                        n_increase += 1
+
+                upperlimit = Trader.position_limit[product]
+                lowerlimit = -Trader.position_limit[product] 
+                order_depth: OrderDepth = state.order_depths[product]
+                
+                # SELL when higher than 1
+                if scale_ukulele > 2.5 and n_increase < 9:
+                    if order_depth.buy_orders:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]     
+                        remaining_position = limit_calculation(
+                            product,
+                            lowerlimit
+                            )
+                        result[product] = sell(
+                            product,
+                            best_bid_volume,
+                            remaining_position,
+                            best_bid
+                        )                
+                # BUY when lower than 1
+                if scale_ukulele < -2.5 and n_decrease < 9:
+                    if order_depth.sell_orders:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        remaining_position = limit_calculation(
+                            product,
+                            upperlimit
+                        )
+                        # remaining position is > 0
+                        result[product] = buy(
+                            product,
+                            best_ask_volume,
+                            remaining_position,
+                            best_ask
+                        )
 
 
         return result
