@@ -1,4 +1,4 @@
-from algo_pina_coco import *
+from previous_pina_coco import *
 
 import random
 import pandas as pd
@@ -241,24 +241,44 @@ while True:
 
     # put the result in to output.csv file
     with open("outputPINA-COCO.csv", "a") as f:
-        if result[pina]:
+        if result[pina] and result[coconuts]:
             print(
                 checktime, 
                 result[pina][0].price,  
                 result[pina][0].quantity,      
                 profit[pina], 
+                result[coconuts][0].price,  
+                result[coconuts][0].quantity,       
+                profit[coconuts],
                 sep=';',
                 file=f
             )
-        if result[coconuts]:
+        elif result[pina]:
+            print(
+                checktime, 
+                result[pina][0].price,  
+                result[pina][0].quantity,      
+                profit[pina],
+                'NA',
+                'NA',
+                'NA', 
+                sep=';',
+                file=f
+            )
+        elif result[coconuts]:
             print(
                 checktime,  
+                'NA',
+                'NA',
+                'NA', 
                 result[coconuts][0].price,  
                 result[coconuts][0].quantity,       
                 profit[coconuts], 
                 sep=';',
                 file=f
             )
+
+        
                         
     checktime += 100
     index += 1
