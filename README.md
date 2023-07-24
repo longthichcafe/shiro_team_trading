@@ -26,7 +26,7 @@ For Bananas, the bid and ask price always have a consistent gap and some spikes 
 Midpoint is defined by:
 $$mid_t = \frac{ask_t + bid_t}{2}$$
 
-Moving average:
+Simple Exponential Smoothing Equation:
 $$l_t = a*mid_t + (1-a)*l_{t-1}$$
 
 
