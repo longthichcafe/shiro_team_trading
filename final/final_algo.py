@@ -317,261 +317,197 @@ class Trader:
             
             return remaining_position
 
-        for product in state.order_depths.keys():
 
-            if product == 'PEARLS':
-                """
-                The strategy for PEARLS starts here: 
+        product == 'PEARLS'
+        """
+        The strategy for PEARLS starts here: 
 
-                Enter position when current price cross 10000
-                """
-                order_depth: OrderDepth = state.order_depths[product]
-                upperlimit = Trader.position_limit[product]
-                lowerlimit = -Trader.position_limit[product]
+        Enter position when current price cross 10000
+        """
+        order_depth: OrderDepth = state.order_depths[product]
+        upperlimit = Trader.position_limit[product]
+        lowerlimit = -Trader.position_limit[product]
 
-                if order_depth.sell_orders:
-                    best_ask = min(order_depth.sell_orders.keys())
-                    best_ask_volume = order_depth.sell_orders[best_ask]
-                    # BUY conditions
-                    if best_ask < 10000:
-                        remaining_position = limit_calculation(
-                            product,
-                            upperlimit
-                        )
-                        result[product] = buy(
-                            product,
-                            best_ask_volume,
-                            remaining_position,
-                            best_ask
-                        )
+        if order_depth.sell_orders:
+            best_ask = min(order_depth.sell_orders.keys())
+            best_ask_volume = order_depth.sell_orders[best_ask]
+            # BUY conditions
+            if best_ask < 10000:
+                remaining_position = limit_calculation(
+                    product,
+                    upperlimit
+                )
+                result[product] = buy(
+                    product,
+                    best_ask_volume,
+                    remaining_position,
+                    best_ask
+                )
 
-                if len(order_depth.buy_orders) != 0:
-                    best_bid = max(order_depth.buy_orders.keys())
-                    best_bid_volume = order_depth.buy_orders[best_bid]
-                    # SELL conditions
-                    if best_bid > 10000:
-                        remaining_position = limit_calculation(
-                            product,
-                            lowerlimit
-                        )
-                        result[product] = sell(
-                            product,
-                            best_bid_volume,
-                            remaining_position,
-                            best_bid
-                        )
+        if len(order_depth.buy_orders) != 0:
+            best_bid = max(order_depth.buy_orders.keys())
+            best_bid_volume = order_depth.buy_orders[best_bid]
+            # SELL conditions
+            if best_bid > 10000:
+                remaining_position = limit_calculation(
+                    product,
+                    lowerlimit
+                )
+                result[product] = sell(
+                    product,
+                    best_bid_volume,
+                    remaining_position,
+                    best_bid
+                )
             
-            if product == 'BANANAS':
-                """
-                The strategy for BANANAS starts here: 
-                Enter position when current price cross MA20 (long trend is not considered)
-                """
-                order_depth: OrderDepth = state.order_depths[product]
-                pre_trade, current_price = get_pre_trade(
-                    product,
-                    order_depth
-                )
-                upperlimit = Trader.position_limit[product]
-                lowerlimit = -Trader.position_limit[product]                
+        product == 'BANANAS'
+        """
+        The strategy for BANANAS starts here: 
+        Enter position when current price cross MA20 (long trend is not considered)
+        """
+        order_depth: OrderDepth = state.order_depths[product]
+        pre_trade, current_price = get_pre_trade(
+            product,
+            order_depth
+        )
+        upperlimit = Trader.position_limit[product]
+        lowerlimit = -Trader.position_limit[product]                
 
-                if len(pre_trade) > 19:
-                    ma_20 = ( 
-                        0.08 * pre_trade[-1] +
-                        0.3 * np.average(pre_trade[-5:-1]) + 
-                        0.27 * np.average(pre_trade[-9:-5]) + 
-                        0.21 * np.average(pre_trade[-13:-9]) + 
-                        0.11 * np.average(pre_trade[-17:-13]) + 
-                        0.03 * np.average(pre_trade[-20:-17]) 
+        if len(pre_trade) > 19:
+            ma_20 = ( 
+                0.08 * pre_trade[-1] +
+                0.3 * np.average(pre_trade[-5:-1]) + 
+                0.27 * np.average(pre_trade[-9:-5]) + 
+                0.21 * np.average(pre_trade[-13:-9]) + 
+                0.11 * np.average(pre_trade[-17:-13]) + 
+                0.03 * np.average(pre_trade[-20:-17]) 
+            )
+            Trader.pre_ma20s[product].append(ma_20)
+            pre_ma20 = Trader.pre_ma20s[product]
+
+        # if len(pre_trade) > 129:
+        if len(pre_trade) > 24:
+            adaptive_ma20 = (
+                    1.0 * ma_20 +
+                    1.5 * (pre_ma20[-1] - pre_ma20[-2]) +
+                    1.0 * (pre_ma20[-1] - pre_ma20[-3]) +
+                    0.5 * (pre_ma20[-1] - pre_ma20[-4]) 
+            )   
+            if order_depth.sell_orders:
+                best_ask = min(order_depth.sell_orders.keys())
+                best_ask_volume = order_depth.sell_orders[best_ask]
+                if best_ask < adaptive_ma20:
+                    remaining_position = limit_calculation(
+                        product,
+                        upperlimit
                     )
-                    Trader.pre_ma20s[product].append(ma_20)
-                    pre_ma20 = Trader.pre_ma20s[product]
-
-                # if len(pre_trade) > 129:
-                if len(pre_trade) > 24:
-                    adaptive_ma20 = (
-                            1.0 * ma_20 +
-                            1.5 * (pre_ma20[-1] - pre_ma20[-2]) +
-                            1.0 * (pre_ma20[-1] - pre_ma20[-3]) +
-                            0.5 * (pre_ma20[-1] - pre_ma20[-4]) 
-                    )   
-                    if order_depth.sell_orders:
-                        best_ask = min(order_depth.sell_orders.keys())
-                        best_ask_volume = order_depth.sell_orders[best_ask]
-                        if best_ask < adaptive_ma20:
-                            remaining_position = limit_calculation(
-                                product,
-                                upperlimit
-                            )
-                            # remaining position is > 0
-                            result[product] = buy(
-                                product,
-                                best_ask_volume,
-                                remaining_position,
-                                best_ask
-                            )
-                    if order_depth.buy_orders:
-                        best_bid = max(order_depth.buy_orders.keys())
-                        best_bid_volume = order_depth.buy_orders[best_bid]
-                        if best_bid > adaptive_ma20:       
-                            remaining_position = limit_calculation(
-                                product,
-                                lowerlimit
-                                )
-                            result[product] = sell(
-                                product,
-                                best_bid_volume,
-                                remaining_position,
-                                best_bid
-                            )
-
-            if product == 'BERRIES':
-                """
-                The strategy for BERRIES starts here: 
-                Enter position based on MA100 (favor Long before 450000, favor Short after 550000)
-                """
-                order_depth: OrderDepth = state.order_depths[product]
-    
-                # Only BUY
-                if state.timestamp in range(0, 260000):
-                    buy_flag = False
-                    if state.timestamp in range(0, 10000, 1000):
-                        upperlimit = 50
-                        lowerlimit = 0
-                        buy_flag = True
-                    elif state.timestamp in range(120000, 130000, 1000):
-                        upperlimit = 200
-                        lowerlimit = 0
-                        buy_flag = True
-                    elif state.timestamp in range(240000, 260000, 1000):
-                        upperlimit = 250
-                        lowerlimit = 0
-                        buy_flag = True
-
-                    if order_depth.sell_orders and buy_flag:
-                        best_ask = min(order_depth.sell_orders.keys())
-                        best_ask_volume = order_depth.sell_orders[best_ask]
-                        remaining_position = limit_calculation(
-                            product,
-                            upperlimit
+                    # remaining position is > 0
+                    result[product] = buy(
+                        product,
+                        best_ask_volume,
+                        remaining_position,
+                        best_ask
+                    )
+            if order_depth.buy_orders:
+                best_bid = max(order_depth.buy_orders.keys())
+                best_bid_volume = order_depth.buy_orders[best_bid]
+                if best_bid > adaptive_ma20:       
+                    remaining_position = limit_calculation(
+                        product,
+                        lowerlimit
                         )
-                        result[product] = buy(
-                            product,
-                            best_ask_volume,
-                            remaining_position,
-                            best_ask
-                        )
+                    result[product] = sell(
+                        product,
+                        best_bid_volume,
+                        remaining_position,
+                        best_bid
+                    )
 
-                # Only SELL
-                elif state.timestamp in range(490000, 520000, 500):
-                    upperlimit = 0
-                    lowerlimit = -250
+        product == 'BERRIES'
+        """
+        The strategy for BERRIES starts here: 
+        Enter position based on MA100 (favor Long before 450000, favor Short after 550000)
+        """
+        order_depth: OrderDepth = state.order_depths[product]
 
-                    if order_depth.buy_orders:
-                        best_bid = max(order_depth.buy_orders.keys())
-                        best_bid_volume = order_depth.buy_orders[best_bid]
-                        remaining_position = limit_calculation(
-                            product,
-                            lowerlimit
-                        )
-                        result[product] = sell(
-                            product,
-                            best_bid_volume,
-                            remaining_position,
-                            best_bid
-                        )
-                
-                # Close SHORT Position  
-                elif state.timestamp in range(510000, 1000000):
-                    buy_flag = False
-                    if state.timestamp in range(740000, 755000, 1000):
-                        upperlimit = 0
-                        lowerlimit = -175
-                        buy_flag = True
-                    elif state.timestamp in range(874000, 875500, 1000):
-                        upperlimit = 0
-                        lowerlimit = -100
-                        buy_flag = True
-                    elif state.timestamp in range(990000, 1000000, 500):
-                        upperlimit = 0
-                        lowerlimit = 0
-                        buy_flag = True
-                        
-                    if order_depth.sell_orders and buy_flag:
-                        best_ask = min(order_depth.sell_orders.keys())
-                        best_ask_volume = order_depth.sell_orders[best_ask]
-                        remaining_position = limit_calculation(
-                            product,
-                            lowerlimit
-                        )
-                        result[product] = buy(
-                            product,
-                            best_ask_volume,
-                            remaining_position,
-                            best_ask
-                        )
+        # Only BUY
+        if state.timestamp in range(0, 260000):
+            buy_flag = False
+            if state.timestamp in range(0, 10000, 1000):
+                upperlimit = 50
+                lowerlimit = 0
+                buy_flag = True
+            elif state.timestamp in range(120000, 130000, 1000):
+                upperlimit = 200
+                lowerlimit = 0
+                buy_flag = True
+            elif state.timestamp in range(240000, 260000, 1000):
+                upperlimit = 250
+                lowerlimit = 0
+                buy_flag = True
 
-            if product == 'DIVING_GEAR':
-                order_depth: OrderDepth = state.order_depths[product]
-                # Take the market price (mid price)            
-                pre_trade, current_price = get_pre_trade(
+            if order_depth.sell_orders and buy_flag:
+                best_ask = min(order_depth.sell_orders.keys())
+                best_ask_volume = order_depth.sell_orders[best_ask]
+                remaining_position = limit_calculation(
                     product,
-                    order_depth
+                    upperlimit
                 )
-                # Calculate moving avg 100
-                if len(pre_trade) > 99:
-                    ma_100 = np.average(pre_trade[-100:])
-                    Trader.pre_ma100s[product].append(ma_100)
+                result[product] = buy(
+                    product,
+                    best_ask_volume,
+                    remaining_position,
+                    best_ask
+                )
 
-            if product == 'COCONUTS':
-                order_depth: OrderDepth = state.order_depths[product]
-                # Take the market price (mid price)
-                if order_depth.buy_orders and order_depth.sell_orders:
-                    best_bid = max(order_depth.buy_orders.keys())
-                    best_ask = min(order_depth.sell_orders.keys())
-                    current_price = np.average([best_ask, best_bid])
-                elif order_depth.buy_orders:
-                    current_price = best_ask
-                elif order_depth.sell_orders:
-                    current_price = best_bid
+        # Only SELL
+        elif state.timestamp in range(490000, 520000, 500):
+            upperlimit = 0
+            lowerlimit = -250
 
-                # rescale the price
-                mean = 7926.96
-                sd = 12.5475
-                current_price = (current_price - mean) / sd
-                Trader.pre_trades[product].append(current_price)
-                pre_trade = Trader.pre_trades[product]              
-                # Calculate moving avg 20 and 200
-                if len(pre_trade) > 199:
-                    ma_20 = np.average(pre_trade[-20:])
-                    Trader.pre_ma20s[product].append(ma_20)
-                    ma_200 = np.average(pre_trade[-200:])
-                    Trader.pre_ma200s[product].append(ma_200)
-         
-            if product == 'PINA_COLADAS':
-                order_depth: OrderDepth = state.order_depths[product]
-                # Take the market price (mid price)
-                if order_depth.buy_orders and order_depth.sell_orders:
-                    best_bid = max(order_depth.buy_orders.keys())
-                    best_ask = min(order_depth.sell_orders.keys())
-                    current_price = np.average([best_ask, best_bid])
-                elif order_depth.buy_orders:
-                    current_price = best_ask
-                elif order_depth.sell_orders:
-                    current_price = best_bid
-
-                # rescale the price
-                mean = 14885.35
-                sd = 29.1494
-                current_price = (current_price - mean)/sd
-                Trader.pre_trades[product].append(current_price)
-                pre_trade = Trader.pre_trades[product]             
-                # Calculate moving avg 200
-                if len(pre_trade) > 199:                    
-                    ma_20 = np.average(pre_trade[-20:])
-                    Trader.pre_ma20s[product].append(ma_20)
-
-                    ma_200 = np.average(pre_trade[-200:])
-                    Trader.pre_ma200s[product].append(ma_200)
+            if order_depth.buy_orders:
+                best_bid = max(order_depth.buy_orders.keys())
+                best_bid_volume = order_depth.buy_orders[best_bid]
+                remaining_position = limit_calculation(
+                    product,
+                    lowerlimit
+                )
+                result[product] = sell(
+                    product,
+                    best_bid_volume,
+                    remaining_position,
+                    best_bid
+                )
+        
+        # Close SHORT Position  
+        elif state.timestamp in range(510000, 1000000):
+            buy_flag = False
+            if state.timestamp in range(740000, 755000, 1000):
+                upperlimit = 0
+                lowerlimit = -175
+                buy_flag = True
+            elif state.timestamp in range(874000, 875500, 1000):
+                upperlimit = 0
+                lowerlimit = -100
+                buy_flag = True
+            elif state.timestamp in range(990000, 1000000, 500):
+                upperlimit = 0
+                lowerlimit = 0
+                buy_flag = True
+                
+            if order_depth.sell_orders and buy_flag:
+                best_ask = min(order_depth.sell_orders.keys())
+                best_ask_volume = order_depth.sell_orders[best_ask]
+                remaining_position = limit_calculation(
+                    product,
+                    lowerlimit
+                )
+                result[product] = buy(
+                    product,
+                    best_ask_volume,
+                    remaining_position,
+                    best_ask
+                )
 
         """
         The strategy for COCONUTS and PINA_COLADAS starts here: 
@@ -582,6 +518,58 @@ class Trader:
         - Close positions when Gap narrows
 
         """
+
+        def get_current_price(order_depth: OrderDepth):
+            if order_depth.buy_orders and order_depth.sell_orders:
+                best_bid = max(order_depth.buy_orders.keys())
+                best_ask = min(order_depth.sell_orders.keys())
+                current_price = np.average([best_ask, best_bid])
+            elif order_depth.buy_orders:
+                current_price = best_ask
+            elif order_depth.sell_orders:
+                current_price = best_bid
+            return current_price
+        
+        ### Get some metrics for Coconuts ###
+        product == 'COCONUTS'
+        order_depth: OrderDepth = state.order_depths[product]
+        # Take the market price (mid price)
+        current_price = get_current_price(order_depth)
+
+        # rescale the price
+        mean = 7926.96
+        sd = 12.5475
+        current_price = (current_price - mean) / sd
+        Trader.pre_trades[product].append(current_price)
+        pre_trade = Trader.pre_trades[product]              
+        # Calculate moving avg 20 and 200
+        if len(pre_trade) > 199:
+            ma_20 = np.average(pre_trade[-20:])
+            Trader.pre_ma20s[product].append(ma_20)
+            ma_200 = np.average(pre_trade[-200:])
+            Trader.pre_ma200s[product].append(ma_200)
+    
+        ### Get some metrics for Pina ###
+        product == 'PINA_COLADAS'
+        order_depth: OrderDepth = state.order_depths[product]
+        # Take the market price (mid price)
+        current_price = get_current_price(order_depth)
+
+        # rescale the price
+        mean = 14885.35
+        sd = 29.1494
+        current_price = (current_price - mean)/sd
+        Trader.pre_trades[product].append(current_price)
+        pre_trade = Trader.pre_trades[product]             
+        # Calculate moving avg 200
+        if len(pre_trade) > 199:                    
+            ma_20 = np.average(pre_trade[-20:])
+            Trader.pre_ma20s[product].append(ma_20)
+
+            ma_200 = np.average(pre_trade[-200:])
+            Trader.pre_ma200s[product].append(ma_200)
+
+
         pre_ma200_coco = Trader.pre_ma200s['COCONUTS']
         pre_ma200_pina = Trader.pre_ma200s['PINA_COLADAS']
 
@@ -607,6 +595,7 @@ class Trader:
                     n_increase += 1
 
             # --- STRATEGY ---
+            # ONLY TRADE PINA
             # Identify GAP
             if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) > 0.3:
                 # UPward trend
@@ -654,27 +643,27 @@ class Trader:
                             )
 
             # CLOSE positions
-            for product in ['PINA_COLADAS']:
-                upperlimit = Trader.position_limit[product]
-                lowerlimit = -Trader.position_limit[product]
-                order_depth: OrderDepth = state.order_depths[product]
-                if product in state.position.keys() and state.position[product] != 0:
-                    if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.05:
-                        if state.position[product] > 0:
-                            best_bid = max(order_depth.buy_orders.keys())
-                            best_bid_volume = order_depth.buy_orders[best_bid]
-                            # print("SELL", str(state.position[product]) + "x", best_bid)
-                            orders: list[Order] = []
-                            orders.append(
-                                Order(product, best_bid, -state.position[product]))
-                        else:
-                            best_ask = min(order_depth.sell_orders.keys())
-                            best_ask_volume = order_depth.sell_orders[best_ask]
-                            # print("BUY", str(-state.position[product]) + "x", best_ask)
-                            orders: list[Order] = []
-                            orders.append(
-                                Order(product, best_ask, -state.position[product]))
-                        result[product] = orders
+            product = 'PINA_COLADAS'
+            upperlimit = Trader.position_limit[product]
+            lowerlimit = -Trader.position_limit[product]
+            order_depth: OrderDepth = state.order_depths[product]
+            if product in state.position.keys() and state.position[product] != 0:
+                if abs(pre_ma20_coco[-1] - pre_ma20_pina[-1]) < 0.05:
+                    if state.position[product] > 0:
+                        best_bid = max(order_depth.buy_orders.keys())
+                        best_bid_volume = order_depth.buy_orders[best_bid]
+                        # print("SELL", str(state.position[product]) + "x", best_bid)
+                        orders: list[Order] = []
+                        orders.append(
+                            Order(product, best_bid, -state.position[product]))
+                    else:
+                        best_ask = min(order_depth.sell_orders.keys())
+                        best_ask_volume = order_depth.sell_orders[best_ask]
+                        # print("BUY", str(-state.position[product]) + "x", best_ask)
+                        orders: list[Order] = []
+                        orders.append(
+                            Order(product, best_ask, -state.position[product]))
+                    result[product] = orders
 
         '''
         Strategy for DIVING_GEAR starts here
@@ -682,6 +671,19 @@ class Trader:
         Long/Short immediately if Dolphins number increase/decrease
         Close positions when ma100 (ma200) show weaker trend
         '''
+
+        product == 'DIVING_GEAR'
+        order_depth: OrderDepth = state.order_depths[product]
+        # Take the market price (mid price)            
+        pre_trade, current_price = get_pre_trade(
+            product,
+            order_depth
+        )
+        # Calculate moving avg 100
+        if len(pre_trade) > 99:
+            ma_100 = np.average(pre_trade[-100:])
+            Trader.pre_ma100s[product].append(ma_100)
+
         for observe in state.observations.keys():
             if observe == 'DOLPHIN_SIGHTINGS':
                 current_obs = state.observations[observe]
@@ -689,8 +691,6 @@ class Trader:
                 
         pre_ma100_gear = Trader.pre_ma100s['DIVING_GEAR']
         pre_dolphin = Trader.pre_observes["DOLPHIN_SIGHTINGS"]
-
-        product = 'DIVING_GEAR'
 
         if len(pre_dolphin) > 200:
             n_increase = 0
