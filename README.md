@@ -34,9 +34,9 @@ $$mid_t = \frac{bestask_t + bestbid_t}{2}$$
 
 Simple Exponential Smoothing Equation:
 $$l_t = a*mid_t + (1-a)*l_{t-1},$$
-<p align="center"> where $a = 0.08$ </p>
+<p align="center"> where $a = 0.08$, $l_0 = 4950$ </p>
 
-The rate at which the weights decrease is controlled by the parameter $a$, which is chosen by running simulated tests to maximise profit.
+The rate at which the weights decrease is controlled by the parameter $a$, which is chosen by running simulated tests to maximise profit. We market-take orders with prices that pass through the SEM line plus an additional range (avoid some spikes that barely pass).
 
 <p align="center">
   <span style="display: inline-block; border: 1px solid #ccc; border-radius: 8px;">
