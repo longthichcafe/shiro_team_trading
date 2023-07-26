@@ -29,14 +29,14 @@ For Pearls, it always stays in a range of [9995, 10000] and has a stable mean of
 
 For Bananas, the bid and ask price always have a consistent gap and some spikes occur occasionally. We use a method that tracks a simple exponential smoothing (unlike a moving average, the weights attached to the observations decrease exponentially as we go back in time) and cut through the spikes. Whenever it cut a spike, we enter a trade.
 
-Midpoint is defined by:
-$$mid_t = \frac{bestask_t + bestbid_t}{2}$$
+Midpoint price is defined by:
+$$price_t = \frac{bestask_t + bestbid_t}{2}$$
 
 Simple Exponential Smoothing Equation:
 $$l_t = a*mid_t + (1-a)*l_{t-1},$$
 <p align="center"> where $a = 0.077$, $l_0 = 4950$ </p>
 
-The rate at which the weights decrease is controlled by the parameter $a$, which is chosen by running simulated tests to maximise profit. We market-take orders with prices that pass through the SEM line plus an additional range (avoid some spikes that barely pass).
+The rate at which the weights decrease is controlled by the parameter $a$, which is chosen by running simulated tests to maximise profit. We market-take orders with prices that pass through the SEM line plus an additional range (avoid some spikes that barely pass). This results in a high-frequency trading strategy.
 
 <p align="center">
   <span style="display: inline-block; border: 1px solid #ccc; border-radius: 8px;">
@@ -50,8 +50,18 @@ The rate at which the weights decrease is controlled by the parameter $a$, which
 
 ## Round 2
 
+New products in this round are Coconuts and Pina Coladas. Unlike round 1, Coconuts and Pina Coladas are pair-traded as they are correlated with each other. Our volatility-based pair-trading strategy begins with standardising their price (midpoint of bid and ask) and their variance.
 
+Standardising equation:
+$$z_t=\frac{price_t + \overline{price}}{\sigma} \sim (0,1)$$
 
+Next, we compute the 20-step moving average for each product and use it to identify any widened gap larger than 0.3. The moving average helps smooth out volatility-induced fluctuations.
+
+$$| MA20_{coco, t} - MA20_{pina, t} | > 0.3$$
+
+We also calculate the percentage change of the 200-step moving average at time $t$ with time $t-j$ for $j = 20, 40,..., 200$. These percentage changes are then used to determine the number of intervals with increasing and decreasing trends.
+
+Then
 <br>
 
 ## Round 3
