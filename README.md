@@ -55,6 +55,7 @@ New products in this round are Coconuts and Pina Coladas. Unlike round 1, Coconu
 Standardising equation:
 $$z_t=\frac{price_t + \overline{price}}{\sigma} \sim (0,1)$$
 
+### *Opening positions:*
 Next, we compute the 20-step moving average for each product and use it to identify any widened gap larger than 0.3. The moving average helps smooth out volatility-induced fluctuations.
 
 $$| MA20_{coco, t} - MA20_{pina, t} | > 0.3$$
@@ -75,8 +76,14 @@ The trend is identified as bullish when $N_{increase}>6$, and as bearish when $N
 
 In simple pair trading, whenever the gap is observed, we long the product with a higher price and short the other. However, in this case, we implement a trend indication as an additional condition. Now, we only go long if the trend is upward and go short if the trend is downward.
 
+### *Closing positions:*
+After the orders have been matched, we need to continuously observe the gap and close the positions at a suitable condition. Whenever the gap is narrowing until 0.05, we exit the market:
+
+$$| MA20_{coco, t} - MA20_{pina, t} | < 0.05$$
 
 
+
+3290-3325
 <br>
 
 ## Round 3
