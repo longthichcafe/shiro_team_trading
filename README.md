@@ -59,9 +59,24 @@ Next, we compute the 20-step moving average for each product and use it to ident
 
 $$| MA20_{coco, t} - MA20_{pina, t} | > 0.3$$
 
-We also calculate the percentage change of the 200-step moving average at time $t$ with time $t-j$ for $j = 20, 40,..., 200$. These percentage changes are then used to determine the number of intervals with increasing and decreasing trends.
+We also calculate the percentage change of the 200-step moving average at time $t$ with time $t-j$ for $j = 20, 40,..., 200$. The $MA200$ has been averaged between Coconuts and Pina Coladas. These percentage changes are then used to determine the number of intervals with increasing and decreasing trends.
 
-Then
+$$Percentage Change_{t,j} = \frac{MA200_{t} - MA200_{t-j}}{MA200_{t-j}}$$
+
+$$N_{increase} = \sum_{j=20, 40, \ldots, 200} \mathbb{I}({Percentage Change}_{t,j} > 0)$$
+
+$$N_{decrease} = \sum_{j=20, 40, \ldots, 200} \mathbb{I}({Percentage Change}_{t,j} < 0)$$
+
+<p align="center">
+  where $\mathbb{I}(x)$ is the indicator function, which returns 1 if the condition $x$ is met, and 0 otherwise.
+</p>
+
+The trend is identified as bullish when $N_{increase}>6$, and as bearish when $N_{decrease}>6$.
+
+In simple pair trading, whenever the gap is observed, we long the product with a higher price and short the other. However, in this case, we implement a trend indication as an additional condition. Now, we only go long if the trend is upward and go short if the trend is downward.
+
+
+
 <br>
 
 ## Round 3
