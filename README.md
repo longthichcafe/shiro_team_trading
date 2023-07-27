@@ -143,7 +143,7 @@ We end the day with profits.
 
 <br>
 
-This strategy, based on pure seasonality, was originated at Round 4. Our first algorithm did not perform well and dragged the Shiro team down from top 45th. We worked the extra miles to analyse and apply some forecasting practices, striving to come back where we had been. 
+This strategy, based on pure seasonality, was originated at Round 4. Our first algorithm did not perform well and dragged the Shiro team down from top 45th. We worked the extra miles to analyse and apply some forecasting practices, striving to come back where we should be. 
 
 <br>
 
