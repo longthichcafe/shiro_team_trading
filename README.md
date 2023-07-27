@@ -80,6 +80,8 @@ The temporary trend is identified as bullish when $N_{increase}>6$, and as beari
 
 In simple pair trading, whenever the gap is observed, we long the product with a higher price and short the other. However, in this case, we implement a trend indication as an additional condition. Now, we only go long if the temporary trend is upward and go short if the temporary trend is downward.
 
+<br>
+
 ### *Closing positions:*
 After the orders have been matched, we need to continuously observe the gap and close the positions at a suitable condition. Whenever the gap is narrowing until 0.05, we exit the market:
 
@@ -100,6 +102,8 @@ $$| MA20_{coco, t} - MA20_{pina, t} | < 0.05$$
 </p>
 
 As the gap opens up and the trend is identified as downward, the algorithms short the product with a higher price. This results in some red points marked on the Coconuts series (figure 4). When the gap is closing, the algorithms exit the market, resulting in some green points on the right-hand side. The trade succeeds as we managed to sell high and buy low. 
+
+<br>
 
 The success of this strategy was remarkable that led to a huge amount of profits for this round. We climbed up 226 ranks and reached the top 45th, which is our highest rank achieved in this competition.
 
