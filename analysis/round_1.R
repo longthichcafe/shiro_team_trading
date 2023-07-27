@@ -7,14 +7,14 @@ data <- read_csv2('data/data_round_1/island-data-bottle-round-1/prices_round_1_d
 # Visualise pearls graph
 ggplotly(
     data %>% 
-        filter(timestamp < 15000) %>% 
-        filter(product == 'PEARLS') %>% 
-        ggplot(aes(x = timestamp)) +
-        geom_line(aes(y = ask_price_1, color = 'Ask Price')) +
-        geom_line(aes(y = bid_price_1, color = 'Bid Price')) +
-        theme_bw()+
-        ylab(NULL)+
-        labs(title = "Pearls Price Action")
+    filter(timestamp < 15000) %>% 
+    filter(product == 'PEARLS') %>% 
+    ggplot(aes(x = timestamp)) +
+    geom_line(aes(y = ask_price_1, color = 'Ask Price')) +
+    geom_line(aes(y = bid_price_1, color = 'Bid Price')) +
+    theme_bw()+
+    ylab(NULL)+
+    labs(title = "Pearls Price Action")
 )
 
 # Generating Simple Exponential Smoothing function
@@ -23,8 +23,8 @@ generate_sem <- function(data, alpha, level_0) {
     data <- data %>% 
     mutate(sem = 0)
     data <- bind_rows(
-    data.frame(day = -1, timestamp = -100, product = "BANANAS", sem = level_0),
-    data
+        data.frame(day = -1, timestamp = -100, product = "BANANAS", sem = level_0),
+        data
     )
     # Generate remaining observations
     for(i in seq(2, length = nrow(data) - 1)) {
