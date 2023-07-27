@@ -426,7 +426,7 @@ class Trader:
         product == 'BERRIES'
         """
         The strategy for BERRIES starts here: 
-        Enter position based on MA100 (favor Long before 450000, favor Short after 550000)
+        Enter position on specific timestamp, peak at 500000
         """
         order_depth: OrderDepth = state.order_depths[product]
 
@@ -480,7 +480,7 @@ class Trader:
                 )
         
         # Close SHORT Position  
-        elif state.timestamp in range(510000, 1000000):
+        elif state.timestamp in range(740000, 1000000):
             buy_flag = False
             if state.timestamp in range(740000, 755000, 1000):
                 upperlimit = 0

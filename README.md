@@ -64,7 +64,7 @@ Next, we compute the 20-step moving average for each product and use it to ident
 
 $$| MA20_{coco, t} - MA20_{pina, t} | > 0.3$$
 
-We also calculate the percentage change of the 200-step moving average at time $t$ with time $t-j$ for $j = 20, 40,..., 200$. The $MA200$ has been averaged between Coconuts and Pina Coladas. These percentage changes are then used to determine the number of intervals with increasing and decreasing trends.
+We also calculate the percentage change of the 200-step moving average at time $t$ with time $t-j$ for $j = 20, 40,..., 200$. The $MA200$ has been averaged between Coconuts and Pina Coladas. These percentage changes are then used to determine the number of intervals with increasing and decreasing temporary trends.
 
 $$Percentage Change_{t,j} = \frac{MA200_{t} - MA200_{t-j}}{MA200_{t-j}}$$
 
@@ -76,9 +76,9 @@ $$N_{decrease} = \sum_{j=20, 40, \ldots, 200} \mathbb{I}({Percentage Change}_{t,
   where $\mathbb{I}(x)$ is the indicator function, which returns 1 if the condition $x$ is met, and 0 otherwise.
 </p>
 
-The trend is identified as bullish when $N_{increase}>6$, and as bearish when $N_{decrease}>6$.
+The temporary trend is identified as bullish when $N_{increase}>6$, and as bearish when $N_{decrease}>6$.
 
-In simple pair trading, whenever the gap is observed, we long the product with a higher price and short the other. However, in this case, we implement a trend indication as an additional condition. Now, we only go long if the trend is upward and go short if the trend is downward.
+In simple pair trading, whenever the gap is observed, we long the product with a higher price and short the other. However, in this case, we implement a trend indication as an additional condition. Now, we only go long if the temporary trend is upward and go short if the temporary trend is downward.
 
 ### *Closing positions:*
 After the orders have been matched, we need to continuously observe the gap and close the positions at a suitable condition. Whenever the gap is narrowing until 0.05, we exit the market:
@@ -107,7 +107,43 @@ The success of this strategy was remarkable that led to a huge amount of profits
 
 ## Round 3
 
-...coming soon...
+The 3rd round introduces a new product, Mayberries. Mayberries exhibits a characteristic price movement with a relatively low price at the start of the trading day, reaching a peak in the middle of the day, and then dropping down. This behavior can be illustrated as follows:
+
+<p align="center">
+  <img src="analysis/figures/berries_stl.png" alt="Mayberries STL Decomposition" width="700">
+  <br>
+  Figure 5: 3-day Time Series of Mayberries Price 
+</p>
+
+The time series of Mayberries is decomposed into three components: Trend, Season, and the Remainder ( $T_t + S_t + R_t$ ). The panel's first graph shows the original price movement of Mayberries, and the other ones show the decomposed components respectively. We can see some seasonal changes to the original price across the day, but the volatily makes it a bit harder to identify where the peak and troughs are. That is the reason why decomposition is a good way to separate out seasonal part and others. Moveover, the long-term trend appears unperdictable, which will be ruled out to keep the pure seasonality in the upcoming strategy.
+
+By taking the mean across 3 days of the seasonal component, we make the peak and troughs more obvious:
+
+$$\bar{S_t} = \frac{S_{1,t} + S_{2,t} + S_{3,t}}{3}$$
+
+<p align="center">
+  where $S_{d,t}$ represents the seasonal component at day $d$ and timestamp $t$
+</p>
+
+<p align="center">
+  <img src="analysis/figures/berries_season.png" alt="Mayberries Season Components" width="700">
+  <br>
+  Figure 6
+</p>
+
+The first trough starts at around timestamp 125000. Then the price peaks at timestamp 500000, which is the middle of the day, the drops rapidly until timestamp 750000. Out-of-sample trading day is likely to be different and overfit the given data is not an ideal option. 
+
+Based on pure seasonality, we implement the following trading strategy for Mayberries:
+
+- Buy within timestamp [0, 260000].
+- Hold positions until mid-day, start selling and eventually go short for timestamps in [490000, 520000].
+- Buy back within timestamp [740000, 1000000].
+
+We end the day with profits.
+
+<br>
+
+This strategy, based on pure seasonality, was originated at Round 4. Our first algorithm did not perform well and dragged the Shiro team down from top 45th. We worked the extra miles to analyse and apply some forecasting practices, striving to come back where we had been. 
 
 <br>
 
