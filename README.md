@@ -23,7 +23,9 @@ For Pearls, it always stays in a range of [9995, 10000] and has a stable mean of
 
 <p align="center">
   <span style="display: inline-block; border: 1px solid #ccc; border-radius: 8px;">
-    <img src="analysis/Pearls.png" alt="Pearls" width="700">
+    <img src="analysis/figures/pearls.png" alt="Pearls" width="700">
+    <br>
+    Figure 1
   </span>
 </p>
 
@@ -40,7 +42,9 @@ The rate at which the weights decrease is controlled by the parameter $a$, which
 
 <p align="center">
   <span style="display: inline-block; border: 1px solid #ccc; border-radius: 8px;">
-    <img src="analysis/bananas.png" alt="Bananas" width="700">
+    <img src="analysis/figures/bananas.png" alt="Bananas" width="700">
+    <br>
+    Figure 2
   </span>
 </p>
 
@@ -81,26 +85,41 @@ After the orders have been matched, we need to continuously observe the gap and 
 
 $$| MA20_{coco, t} - MA20_{pina, t} | < 0.05$$
 
+<br>
 
+<p align="center">
+  <img src="analysis/figures/coco_pina_1.png" alt="coco pina ma20" width="700">
+  <br>
+  Figure 3
+</p>
 
-3290-3325
+<p align="center">
+  <img src="analysis/figures/coco_pina_2.png" alt="coco pina price" width="700">
+  <br>
+  Figure 4
+</p>
+
+As the gap opens up and the trend is identified as downward, the algorithms short the product with a higher price. This results in some red points marked on the Coconuts series (figure 4). When the gap is closing, the algorithms exit the market, resulting in some green points on the right-hand side. The trade succeeds as we managed to sell high and buy low. 
+
+The success of this strategy was remarkable that led to a huge amount of profits for this round. We climbed up 226 ranks and reached the top 45th, which is our highest rank achieved in this competition.
+
 <br>
 
 ## Round 3
 
-
+...coming soon...
 
 <br>
 
 ## Round 4
 
-
+...coming soon...
 
 <br>
 
 ## Round 5
 
-
+...coming soon...
 
 <br>
 
