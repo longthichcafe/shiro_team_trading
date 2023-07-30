@@ -9,15 +9,17 @@ Prosperity is a 10-day global trading challenge, consisting of 5 rounds, hosted 
 We, a team of three penultimate students, managed to reach our final rank of 79th among 7007 global teams. We would love to present our strategies and analysis across this challenging competition.
 
 ### Team member:
-- Dat Su depzai
-- Long bu c thang duoi
-- Moe bi thang tren bu
+- Vincent Su (Dat Su)
+- Long Ho
+- Khoa Pham
 
 <br>
 
 ## Round 1
 
 Pearls and Bananas are two products introduced in the first round and we work on them separately.
+
+### *Pearls*
 
 For Pearls, it always stays in a range of [9995, 10000] and has a stable mean of 10000. There are times when the best bid is 10002 or the best ask is 9998. Therefore we market-take any ask below 10000, and accept any bid above 10000.
 
@@ -28,6 +30,10 @@ For Pearls, it always stays in a range of [9995, 10000] and has a stable mean of
     Figure 1
   </span>
 </p>
+
+<br>
+
+### *Bananas*
 
 For Bananas, the bid and ask price always have a consistent gap and some spikes occur occasionally. We use a method that tracks a simple exponential smoothing (unlike a moving average, the weights attached to the observations decrease exponentially as we go back in time) and cut through the spikes. Whenever it cut a spike, we enter a trade.
 
@@ -111,7 +117,11 @@ The success of this strategy was remarkable that led to a huge amount of profits
 
 ## Round 3
 
-The 3rd round introduces a new product, Mayberries. Mayberries exhibits a characteristic price movement with a relatively low price at the start of the trading day, reaching a peak in the middle of the day, and then dropping down. This behavior can be illustrated as follows:
+The 3rd round introduces another two products, Mayberries and Diving Gears.
+
+### *Mayberries*
+
+Mayberries exhibits a characteristic price movement with a relatively low price at the start of the trading day, reaching a peak in the middle of the day, and then dropping down. This behavior can be illustrated as follows:
 
 <p align="center">
   <img src="analysis/figures/berries_stl.png" alt="Mayberries STL Decomposition" width="700">
@@ -144,6 +154,11 @@ Based on pure seasonality, we implement the following trading strategy for Maybe
 - Buy back within timestamp [740000, 1000000].
 
 We end the day with profits.
+
+### *Diving Gears*
+
+Diving Gears has an interesting relationship with number of Dolphins across the trading day. Dolphins is not a tradable product. A abrupt change in Dolphins sighted has a causal, positive effect on the price of Diving Gears. 
+
 
 <br>
 

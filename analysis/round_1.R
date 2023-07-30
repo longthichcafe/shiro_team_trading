@@ -1,3 +1,9 @@
+# --------------------------------------------
+# Code for generating plots round 1
+# 
+# Author: Vincent Su
+# --------------------------------------------
+
 library(tidyverse)
 library(zoo)
 library(plotly)
