@@ -65,7 +65,8 @@ New products in this round are Coconuts and Pina Coladas. Unlike round 1, Coconu
 Standardising equation:
 $$z_t=\frac{price_t + \overline{price}}{\sigma} \sim (0,1)$$
 
-### *Opening positions:*
+__*Opening positions:*__
+
 Next, we compute the 20-step moving average for each product and use it to identify any widened gap larger than 0.3. The moving average helps smooth out volatility-induced fluctuations.
 
 $$| MA20_{coco, t} - MA20_{pina, t} | > 0.3$$
@@ -88,7 +89,8 @@ In simple pair trading, whenever the gap is observed, we long the product with a
 
 <br>
 
-### *Closing positions:*
+__*Closing positions:*__
+
 After the orders have been matched, we need to continuously observe the gap and close the positions at a suitable condition. Whenever the gap is narrowing until 0.05, we exit the market:
 
 $$| MA20_{coco, t} - MA20_{pina, t} | < 0.05$$
@@ -155,10 +157,32 @@ Based on pure seasonality, we implement the following trading strategy for Maybe
 
 We end the day with profits.
 
+<br>
+
 ### *Diving Gears*
 
-Diving Gears has an interesting relationship with number of Dolphins across the trading day. Dolphins is not a tradable product. A abrupt change in Dolphins sighted has a causal, positive effect on the price of Diving Gears. 
+Diving Gears has an interesting relationship with number of Dolphins across the trading day. Dolphins is not a tradable product. An abrupt change in Dolphins sighted has a causal, positive effect on the price of Diving Gears. 
 
+__*Opening positions:*__
+
+An abrupt change in Dolphins is considered as significant when it is larger than 10. However, since the price of Diving Gears does not reflect the Dolphins changes immediately, we use an interval of 200 to capture this delayed effect.
+
+$$\Delta dolphin_{200} =  dolphin_{t} - dolphin_{t-200} $$
+
+A significant increase is when: $\Delta dolphin_{200} > 10$
+
+A significant decrease is when: $\Delta dolphin_{200} < 10$
+
+It can be illustrated in the plot below:
+<p align="center">
+  <img src="analysis/figures/gears_vs_dol.png" alt="Gears against Dol" width="700">
+  <br>
+  Figure 7: Example of a Long Position
+</p>
+
+<br>
+
+__*Closing positions:*__
 
 <br>
 
