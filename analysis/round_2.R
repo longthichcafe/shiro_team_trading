@@ -1,3 +1,12 @@
+"""
+--------------------------------------------
+Code for generating plots round 2: Coconuts and Pina Coladas
+ 
+Author: Vincent Su
+--------------------------------------------
+"""
+
+
 library(tidyverse)
 library(plotly)
 library(zoo)

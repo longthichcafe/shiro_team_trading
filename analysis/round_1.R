@@ -1,8 +1,10 @@
-# --------------------------------------------
-# Code for generating plots round 1
-# 
-# Author: Vincent Su
-# --------------------------------------------
+"""
+--------------------------------------------
+Code for generating plots round 1: Pearls and Bananas
+ 
+Author: Vincent Su
+--------------------------------------------
+"""
 
 library(tidyverse)
 library(zoo)

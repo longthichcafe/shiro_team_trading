@@ -1,3 +1,12 @@
+"""
+--------------------------------------------
+Code for generating plots round 3: Mayberries
+ 
+Author: Vincent Su
+--------------------------------------------
+"""
+
+
 library(tidyverse)
 library(fpp3)
 library(zoo)

@@ -1,3 +1,11 @@
+"""
+--------------------------------------------
+Code for generating plots round 3: Diving Gears
+ 
+Author: Vincent Su
+--------------------------------------------
+"""
+
 library(tidyverse)
 library(fpp3)
 library(plotly)
