@@ -47,7 +47,7 @@ pair <- data_gear %>%
 
 # Plot Diving Gears
 plot_gears <- pair %>% 
-  filter(timestamp <=2400000) %>% 
+  filter(timestamp >= 2070000 & timestamp <=2320000) %>% 
   ggplot(aes(x = timestamp, y=mid_price)) +
     geom_line(color = "#0C8BC2") +
     ylab("Price of Diving Gears") +
@@ -56,12 +56,12 @@ plot_gears <- pair %>%
 
 # Plot Dolphins Changes
 plot_dol <- pair %>% 
-  filter(timestamp <=2400000) %>% 
+  filter(timestamp >= 2070000 & timestamp <=2320000) %>% 
   ggplot(aes(x = timestamp, y=delta_dol)) +
     geom_line(color = "#37D9AA") +
     geom_hline(yintercept = 10, linetype = "dashed") +
     annotate(
-      "text", x = 2050000, y = 12, 
+      "text", x = 2100000, y = 12, 
       label="Significance level", color = "gray30") +
     ylab("Change in Dolphins") +
     theme_bw()
