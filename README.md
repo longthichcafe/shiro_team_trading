@@ -73,11 +73,11 @@ $$| MA20_{coco, t} - MA20_{pina, t} | > 0.3$$
 
 We also calculate the percentage change of the 200-step moving average at time $t$ with time $t-j$ for $j = 20, 40,..., 200$. The $MA200$ has been averaged between Coconuts and Pina Coladas. These percentage changes are then used to determine the number of intervals with increasing and decreasing temporary trends.
 
-$$Percentage Change_{t,j} = \frac{MA200_{t} - MA200_{t-j}}{MA200_{t-j}}$$
+$$Pct Change_{t,j} = \frac{MA200_{t} - MA200_{t-j}}{MA200_{t-j}}$$
 
-$$N_{increase} = \sum_{j=20, 40, \ldots, 200} \mathbb{I}({Percentage Change}_{t,j} > 0)$$
+$$N_{increase} = \sum_{j=20, 40, \ldots, 200} \mathbb{I}({Pct Change}_{t,j} > 0)$$
 
-$$N_{decrease} = \sum_{j=20, 40, \ldots, 200} \mathbb{I}({Percentage Change}_{t,j} < 0)$$
+$$N_{decrease} = \sum_{j=20, 40, \ldots, 200} \mathbb{I}({Pct Change}_{t,j} < 0)$$
 
 <p align="center">
   where $\mathbb{I}(x)$ is the indicator function, which returns 1 if the condition $x$ is met, and 0 otherwise.
@@ -173,7 +173,7 @@ A significant increase is when: $\Delta dolphin_{200} > 10$
 
 A significant decrease is when: $\Delta dolphin_{200} < 10$
 
-It can be illustrated in the plot below:
+Whenever there is a significant increase/decrease, we go long/short accordingly. It can be illustrated in the plot below:
 <p align="center">
   <img src="analysis/figures/gears_vs_dol.png" alt="Gears against Dol" width="700">
   <br>
@@ -184,9 +184,27 @@ It can be illustrated in the plot below:
 
 __*Closing positions:*__
 
+When the price of Diving Gears has taken a move, we need to find a time to close the position. In this case, we exit the market when the short-term trend starts to weaken. The trend is identified similarly as in Round 2, but with shorter moving average: $MA100$.
+
+We calculate the percentage change at time $t$ with time $t-j$ for $j = 10, 20,..., 100$. These percentage changes are then used to determine the number of intervals with increasing and decreasing temporary trends.
+
+$$Pct Change_{t,j} = \frac{MA100_{t} - MA100_{t-j}}{MA100_{t-j}}$$
+
+$$N_{increase} = \sum_{j=10, 20, \ldots, 100} \mathbb{I}({Pct Change}_{t,j} > 0)$$
+
+$$N_{decrease} = \sum_{j=10, 20, \ldots, 100} \mathbb{I}({Pct Change}_{t,j} < 0)$$
+
+<p align="center">
+  where $\mathbb{I}(x)$ is the indicator function, which returns 1 if the condition $x$ is met, and 0 otherwise.
+</p>
+
+Assuming we are holding a Long position (the price is increasing), that bullish trend will be considered as weakening if $N_{increase} < 6$. For Short position, it is vice versa. These closing points ensure we sell back at the highest price, or buy back at the lowest price.
+
+<br>
+<br>
 <br>
 
-This strategy, based on pure seasonality, was originated at Round 4. Our first algorithm did not perform well and dragged the Shiro team down from top 45th. We worked the extra miles to analyse and apply some forecasting practices, striving to come back where we should be. 
+These two strategies were not originated at Round 3. Our first algorithms did not perform well and dragged the Shiro team down from top 45th. We worked the extra miles to analyse and apply some forecasting practices, striving to come back where we should be.
 
 <br>
 
