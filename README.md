@@ -216,10 +216,53 @@ Theoretically, the price of Picnic Basket will not deviate from a sum of its com
 
 $$ sum_t = 4dip_t + 2bagt_t + uku_t $$
 
-insert fig8
+In which the difference is calculated as:
 
-insert fig9
+$$ diff_t = picnic_t - sum_t$$
 
+<p align="center">
+  <img src="analysis/figures/arbitrage.png" alt="Diff against Basket" width="700">
+  <br>
+  Figure 8: Strong Correlation between Diff and Picnic Basket Price
+</p>
+
+The price difference follows a mean-reversing, stationary process with $E(diff_t) = 367$. Since the price difference does not stay at 0, we demean the series for simplicity.
+
+$$ \widetilde{diff_t} = diff_t - 367$$
+
+<p align="center">
+  where $\widetilde{diff_t}$ reoresents the demeaned price difference.
+</p>
+
+In this strategy, the demeaned price difference will always be pushed back to x-axis when it deviates too much from the latter. We found that a gap of demeaned difference that larger than 100 signal a trading opportunity.
+
+However, $\widetilde{diff_t}$ is not guaranteed to reverse even if it passes above $\pm{100}$. It can reached up to $\pm{300}$ randomly. Therefore, what we aim to do is to send orders when $\widetilde{diff_t}$ is large enough and starts to reverse.
+
+To do this, we implement a similar method of "weakening short-term trend" as in Diving Gears' strategy, but with stricter conditions. Instead of using 6 as a threshold, we use 8 in this case. 
+
+<br>
+
+The strategy can be summarised as follow.
+
+$$Pct Change_{t,j} = \frac{MA100_{t} - MA100_{t-j}}{MA100_{t-j}}$$
+
+$$N_{increase} = \sum_{j=10, 20, \ldots, 100} \mathbb{I}({Pct Change}_{t,j} > 0)$$
+
+$$N_{decrease} = \sum_{j=10, 20, \ldots, 100} \mathbb{I}({Pct Change}_{t,j} < 0)$$
+
+<p align="center">
+  where $\mathbb{I}(x)$ is the indicator function, which returns 1 if the condition $x$ is met, and 0 otherwise.
+</p>
+
+- Send **buy** orders for Picnic Basket, **sell** orders for Dip, Baguette, and Ukulele when:
+
+$$ \widetilde{diff_t} < 100$$
+$$N_{decrease} < 8$$
+
+- Send **buy** orders for Dip, Baguette, and Ukulele, **sell** orders for Picnic Basket when:
+
+$$ \widetilde{diff_t} > 100$$
+$$N_{increase} < 8$$
 
 <br>
 
