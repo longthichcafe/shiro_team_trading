@@ -696,7 +696,7 @@ class Trader:
             n_increase = 0
             n_decrease = 0
             trend_index_gear = []
-            # compute the change in moving avg 200 
+            # compute the change in moving avg 100 
             for i in [10,20,30,40,50,60,70,80,90,100]:
                 trend_index_gear.append(
                     pre_ma100_gear[-1] - pre_ma100_gear[-i-1]
@@ -790,48 +790,44 @@ class Trader:
 
 
         '''
-        Strategy for PICNIC
+        Strategy for PICNIC BASKET
         
         '''
-        for product in state.order_depths.keys():
-            if product == 'DIP':
-                order_depth: OrderDepth = state.order_depths[product]
-                # Take the market price (mid price)            
-                pre_trade_dip, current_price_dip = get_pre_trade(
-                    product,
-                    order_depth
-                )
+        # Getting the prices ==============
+        product == 'DIP'
+        order_depth: OrderDepth = state.order_depths[product]
+        # Take the market price (mid price)            
+        pre_trade_dip, current_price_dip = get_pre_trade(
+            product,
+            order_depth
+        )
 
-            if product == 'BAGUETTE':
-                order_depth: OrderDepth = state.order_depths[product]
-                # Take the market price (mid price)            
-                pre_trade_baguette, current_price_baguette = get_pre_trade(
-                    product,
-                    order_depth
-                )
+        product == 'BAGUETTE'
+        order_depth: OrderDepth = state.order_depths[product]
+        # Take the market price (mid price)            
+        pre_trade_baguette, current_price_baguette = get_pre_trade(
+            product,
+            order_depth
+        )
 
-            if product == 'UKULELE':
-                order_depth: OrderDepth = state.order_depths[product]
-                # Take the market price (mid price)            
-                pre_trade_ukulele, current_price_ukulele = get_pre_trade(
-                    product,
-                    order_depth
-                )
+        product == 'UKULELE'
+        order_depth: OrderDepth = state.order_depths[product]
+        # Take the market price (mid price)            
+        pre_trade_ukulele, current_price_ukulele = get_pre_trade(
+            product,
+            order_depth
+        )
 
-            if product == 'PICNIC_BASKET':
-                order_depth: OrderDepth = state.order_depths[product]
-                # Take the market price (mid price)            
-                pre_trade_picnic, current_price_picnic = get_pre_trade(
-                    product,
-                    order_depth
-                )
+        product == 'PICNIC_BASKET'
+        order_depth: OrderDepth = state.order_depths[product]
+        # Take the market price (mid price)            
+        pre_trade_picnic, current_price_picnic = get_pre_trade(
+            product,
+            order_depth
+        )
 
-
-        '''
-        PICNIC BASKET
-        '''
         
-        # GET DIFFERENCE IN PICNIC
+        # GET DIFFERENCE IN PICNIC ============
         current_sum = (
             4*current_price_dip + 2*current_price_baguette + current_price_ukulele
         )
@@ -839,18 +835,18 @@ class Trader:
         Trader.pre_trades['DIFF_PICNIC'].append(current_diff)
         pre_diff = Trader.pre_trades['DIFF_PICNIC']
 
-        # Calculate moving avg 20 and 200
+        # Calculate moving avg 100 ==========
         if len(pre_diff) > 99:
             ma_100 = np.average(pre_diff[-100:])
             Trader.pre_ma100s['DIFF_PICNIC'].append(ma_100)
             pre_ma100_diff = Trader.pre_ma100s['DIFF_PICNIC']
 
-            if len(pre_ma100_diff) > 70:
+            if len(pre_ma100_diff) > 100:
                 n_increase = 0
                 n_decrease = 0
                 trend_index_diff = []
-                # compute the change in moving avg 200 
-                for i in [5,10,15,20,25,30,40,50,60,70]:
+                # compute the change in moving avg 100 
+                for i in [10,20,30,40,50,60,70,80,90,100]:
                     trend_index_diff.append(
                         pre_ma100_diff[-1] - pre_ma100_diff[-i-1]
                     )

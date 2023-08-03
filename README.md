@@ -204,13 +204,22 @@ Assuming we are holding a Long position (the price is increasing), that bullish 
 <br>
 <br>
 
-These two strategies were not originated at Round 3. Our first algorithms did not perform well and dragged the Shiro team down from top 45th. We worked the extra miles to analyse and apply some forecasting practices, striving to come back where we should be.
+These two strategies were not originated at Round 3. Our original algorithms did not perform well and dragged the Shiro team down from top 45th. We worked the extra miles to analyse and apply some forecasting practices, striving to come back where we should be.
 
 <br>
 
 ## Round 4
 
-...coming soon...
+The 4th round introduces a set of related products to trade, including Picnic Basket, Dip, Baguette, and Ukulele. In principle, a Picnic Basket consists of 4 Dip, 2, Baguette, and 1 Ukulele. It is a perfect example of arbitrage trading.
+
+Theoretically, the price of Picnic Basket will not deviate from a sum of its components. Any deviation from the sum will be pushed back to the equilibrium line. 
+
+$$ sum_t = 4dip_t + 2bagt_t + uku_t $$
+
+insert fig8
+
+insert fig9
+
 
 <br>
 
