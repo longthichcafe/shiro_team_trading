@@ -257,11 +257,13 @@ $$N_{decrease} = \sum_{j=10, 20, \ldots, 100} \mathbb{I}({Pct Change}_{t,j} < 0)
 - Send **buy** orders for Picnic Basket, **sell** orders for Dip, Baguette, and Ukulele when:
 
 $$ \widetilde{diff_t} < 100$$
+
 $$N_{decrease} < 8$$
 
 - Send **buy** orders for Dip, Baguette, and Ukulele, **sell** orders for Picnic Basket when:
 
 $$ \widetilde{diff_t} > 100$$
+
 $$N_{increase} < 8$$
 
 <br>
