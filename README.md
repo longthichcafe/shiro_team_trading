@@ -10,7 +10,7 @@ We, a team of three penultimate students, managed to reach our final rank of 79t
 
 ### Team member:
 - Vincent Su (Dat Su)
-- Long Ho
+- Jackie Ho
 - Khoa Pham
 
 <br>
