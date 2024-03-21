@@ -275,5 +275,8 @@ In the final round, there was no new products introduced. This round is mainly f
 At this stage, the team was currently at the 150th rank, we doubted that we could achieve our goal of getting into the top 100. Our team finalised all the strategies and algorithms, which are the ones presented above. Surprisingly, the algorithms surpassed our expectations! We had a huge jump to rank 79th! The sheer amount of joy when we were looking at the screen, is unforgettable.
 
 <br>
+<br>
 
 This challenge, 10 days of grinding, is a great experience with great rewards. We appreciate the time you spent reading till the end, and hope you find your own challenge to conquer.
+
+<br>
