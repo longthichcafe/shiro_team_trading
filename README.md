@@ -276,3 +276,4 @@ At this stage, the team was currently at the 150th rank, we doubted that we coul
 
 <br>
 
+This challenge, 10 days of grinding, is a great experience with great rewards. We appreciate the time you spent reading till the end, and hope you find your own challenge to conquer.
