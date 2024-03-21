@@ -2,7 +2,7 @@
 
 Welcome to the official GitHub repository of team Shiro!
 
-*Final rank: 79th of 7007 teams*
+*Highest rank: 45th of 7007 teams*
 
 Prosperity is a 10-day global trading challenge, consisting of 5 rounds, hosted by IMC Trading. For each round, a new product is released with its own characteristics and price action that guide profitable strategies. Teams are challenged to combine Python skills, strategic insight, and analytics to trade on a virtual market and bring their island to prosperity.
 
